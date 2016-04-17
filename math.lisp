@@ -13,10 +13,25 @@
     :displaced-to arr 
     :displaced-index-offset (* row (array-dimension arr 1))))
 
-
 (defun column-major-aref (arr idx)
   (let* ((num_row (array-dimension arr 0))
          (num_col (array-dimension arr 1))
          (col_idx (floor (/ idx num_row)))
          (row_idx (mod idx num_row)))
   (row-major-aref arr (+ col_idx (* row_idx num_col)))))
+
+;http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
+(defun iota (n &optional (start-at 0))
+  "Return a list of n consecutive integers, by default starting at 0."
+  (if (<= n 0) nil (cons start-at (iota (- n 1) (+ start-at 1)))))
+
+(defun apply-column-major-ref (arr l)
+  (if (eq l nil) 
+    nil 
+    (cons (column-major-aref arr (car l)) (apply-column-major-ref arr (cdr l))))) 
+
+(defun array-col-slice (arr col)
+  (let* ((num_row (array-dimension arr 0))
+         (seq (iota num_row))
+         (start_id (* col num_row)))
+  (apply-column-major-ref arr (mapcar #'+ seq (make-list (length seq) :initial-element start_id)))))
