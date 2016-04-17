@@ -1,4 +1,5 @@
-(defparameter *sizes* '(784 30 10))
+; Martin Kersner, m.kesner@gmail.com
+; 2016/04/17
 
 (defparameter *a* (make-array '(4 3) 
   :initial-contents '((0 1 2) (3 4 5) (6 7 8) (9 10 11))))
@@ -35,3 +36,12 @@
          (seq (iota num_row))
          (start_id (* col num_row)))
   (apply-column-major-ref arr (mapcar #'+ seq (make-list (length seq) :initial-element start_id)))))
+
+(defun create-matrix-indices (rows cols orig_cols)
+  (if (eq rows 0)
+      nil
+      (cons (cons (1- rows) (1- cols)) (if (eq (1- cols) 0)
+                                 (create-matrix-indices (1- rows) orig_cols orig_cols)
+                                 (create-matrix-indices rows (1- cols) orig_cols)))))
+
+;(map 'list #'identity (column-major-aref arr 0))
