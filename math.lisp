@@ -1,6 +1,8 @@
 ; Martin Kersner, m.kesner@gmail.com
 ; 2016/04/17
 
+; TODO control dimension of matrices before multiplying
+
 (defparameter *a* (make-array '(4 3) 
   :initial-contents '((0 1 2) (3 4 5) (6 7 8) (9 10 11))))
 
@@ -40,8 +42,29 @@
 (defun create-matrix-indices (rows cols orig_cols)
   (if (eq rows 0)
       nil
-      (cons (cons (1- rows) (1- cols)) (if (eq (1- cols) 0)
-                                 (create-matrix-indices (1- rows) orig_cols orig_cols)
-                                 (create-matrix-indices rows (1- cols) orig_cols)))))
+      (cons (cons (1- rows) (1- cols))
+            (if (eq (1- cols) 0)
+              (create-matrix-indices (1- rows) orig_cols orig_cols)
+              (create-matrix-indices rows (1- cols) orig_cols)))))
 
-;(map 'list #'identity (column-major-aref arr 0))
+(defun dot (mat_left mat_right)
+  (let* ((rows (array-dimension mat_left 0))
+         (cols (array-dimension mat_right 1))
+         (idxs (create-matrix-indices rows cols cols)))
+  (dot-rec (make-array (list rows cols)) mat_left mat_right idxs)))
+
+(defun dot-rec (mat_res mat_left mat_right idxs)
+  (if (eq (car idxs) nil)
+    mat_res
+    (let* ((row_idx (caar idxs))
+           (col_idx (cdar idxs))
+           (row_vec (map 'list #'identity (array-row-slice mat_left row_idx)))
+           (col_vec (array-col-slice mat_right col_idx)))
+
+    (dot-rec (mul_vec_of_mat mat_res row_idx col_idx row_vec col_vec) mat_left mat_right (cdr idxs)))))
+
+; Multiply element-wise two vectors and save result to determined location of matrix.
+; Return updated matrix
+(defun mul_vec_of_mat (mat row_idx col_idx row_vec col_vec)
+  (setf (aref mat row_idx col_idx) (apply #'+ (mapcar #'* row_vec col_vec)))
+  mat)
