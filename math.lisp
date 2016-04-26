@@ -1,7 +1,9 @@
-; Martin Kersner, m.kesner@gmail.com
-; 2016/04/17
+;;;; Martin Kersner, m.kesner@gmail.com
+;;;; 2016/04/17
+;;;; 
+;;;; Mathematical operations, mainly with matrices.
 
-; Matrices for testing.
+;;; Matrices for testing.
 (defparameter *a* (make-array '(4 3) 
   :initial-contents '((0 1 2) (3 4 5) (6 7 8) (9 10 11))))
 
@@ -11,12 +13,12 @@
 (define-condition matrix-error (error)
   ((text :initarg :text :reader text)))
 
-; Return size of matrix in form of multiple values.
+;;; Return size of matrix in form of multiple values.
 (defun matrix-dim (A)
   (values (array-dimension 0) (array-dimension 1)))
 
-; krzysz00
-; http://stackoverflow.com/questions/12327237/common-lisp-how-to-access-a-row-of-a-certain-multi-dimension-array
+;;; krzysz00
+;;; http://stackoverflow.com/questions/12327237/common-lisp-how-to-access-a-row-of-a-certain-multi-dimension-array
 (defun array-row-slice (arr row)
   (make-array (array-dimension arr 1) 
     :displaced-to arr 
@@ -29,7 +31,7 @@
          (row_idx (mod idx num_row)))
   (row-major-aref arr (+ col_idx (* row_idx num_col)))))
 
-;http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
+;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
 (defun iota (n &optional (start-at 0))
   "Return a list of n consecutive integers, by default starting at 0."
   (if (<= n 0) nil (cons start-at (iota (- n 1) (+ start-at 1)))))
@@ -53,8 +55,8 @@
               (create-matrix-indices (1- rows) orig_cols orig_cols)
               (create-matrix-indices rows (1- cols) orig_cols)))))
 
-; Control if matrices A and B can be multiplied.
-; If not raises error.
+;;; Control if matrices A and B can be multiplied.
+;;; If not raises error.
 (defun valid-dot-op (A B)
   (let ((m_A (array-dimension A 1))
         (n_B (array-dimension B 0)))
@@ -80,14 +82,14 @@
 
     (dot-rec (mul_vec_of_mat mat_res row_idx col_idx row_vec col_vec) mat_left mat_right (cdr idxs)))))
 
-; Multiply element-wise two vectors and save result to determined location of matrix.
-; Return updated matrix.
+;;; Multiply element-wise two vectors and save result to determined location of matrix.
+;;; Return updated matrix.
 (defun mul_vec_of_mat (mat row_idx col_idx row_vec col_vec)
   (setf (aref mat row_idx col_idx) (apply #'+ (mapcar #'* row_vec col_vec)))
   mat)
 
-; https://rosettacode.org/wiki/Matrix_transposition#Common_Lisp
-; Tranpose matrix.
+;;; https://rosettacode.org/wiki/Matrix_transposition#Common_Lisp
+;;; Tranpose matrix.
 (defun transpose (A)
   (let* ((m (array-dimension A 0))
          (n (array-dimension A 1))
@@ -114,7 +116,7 @@
       (not (= m_A m_B)))
     (error 'matrix-error :text "Matrices do not have the same dimensions.")))
 
-; Element-wise operation op on matrices A and B.
+;;; Element-wise operation op on matrices A and B.
 (defun matrix-elwise-op (A B op)
   (let ((n_A (array-dimension A 0))
         (m_A (array-dimension A 1))
@@ -122,28 +124,28 @@
         (m_B (array-dimension B 1))
         (C))
 
-    ; control matrix dimensions
+    ;; control matrix dimensions
     (equal-matrix-dim2 n_A m_A n_B m_B)
     (setf C (make-array (list n_A m_A)))
 
-    ; element-wise subtract
+    ;; element-wise subtract
     (dotimes (n n_A)
       (dotimes (m m_A)
         (setf (aref C n m) (funcall op (aref A n m) (aref B n m)))))
 
   C))
 
-; Subtract two matrices element-wise.
-; Create new matrix that stores result values of subtraction.
+;;; Subtract two matrices element-wise.
+;;; Create new matrix that stores result values of subtraction.
 (defun subtract (A B)
   (matrix-elwise-op A B (lambda (x y) (- x y))))
 
-; Add two matrices element-wise.
-; Create new matrix that stores result values of addition.
+;;; Add two matrices element-wise.
+;;; Create new matrix that stores result values of addition.
 (defun add (A B)
   (matrix-elwise-op A B (lambda (x y) (+ x y))))
 
-; Multiply matrix A with constant b.
+;; Multiply matrix A with constant b.
 (defun multiply (b A)
   (let* ((n_A (array-dimension A 0))
         (m_A (array-dimension A 1))

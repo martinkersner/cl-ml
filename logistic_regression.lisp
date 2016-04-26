@@ -1,7 +1,7 @@
-; Martin Kersner, m.kersner@gmail.com
-; 2016/04/25
-
-; Logistic regression
+;;;; Martin Kersner, m.kersner@gmail.com
+;;;; 2016/04/25
+;;;;
+;;;; Logistic regression
 
 (load "math")
 (load "utils")

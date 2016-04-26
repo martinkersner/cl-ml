@@ -1,5 +1,5 @@
-; Martin Kersner, m.kersner@gmail.com
-; 2016/04/26
+;;;; Martin Kersner, m.kersner@gmail.com
+;;;; 2016/04/26
 
 (load "math")
 
@@ -15,8 +15,8 @@
 
     (list-to-col-vector-rec arr 0 lst)))
 
-; Samuel Edwin Ward
-; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
+;;; Samuel Edwin Ward
+;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
 (defun remove-nth (n list)
   (declare
     (type (integer 0) n)
@@ -25,7 +25,7 @@
     (cdr list)
     (cons (car list) (remove-nth (1- n) (cdr list)))))
 
-; Update row of matrix A with values in list.
+;;; Update row of matrix A with values in list.
 (defun update-row (A row_idx lst)
   (let ((m (array-dimension A 1)))
 
@@ -34,8 +34,8 @@
     
    A))
 
-; Append constant number at the beginning of each row.
-; Create new matrix with appended values. 
+;;; Append constant number at the beginning of each row.
+;;; Create new matrix with appended values. 
 (defun append-const-val (A val)
   (let* ((n (array-dimension A 0))
          (m (1+ (array-dimension A 1)))
@@ -52,7 +52,7 @@
 
   B)))
 
-; Remove column at position pos from given matrix A.
+;;; Remove column at position pos from given matrix A.
 (defun remove-col (A pos)
   (let* ((n (array-dimension A 0))
          (m (array-dimension A 1))
