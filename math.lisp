@@ -9,6 +9,9 @@
 (defparameter *b* (make-array '(2 4) 
   :initial-contents '((1 2 3 4) (5 6 7 8))))
 
+(define-condition matrix-error (error)
+  ((text :initarg :text :reader text)))
+
 ; krzysz00
 ; http://stackoverflow.com/questions/12327237/common-lisp-how-to-access-a-row-of-a-certain-multi-dimension-array
 (defun array-row-slice (arr row)
@@ -47,10 +50,21 @@
               (create-matrix-indices (1- rows) orig_cols orig_cols)
               (create-matrix-indices rows (1- cols) orig_cols)))))
 
+; Control if matrices A and B can be multiplied.
+; If not raises error.
+(defun valid-dot-op (A B)
+  (let ((m_A (array-dimension A 1))
+        (n_B (array-dimension B 0)))
+
+    (if (not (= m_A n_B))
+      (error 'matrix-error :text "Matrices cannot be multiplied. Dimensions do not fit."))))
+
 (defun dot (mat_left mat_right)
   (let* ((rows (array-dimension mat_left 0))
          (cols (array-dimension mat_right 1))
          (idxs (create-matrix-indices rows cols cols)))
+
+  (valid-dot-op mat_left mat_right)
   (dot-rec (make-array (list rows cols)) mat_left mat_right idxs)))
 
 (defun dot-rec (mat_res mat_left mat_right idxs)
@@ -80,9 +94,6 @@
                 (setf (aref B j i)
                       (aref A i j))))
     B))
-
-(define-condition matrix-error (error)
-  ((text :initarg :text :reader text)))
 
 (defun equal-matrix-dim (A B)
   (let ((n_A (array-dimension A 0))
