@@ -1,8 +1,7 @@
 ; Martin Kersner, m.kesner@gmail.com
 ; 2016/04/17
 
-; TODO control dimension of matrices before multiplying
-
+; Matrices for testing.
 (defparameter *a* (make-array '(4 3) 
   :initial-contents '((0 1 2) (3 4 5) (6 7 8) (9 10 11))))
 
@@ -11,6 +10,10 @@
 
 (define-condition matrix-error (error)
   ((text :initarg :text :reader text)))
+
+; Return size of matrix in form of multiple values.
+(defun matrix-dim (A)
+  (values (array-dimension 0) (array-dimension 1)))
 
 ; krzysz00
 ; http://stackoverflow.com/questions/12327237/common-lisp-how-to-access-a-row-of-a-certain-multi-dimension-array
@@ -131,12 +134,12 @@
   C))
 
 ; Subtract two matrices element-wise.
-; Creates new matrix that stores result values of subtraction.
+; Create new matrix that stores result values of subtraction.
 (defun subtract (A B)
   (matrix-elwise-op A B (lambda (x y) (- x y))))
 
 ; Add two matrices element-wise.
-; Creates new matrix that stores result values of addition.
+; Create new matrix that stores result values of addition.
 (defun add (A B)
   (matrix-elwise-op A B (lambda (x y) (+ x y))))
 

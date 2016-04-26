@@ -7,6 +7,15 @@
 (load "utils")
 (load "dataset1")
 
+; training data preparation
+(defparameter *label-col* 2)
+
+(defparameter *data*
+  (remove-col *dataset1* *label-col*))
+
+(defparameter *labels*
+  (list-to-col-vector (array-col-slice *dataset1* *label-col*)))
+
 (defun grad-ascent (data_matrix labels_matrix &key (lr 0.001) (max_iter 500))
   (let* ((data_matrix (append-const-val data_matrix 1.0))
          (n (array-dimension data_matrix 1))
