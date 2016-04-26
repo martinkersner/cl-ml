@@ -4,10 +4,12 @@
 ; Logistic regression
 
 (load "math")
+(load "utils")
 (load "dataset1")
 
 (defun grad-ascent (data_matrix labels_matrix &key (lr 0.001) (max_iter 500))
-  (let* ((n (array-dimension data_matrix 1))
+  (let* ((data_matrix (append-const-val data_matrix 1.0))
+         (n (array-dimension data_matrix 1))
          (weights (make-array (list n 1) :initial-element 1))
          (data_matrix_T (transpose data_matrix))
          (h)
