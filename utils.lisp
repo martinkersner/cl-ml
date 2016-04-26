@@ -3,6 +3,7 @@
 
 (load "math")
 
+;;; Conversion of simple list to column vector.
 (defun list-to-col-vector-rec (arr idx lst)
   (if (eq lst nil)
     arr
@@ -17,6 +18,7 @@
 
 ;;; Samuel Edwin Ward
 ;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
+;;; Remove the nth element from list.
 (defun remove-nth (n list)
   (declare
     (type (integer 0) n)
@@ -42,17 +44,14 @@
          (B (make-array (list n m)))
          (tmp_vals))
 
-  (flet ((update-row (row_idx vals)
-            (dotimes (col_idx m)
-             (setf (aref B row_idx col_idx) (nth col_idx vals)))))
+  (dotimes (row_idx n)
+    (setf tmp_vals (append (list val) (map 'list #'identity (array-row-slice A row_idx))))
+    (setf B (update-row B row_idx tmp_vals)))
 
-  (dotimes (i n)
-    (setf tmp_vals (append (list val) (map 'list #'identity (array-row-slice A i))))
-    (update-row i tmp_vals))
-
-  B)))
+  B))
 
 ;;; Remove column at position pos from given matrix A.
+;;; Create new matrix. 
 (defun remove-col (A pos)
   (let* ((n (array-dimension A 0))
          (m (array-dimension A 1))
