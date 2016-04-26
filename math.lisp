@@ -32,8 +32,8 @@
   (row-major-aref arr (+ col_idx (* row_idx num_col)))))
 
 ;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
+;;; Return a list of n consecutive integers, by default starting at 0.
 (defun iota (n &optional (start-at 0))
-  "Return a list of n consecutive integers, by default starting at 0."
   (if (<= n 0) nil (cons start-at (iota (- n 1) (+ start-at 1)))))
 
 (defun apply-column-major-ref (arr l)
@@ -94,11 +94,13 @@
   (let* ((m (array-dimension A 0))
          (n (array-dimension A 1))
          (B (make-array `(,n ,m) :initial-element 0)))
-    (loop for i from 0 below m do
-          (loop for j from 0 below n do
-                (setf (aref B j i)
-                      (aref A i j))))
-    B))
+
+  (dotimes (i m)
+    (dotimes (j n)
+      (setf (aref B j i)
+            (aref A i j))))
+
+  B))
 
 (defun equal-matrix-dim (A B)
   (let ((n_A (array-dimension A 0))
