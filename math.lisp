@@ -102,7 +102,7 @@
 
 ; Subtract two matrices element-wise.
 ; Creates new matrix that stores result values of subtraction.
-(defun subtract-matrices (A B)
+(defun subtract (A B)
   (let ((n_A (array-dimension A 0))
         (m_A (array-dimension A 1))
         (n_B (array-dimension B 0))
@@ -123,7 +123,7 @@
 ; Sum two matrices element-wise.
 ; Creates new matrix that stores result values of sum.
 ; TODO create function for both subtracting and summing matrices
-(defun sum-matrices (A B)
+(defun sum (A B)
   (let ((n_A (array-dimension A 0))
         (m_A (array-dimension A 1))
         (n_B (array-dimension B 0))
@@ -141,7 +141,8 @@
 
   C))
 
-(defun const-mult-matrix (b A)
+; Multiply matrix A with constant b.
+(defun multiply (b A)
   (let* ((n_A (array-dimension A 0))
         (m_A (array-dimension A 1))
         (C (make-array (list n_A m_A))))
@@ -151,3 +152,16 @@
         (setf (aref C n m) (* (aref A n m) b))))
 
   C))
+
+(defun sigmoid-base (num)
+  (/ 1 (+ 1 (exp (- num)))))
+
+(defun sigmoid (mat)
+  (let ((n (array-dimension mat 0))
+        (m (array-dimension mat 1)))
+
+  (dotimes (rows n)
+    (dotimes (cols m)
+      (setf (aref mat rows cols) (sigmoid-base (aref mat rows cols)))))
+ 
+  mat))
