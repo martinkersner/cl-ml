@@ -100,46 +100,34 @@
       (not (= m_A m_B)))
     (error 'matrix-error :text "Matrices do not have the same dimensions.")))
 
+; Element-wise operation op on matrices A and B.
+(defun matrix-elwise-op (A B op)
+  (let ((n_A (array-dimension A 0))
+        (m_A (array-dimension A 1))
+        (n_B (array-dimension B 0))
+        (m_B (array-dimension B 1))
+        (C))
+
+    ; control matrix dimensions
+    (equal-matrix-dim2 n_A m_A n_B m_B)
+    (setf C (make-array (list n_A m_A)))
+
+    ; element-wise subtract
+    (dotimes (n n_A)
+      (dotimes (m m_A)
+        (setf (aref C n m) (funcall op (aref A n m) (aref B n m)))))
+
+  C))
+
 ; Subtract two matrices element-wise.
 ; Creates new matrix that stores result values of subtraction.
 (defun subtract (A B)
-  (let ((n_A (array-dimension A 0))
-        (m_A (array-dimension A 1))
-        (n_B (array-dimension B 0))
-        (m_B (array-dimension B 1))
-        (C))
+  (matrix-elwise-op A B (lambda (x y) (- x y))))
 
-    ; control matrix dimensions
-    (equal-matrix-dim2 n_A m_A n_B m_B)
-    (setf C (make-array (list n_A m_A)))
-
-    ; element-wise subtract
-    (dotimes (n n_A)
-      (dotimes (m m_A)
-        (setf (aref C n m) (- (aref A n m) (aref B n m)))))
-
-  C))
-
-; Sum two matrices element-wise.
-; Creates new matrix that stores result values of sum.
-; TODO create function for both subtracting and summing matrices
-(defun sum (A B)
-  (let ((n_A (array-dimension A 0))
-        (m_A (array-dimension A 1))
-        (n_B (array-dimension B 0))
-        (m_B (array-dimension B 1))
-        (C))
-
-    ; control matrix dimensions
-    (equal-matrix-dim2 n_A m_A n_B m_B)
-    (setf C (make-array (list n_A m_A)))
-
-    ; element-wise subtract
-    (dotimes (n n_A)
-      (dotimes (m m_A)
-        (setf (aref C n m) (+ (aref A n m) (aref B n m)))))
-
-  C))
+; Add two matrices element-wise.
+; Creates new matrix that stores result values of addition.
+(defun add (A B)
+  (matrix-elwise-op A B (lambda (x y) (+ x y))))
 
 ; Multiply matrix A with constant b.
 (defun multiply (b A)

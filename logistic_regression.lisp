@@ -16,6 +16,6 @@
     (dotimes (i max_iter)
       (setf h (sigmoid (dot data_matrix weights)))
       (setf err (subtract labels_matrix h))
-      (setf weights (sum weights (dot (multiply lr data_matrix_T) err))))
+      (setf weights (add weights (dot (multiply lr data_matrix_T) err))))
 
   weights))
