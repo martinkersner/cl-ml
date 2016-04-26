@@ -64,12 +64,13 @@
     (dot-rec (mul_vec_of_mat mat_res row_idx col_idx row_vec col_vec) mat_left mat_right (cdr idxs)))))
 
 ; Multiply element-wise two vectors and save result to determined location of matrix.
-; Return updated matrix
+; Return updated matrix.
 (defun mul_vec_of_mat (mat row_idx col_idx row_vec col_vec)
   (setf (aref mat row_idx col_idx) (apply #'+ (mapcar #'* row_vec col_vec)))
   mat)
 
 ; https://rosettacode.org/wiki/Matrix_transposition#Common_Lisp
+; Tranpose matrix.
 (defun transpose (A)
   (let* ((m (array-dimension A 0))
          (n (array-dimension A 1))
@@ -79,3 +80,74 @@
                 (setf (aref B j i)
                       (aref A i j))))
     B))
+
+(define-condition matrix-error (error)
+  ((text :initarg :text :reader text)))
+
+(defun equal-matrix-dim (A B)
+  (let ((n_A (array-dimension A 0))
+        (m_A (array-dimension A 1))
+        (n_B (array-dimension B 0))
+        (m_B (array-dimension B 1)))
+
+    (if (or (not (= n_A n_B)) 
+            (not (= m_A m_B)))
+      (error 'matrix-error :text "Matrices do not have the same dimensions."))
+  ))
+
+(defun equal-matrix-dim2 (n_A m_A n_B m_B)
+  (if (or (not (= n_A n_B)) 
+      (not (= m_A m_B)))
+    (error 'matrix-error :text "Matrices do not have the same dimensions.")))
+
+; Subtract two matrices element-wise.
+; Creates new matrix that stores result values of subtraction.
+(defun subtract-matrices (A B)
+  (let ((n_A (array-dimension A 0))
+        (m_A (array-dimension A 1))
+        (n_B (array-dimension B 0))
+        (m_B (array-dimension B 1))
+        (C))
+
+    ; control matrix dimensions
+    (equal-matrix-dim2 n_A m_A n_B m_B)
+    (setf C (make-array (list n_A m_A)))
+
+    ; element-wise subtract
+    (dotimes (n n_A)
+      (dotimes (m m_A)
+        (setf (aref C n m) (- (aref A n m) (aref B n m)))))
+
+  C))
+
+; Sum two matrices element-wise.
+; Creates new matrix that stores result values of sum.
+; TODO create function for both subtracting and summing matrices
+(defun sum-matrices (A B)
+  (let ((n_A (array-dimension A 0))
+        (m_A (array-dimension A 1))
+        (n_B (array-dimension B 0))
+        (m_B (array-dimension B 1))
+        (C))
+
+    ; control matrix dimensions
+    (equal-matrix-dim2 n_A m_A n_B m_B)
+    (setf C (make-array (list n_A m_A)))
+
+    ; element-wise subtract
+    (dotimes (n n_A)
+      (dotimes (m m_A)
+        (setf (aref C n m) (+ (aref A n m) (aref B n m)))))
+
+  C))
+
+(defun const-mult-matrix (b A)
+  (let* ((n_A (array-dimension A 0))
+        (m_A (array-dimension A 1))
+        (C (make-array (list n_A m_A))))
+
+    (dotimes (n n_A)
+      (dotimes (m m_A)
+        (setf (aref C n m) (* (aref A n m) b))))
+
+  C))
