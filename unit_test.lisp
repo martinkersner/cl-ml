@@ -1,6 +1,11 @@
-;;;; http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html
+;;;; by http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html
 
 (defvar *test-name* nil)
+
+;;; If macro WITH-GENSYSM is locked type continue and hit enter. (clisp)
+(defmacro with-gensyms ((&rest names) &body body)
+  `(let ,(loop for n in names collect `(,n (gensym)))
+     ,@body))
 
 (defmacro deftest (name parameters &body body)
   "Define a test function. Within a test function we can call
