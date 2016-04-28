@@ -29,5 +29,5 @@
 
 (defun report-result (result form)
   "Report the results of a single test case. Called by 'check'."
-  (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
+  (format t "~:[FAIL~;PASS~] ... ~a: ~a~%" result *test-name* form)
   result)
