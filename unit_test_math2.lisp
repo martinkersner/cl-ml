@@ -41,8 +41,22 @@
                     (make-matrix :rows 3 :cols 3 :data '((1 4 7)(2 5 8)(3 6 9))))
     ))
 
+(deftest test-access-matrix ()
+  (check
+    ;; nth-row
+    (equal (nth-row 0 (matrix-from-data '((1)))) '(1))
+    (equal (nth-row 0 (matrix-from-data '((1 2)))) '(1 2))
+    (equal (nth-row 0 (matrix-from-data '((1)(2)))) '(1))
+    (equal (nth-row 0 (matrix-from-data '((1 2)(3 4)))) '(1 2))
+    (equal (nth-row 1 (matrix-from-data '((1 2)(3 4)))) '(3 4))
+    (equal (nth-row 0 (matrix-from-data '((1 2)(3 4)(5 6)))) '(1 2))
+    (equal (nth-row 1 (matrix-from-data '((1 2)(3 4)(5 6)))) '(3 4))
+    (equal (nth-row 2 (matrix-from-data '((1 2)(3 4)(5 6)))) '(5 6))
+    ))
+
 (deftest test-all ()
   (combine-results
     (test-generate-matrix)
     (test-transpose-matrix)
+    (test-access-matrix)
    ))

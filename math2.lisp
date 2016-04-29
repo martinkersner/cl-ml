@@ -68,3 +68,6 @@
     (make-matrix :rows cols
                  :cols rows
                  :data (apply #'mapcar (cons #'list data)))))
+
+(defun nth-row (row matrix)
+  (nth row (matrix-data matrix)))
