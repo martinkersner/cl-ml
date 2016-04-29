@@ -70,7 +70,7 @@
                  :data (apply #'mapcar (cons #'list data)))))
 
 (defun nth-row (row matrix)
-  (nth row (matrix-data matrix)))
+  (list (nth row (matrix-data matrix))))
 
 (defmacro nth-col (col matrix)
   `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,matrix)))
