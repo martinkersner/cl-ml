@@ -74,3 +74,60 @@
 
 (defmacro nth-col (col matrix)
   `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,matrix)))
+
+
+(defun matrix-indices (rows cols)
+  (matrix-indices-rec (rows cols cols)))
+
+(defun matrix-indices-rec (rows cols orig_cols)
+  (if (eq rows 0)
+    nil
+    (cons (cons (1- rows) (1- cols))
+          (if (eq (1- cols) 0)
+            (matrix-indices-rec (1- rows) orig_cols orig_cols)
+            (matrix-indices rows-rec (1- cols) orig_cols)))))
+
+;;; Control matrix dot product validity.
+(defun valid-dot-op (mat_l mat_r)
+  (if (not (= (matrix-col mat_l)
+              (matrix-row mat_r)))
+    (error 'matrix-error :text "Matrices cannot be multiplied. Dimensions do not fit.")))
+
+;(defun dot (mat_l mat_r)
+;  (valid-dot-op (mat_l mat_r))
+;
+;  (let ((rows (matrix-rows mat_l))
+;        (cols (matrix-cos mat_r))
+;        (mat_idxs (matrix-indices rows cols)))
+;
+;  (matrix-from-data (dot-rec mat_l mat_r))
+;  )
+;  )
+;
+;(defun dot-rec (mat_res mat_l mat_r indixes)
+;  (if (eq (car idxs) nil)
+;    mat_res
+;    (let* ((row_idx (caar idxs))
+;           (col_idx (cdar idxs))
+;           (row_vec (map 'list #'identity (array-row-slice mat_left row_idx)))
+;           (col_vec (array-col-slice mat_right col_idx)))
+;
+;    (dot-rec (mul_vec_of_mat mat_res row_idx col_idx row_vec col_vec) mat_left mat_right (cdr idxs)))))
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;(defun dot (mat_left mat_right)
+;  (let* ((rows (array-dimension mat_left 0))
+;         (cols (array-dimension mat_right 1))
+;         (idxs (create-matrix-indices rows cols cols)))
+;
+;  (dot-rec (make-array (list rows cols)) mat_left mat_right idxs)))
+;
+;(defun dot-rec (mat_res mat_left mat_right idxs)
+;  (if (eq (car idxs) nil)
+;    mat_res
+;    (let* ((row_idx (caar idxs))
+;           (col_idx (cdar idxs))
+;           (row_vec (map 'list #'identity (array-row-slice mat_left row_idx)))
+;           (col_vec (array-col-slice mat_right col_idx)))
+;
+;    (dot-rec (mul_vec_of_mat mat_res row_idx col_idx row_vec col_vec) mat_left mat_right (cdr idxs)))))
