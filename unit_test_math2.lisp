@@ -64,6 +64,17 @@
     (equal (nth-col 1 (matrix-from-data '((1 2)(3 4)(5 6)))) '((2)(4)(6)))
     ))
 
+(deftest test-matrix-modifications()
+  (check
+  ;; remove-col
+    (compare-matrix (remove-col 0 (matrix-from-data '((1)))) (matrix-from-data '(()))) ; correct?
+    (compare-matrix (remove-col 0 (matrix-from-data '((1 2)))) (matrix-from-data '((2))))
+    (compare-matrix (remove-col 1 (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 3))))
+    (compare-matrix (remove-col 0 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((2 3)(5 6))))
+    (compare-matrix (remove-col 1 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((1 3)(4 6))))
+    (compare-matrix (remove-col 2 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((1 2)(4 5))))
+  ))
+
 (deftest test-dot-product ()
   (check
     (compare-matrix (dot (matrix-from-data '((1))) (matrix-from-data '((1)))) (matrix-from-data '((1))))
@@ -76,6 +87,7 @@
 (deftest test-all ()
   (combine-results
     (test-generate-matrix)
+    (test-matrix-modifications)
     (test-transpose-matrix)
     (test-access-matrix)
     (test-dot-product)

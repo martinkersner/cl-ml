@@ -6,9 +6,10 @@
 ;;;; Matrices are represented by lists.
 
 ;;; TODO 
-;;; matrix dot product
 ;;; matrix element-wise multiplication
 ;;; smart operations (add vector to all rows or columns of matrix)
+;;; nth-row nth-col base functions for returning complete matrices
+;;; rewrite remove-nth function and move to file with list operations
 
 (defstruct matrix rows cols data)
 
@@ -79,7 +80,6 @@
 (defmacro nth-col (col matrix)
   `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,matrix)))
 
-
 (defun matrix-indices (rows cols)
   (matrix-indices-rec rows cols cols))
 
@@ -132,3 +132,20 @@
 ;;; Assume correct vector dimensions.
 (defun vec-mult2 (vec1 vec2)
   (apply #'+ (mapcar #'* vec1 vec2)))
+
+;;; Samuel Edwin Ward
+;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
+;;; Remove the nth element from list.
+(defun remove-nth (n list)
+  (declare
+    (type (integer 0) n)
+    (type list list))
+  (if (or (zerop n) (null list))
+    (cdr list)
+    (cons (car list) (remove-nth (1- n) (cdr list)))))
+
+;;; Remove column from given matrix.
+;;; Create new matrix.
+(defun remove-col (col mat)
+  (matrix-from-data
+    (mapcar #'(lambda (x) (remove-nth col x)) (matrix-data mat))))
