@@ -149,3 +149,7 @@
 (defun remove-col (col mat)
   (matrix-from-data
     (mapcar #'(lambda (x) (remove-nth col x)) (matrix-data mat))))
+
+;;; Append constant number at the beginning of each row of given matrix.
+(defun prefix-const-val (val mat)
+  (matrix-from-data (mapcar #'(lambda (x) (push val x)) (matrix-data mat))))
