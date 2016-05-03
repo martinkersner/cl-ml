@@ -31,15 +31,18 @@
     (t t)))
 
 ;;; Create a matrix of size rowsxcols filled with nil values.
-(defun empty-matrix (rows cols)
+(defun empty-matrix (rows cols &optional default)
   (flet ((generate-empty-matrix (rows cols) 
        (loop for i from 1 to rows
-          collect (make-list cols))))
+          collect (make-list cols :initial-element default))))
   
     (make-matrix :rows rows
                  :cols cols
                  :data (generate-empty-matrix rows cols))))
 
+;;; Generate and initialize matrix with given value.
+(defun initialize-matrix (rows cols val)
+  (empty-matrix rows cols val))
 
 ;;; Control if all rows have the same number of columns.
 (defmacro valid-matrix (row_lengths)
