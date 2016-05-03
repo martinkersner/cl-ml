@@ -174,5 +174,10 @@
   (matrix-from-data
     (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'+)))
 
+;;; Elementwise add for vectors and matrices.
+(defun subtract (mat_l mat_r)
+  (matrix-from-data
+    (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'-)))
+
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
