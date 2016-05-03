@@ -10,6 +10,7 @@
 ;;; smart operations (add vector to all rows or columns of matrix)
 ;;; nth-row nth-col base functions for returning complete matrices
 ;;; rewrite remove-nth function and move to file with list operations
+;;; unit test for sigmoid functions
 
 (defstruct matrix rows cols data)
 
@@ -156,3 +157,22 @@
 ;;; Append constant number at the beginning of each row of given matrix.
 (defun prefix-const-val (val mat)
   (matrix-from-data (mapcar #'(lambda (x) (push val x)) (matrix-data mat))))
+
+;;; Basic sigmoid function.
+;;; Accept only single number.
+(defun sigmoid-base (num)
+  (/ 1 (+ 1 (exp (- num)))))
+
+;;; Sigmoid function accept matrix as an argument.
+(defun sigmoid (mat)
+  (matrix-from-data
+    (mapcar #'(lambda (x) (mapcar #'(lambda (y) (sigmoid-base y)) x))
+            (matrix-data mat))))
+
+;;; Elementwise add for vectors and matrices.
+(defun add (mat_l mat_r)
+  (matrix-from-data
+    (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'+)))
+
+(defun element-wise-op (lst_l lst_r op)
+  (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))

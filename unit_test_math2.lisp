@@ -46,7 +46,7 @@
                     (make-matrix :rows 2 :cols 3 :data '((1 3 5)(2 4 6))))
     (compare-matrix (transpose (make-matrix :rows 3 :cols 3 :data '((1 2 3)(4 5 6)(7 8 9))))
                     (make-matrix :rows 3 :cols 3 :data '((1 4 7)(2 5 8)(3 6 9))))
-    ))
+  ))
 
 (deftest test-access-matrix ()
   (check
@@ -69,11 +69,11 @@
     (equal (nth-col 1 (matrix-from-data '((1 2)(3 4)))) '((2)(4)))
     (equal (nth-col 0 (matrix-from-data '((1 2)(3 4)(5 6)))) '((1)(3)(5)))
     (equal (nth-col 1 (matrix-from-data '((1 2)(3 4)(5 6)))) '((2)(4)(6)))
-    ))
+  ))
 
 (deftest test-matrix-modifications()
   (check
-  ;; remove-col
+    ;; remove-col
     (compare-matrix (remove-col 0 (matrix-from-data '((1)))) (matrix-from-data '(()))) ; correct?
     (compare-matrix (remove-col 0 (matrix-from-data '((1 2)))) (matrix-from-data '((2))))
     (compare-matrix (remove-col 1 (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 3))))
@@ -95,7 +95,16 @@
     (compare-matrix (dot (matrix-from-data '((1 2))) (matrix-from-data '((1)(2)))) (matrix-from-data '((5))))
     (compare-matrix (dot (matrix-from-data '((1 2)(3 4))) (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((7 10)(15 22))))
     (compare-matrix (dot (matrix-from-data '((1 2 3)(4 5 6))) (matrix-from-data '((1 2)(3 4)(5 6)))) (matrix-from-data '((22 28)(49 64))))
-    ))
+  ))
+
+(deftest test-element-wise-operations ()
+  (check
+   ;; add
+   (compare-matrix (add (matrix-from-data '((1))) (matrix-from-data '((1)))) (matrix-from-data '((2))))
+   (compare-matrix (add (matrix-from-data '((1 2))) (matrix-from-data '((3 4)))) (matrix-from-data '((4 6))))
+   (compare-matrix (add (matrix-from-data '((1)(2))) (matrix-from-data '((3)(4)))) (matrix-from-data '((4)(6))))
+   (compare-matrix (add (matrix-from-data '((1 2)(3 4))) (matrix-from-data '((5 6)(7 8)))) (matrix-from-data '((6 8)(10 12))))
+  ))
 
 (deftest test-all ()
   (combine-results
@@ -103,5 +112,6 @@
     (test-matrix-modifications)
     (test-transpose-matrix)
     (test-access-matrix)
+    (test-element-wise-operations)
     (test-dot-product)
    ))
