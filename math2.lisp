@@ -179,5 +179,12 @@
   (matrix-from-data
     (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'-)))
 
+;;; Multiply matrix/vector with a given value.
+(defun multiply (val mat)
+  (matrix-from-data
+    (element-wise-op (matrix-data mat)
+                     (initialize-matrix (matrix-rows mat) (matrix-cols mat) val)
+                     #'*)))
+
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
