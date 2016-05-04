@@ -25,27 +25,10 @@
     (dotimes (i max_iter)
       (setf h (sigmoid (dot data_mat weights)))
       (setf err (subtract labels_mat h))
-      ;(setf weights (add weights (dot (multiply lr data_mat_T) err)))) ; find a better way to multiply
-      )
+      (setf weights (add weights (dot (multiply lr data_mat_T) err))))
 
-  weights 
-  ))
+  weights))
 
-;(defun grad-ascent-old (data_matrix labels_matrix &key (lr 0.001) (max_iter 500))
-;  (let* ((data_matrix (append-const-val data_matrix 1.0))
-;         (n (array-dimension data_matrix 1))
-;         (weights (make-array (list n 1) :initial-element 1))
-;         (data_matrix_T (transpose data_matrix))
-;         (h)
-;         (err))
-;
-;    (dotimes (i max_iter)
-;      (setf h (sigmoid (dot data_matrix weights)))
-;      (setf err (subtract labels_matrix h))
-;      (setf weights (add weights (dot (multiply lr data_matrix_T) err))))
-;
-;  weights))
-;
 ;(defun stochastic-grad-ascent (data_matrix labels_matrix &key (max_iter 500))
 ;  (let* ((data_matrix (append-const-val data_matrix 1.0))
 ;         (m (array-dimension data_matrix 0))
