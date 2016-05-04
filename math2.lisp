@@ -183,7 +183,7 @@
 (defun multiply (val mat)
   (matrix-from-data
     (element-wise-op (matrix-data mat)
-                     (initialize-matrix (matrix-rows mat) (matrix-cols mat) val)
+                     (matrix-data (initialize-matrix (matrix-rows mat) (matrix-cols mat) val))
                      #'*)))
 
 (defun element-wise-op (lst_l lst_r op)
