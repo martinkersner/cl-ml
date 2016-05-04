@@ -2,11 +2,11 @@
 ;;;; 2016/04/27 
 ;;;;
 ;;;; Math 2.0
-;;;; Mathematical operations, mainly with matrices.
-;;;; Matrices are represented by lists.
+;;;; Mathematical operations, mainly with matrices. Matrices are represented by 
+;;;; lists. Most operations have strict prototype in order to avoid additional
+;;;; within functions.
 
 ;;; TODO 
-;;; matrix element-wise multiplication
 ;;; smart operations (add vector to all rows or columns of matrix)
 ;;; nth-row nth-col base functions for returning complete matrices
 ;;; rewrite remove-nth function and move to file with list operations
@@ -182,9 +182,8 @@
 ;;; Multiply matrix/vector with a given value.
 (defun multiply (val mat)
   (matrix-from-data
-    (element-wise-op (matrix-data mat)
-                     (matrix-data (initialize-matrix (matrix-rows mat) (matrix-cols mat) val))
-                     #'*)))
+    (mapcar #'(lambda (x) (mapcar #'(lambda (y) (* y val)) x))
+            (matrix-data mat))))
 
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
