@@ -118,6 +118,12 @@
    (compare-matrix (multiply 4 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((4 8)(12 16))))
   ))
 
+(deftest test-mathematical-functions ()
+  (check
+   ;; sigmoid-base
+   (equal (/ 1 2) (sigmoid-base 0))
+  ))
+
 (deftest test-all ()
   (combine-results
     (test-generate-matrix)
@@ -126,4 +132,5 @@
     (test-access-matrix)
     (test-element-wise-operations)
     (test-dot-product)
+    (test-mathematical-functions)
    ))
