@@ -187,3 +187,9 @@
 
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
+
+;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
+;;; Return a list of n consecutive integers, by default starting at 0.
+;;; TODO rename?
+(defun iota (n &optional (start-at 0))
+  (if (<= n 0) nil (cons start-at (iota (- n 1) (+ start-at 1)))))
