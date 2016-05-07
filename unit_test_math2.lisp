@@ -122,6 +122,8 @@
   (check
    ;; sigmoid-base
    (equal (/ 1 2) (sigmoid-base 0))
+   (< (abs (- (sigmoid-base 10) 1)) 1E-4)
+   (< (abs (- (sigmoid-base -10) 0)) 1E-4)
   ))
 
 (deftest test-all ()
