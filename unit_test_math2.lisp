@@ -122,6 +122,12 @@
    (compare-matrix (subtract-row  (matrix-from-data '((1)(2))) (matrix-from-data '((1)))) (matrix-from-data '((0)(1))))
    (compare-matrix (subtract-row  (matrix-from-data '((1 2)(3 4))) (matrix-from-data '((2 3)))) (matrix-from-data '((-1 -1)(1 1))))
    (compare-matrix (subtract-row  (matrix-from-data '((1 2 3)(4 5 6)(7 8 9))) (matrix-from-data '((1 5 9)))) (matrix-from-data '((0 -3 -6)(3 0 -3)(6 3 0))))
+
+   ;; power
+   (compare-matrix (power  3 (matrix-from-data '((2)))) (matrix-from-data '((8))))
+   (compare-matrix (power  2 (matrix-from-data '((1 2)))) (matrix-from-data '((1 4))))
+   (compare-matrix (power  2 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 4)(9 16))))
+   (compare-matrix (power  2 (matrix-from-data '((1 2 3)(4 5 6)(7 8 9)))) (matrix-from-data '((1 4 9)(16 25 36)(49 64 81))))
   ))
 
 (deftest test-mathematical-functions ()

@@ -185,6 +185,11 @@
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (* y val)) x))
             (matrix-data mat))))
 
+(defun power (val mat)
+  (matrix-from-data
+    (mapcar #'(lambda (x) (mapcar #'(lambda (y) (expt y val)) x))
+            (matrix-data mat))))
+
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
 
