@@ -188,6 +188,17 @@
 (defun element-wise-op (lst_l lst_r op)
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
 
+;;; Element-wise subtract values of given row from all rows in matrix.
+(defun subtract-row (mat row)
+  (matrix-from-data
+    (elwise-mat-row-op (matrix-data mat) (car (matrix-data row)) #'-)))
+
+(defun elwise-mat-row-op (lst_mat lst_row op)
+  (mapcar #'(lambda (x) (elwise-row-row-op x lst_row op)) lst_mat))
+
+(defun elwise-row-row-op (lst_row_l lst_row_r op)
+  (mapcar #'(lambda (x y) (apply op (list x y))) lst_row_l lst_row_r))
+
 ;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
 ;;; Return a list of n consecutive integers, by default starting at 0.
 ;;; TODO rename?
