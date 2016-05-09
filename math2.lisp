@@ -204,6 +204,15 @@
 (defun elwise-row-row-op (lst_row_l lst_row_r op)
   (mapcar #'(lambda (x y) (apply op (list x y))) lst_row_l lst_row_r))
 
+;;; Sum values at each row of matrix.
+(defun sum-rows (mat)
+  (matrix-from-data
+    (rows-op (matrix-data mat) #'+)))
+
+;;; Perform aggregating operation on each row of matrix.
+(defun rows-op (mat_lst op)
+  (mapcar #'(lambda (x) (list (apply op x))) mat_lst))
+
 ;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
 ;;; Return a list of n consecutive integers, by default starting at 0.
 ;;; TODO rename?

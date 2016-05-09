@@ -130,6 +130,15 @@
    (compare-matrix (power  2 (matrix-from-data '((1 2 3)(4 5 6)(7 8 9)))) (matrix-from-data '((1 4 9)(16 25 36)(49 64 81))))
   ))
 
+(deftest test-aggregating-functions ()
+  (check
+   ;; sum-rows
+   (compare-matrix (sum-rows (matrix-from-data '((1)))) (matrix-from-data '((1))))
+   (compare-matrix (sum-rows (matrix-from-data '((1 2)))) (matrix-from-data '((3))))
+   (compare-matrix (sum-rows (matrix-from-data '((1 2 3)))) (matrix-from-data '((6))))
+   (compare-matrix (sum-rows (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((6)(15))))
+  ))
+
 (deftest test-mathematical-functions ()
   (check
    ;; sigmoid-base
@@ -146,5 +155,6 @@
     (test-access-matrix)
     (test-element-wise-operations)
     (test-dot-product)
+    (test-aggregating-functions)
     (test-mathematical-functions)
    ))
