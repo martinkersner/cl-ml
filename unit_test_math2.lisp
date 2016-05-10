@@ -139,6 +139,14 @@
    (compare-matrix (sum-rows (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((6)(15))))
   ))
 
+(deftest test-sort-functions ()
+  (check
+   ;; arg-sort-col-mat
+   (equal (arg-sort-col-mat (matrix-from-data '((1)))) '(0))
+   (equal (arg-sort-col-mat (matrix-from-data '((1)(0)))) '(1 0))
+   (equal (arg-sort-col-mat (matrix-from-data '((5)(4)(3)(2)(1)(0)))) '(5 4 3 2 1 0))
+   ))
+
 (deftest test-mathematical-functions ()
   (check
    ;; sigmoid-base
@@ -156,5 +164,6 @@
     (test-element-wise-operations)
     (test-dot-product)
     (test-aggregating-functions)
+    (test-sort-functions)
     (test-mathematical-functions)
    ))

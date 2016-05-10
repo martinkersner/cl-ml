@@ -213,6 +213,14 @@
 (defun rows-op (mat_lst op)
   (mapcar #'(lambda (x) (list (apply op x))) mat_lst))
 
+;;; Sorts column vector and return indices of sorted vector.
+(defun arg-sort-col-mat (col_mat)
+  (let* ((vec (matrix-data col_mat))
+         (idxs (iota (length vec)))
+         (join-vec-idxs (mapcar #'(lambda (x y) (cons (car x) y)) vec idxs)))
+
+    (mapcar #'(lambda (x) (cdr x)) (stable-sort join-vec-idxs #'< :key #'car))))
+
 ;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
 ;;; Return a list of n consecutive integers, by default starting at 0.
 ;;; TODO rename?
