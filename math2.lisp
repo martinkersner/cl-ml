@@ -12,6 +12,8 @@
 ;;; rewrite remove-nth function and move to file with list operations
 ;;; unit test for sigmoid functions
 
+(load "random")
+
 (defstruct matrix rows cols data)
 
 (define-condition matrix-error (error)
@@ -31,19 +33,28 @@
     ((not (equal (matrix-data mat_a) (matrix-data mat_b))) nil)
     (t t)))
 
+(defmacro empty-matrix-macro (rows cols &rest default)
+  `(flet ((generate-empty-matrix (,rows ,cols)
+       (loop for i from 1 to ,rows
+          collect ,@default)))
+
+    (make-matrix :rows ,rows
+                 :cols ,cols
+                 :data (generate-empty-matrix ,rows ,cols))))
+
 ;;; Create a matrix of size rowsxcols filled with nil values.
 (defun empty-matrix (rows cols &optional default)
-  (flet ((generate-empty-matrix (rows cols) 
-       (loop for i from 1 to rows
-          collect (make-list cols :initial-element default))))
-  
-    (make-matrix :rows rows
-                 :cols cols
-                 :data (generate-empty-matrix rows cols))))
+  (empty-matrix-macro rows cols (make-list cols :initial-element nil)))
 
 ;;; Generate and initialize matrix with given value.
 (defun initialize-matrix (rows cols val)
-  (empty-matrix rows cols val))
+  (empty-matrix-macro rows cols (make-list cols :initial-element val)))
+
+;;; Generate matrix filled with random normal values.
+;;; mean 0
+;;; std 1
+(defun rand-norm-matrix (rows cols)
+  (empty-matrix-macro rows cols (make-list-rand-normal cols)))
 
 ;;; Control if all rows have the same number of columns.
 (defmacro valid-matrix (row_lengths)
