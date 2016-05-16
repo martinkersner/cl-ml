@@ -5,33 +5,47 @@
 ;;;
 ;;; TODO
 ;;; control of object initialization 
-;;; stack overflow when loaded twice in the same clisp session
-;;; defmethod is locked in clisp
 ;;;
 ;;; How to use?
-;;; (defparameter *nn* (make-instance 'neural-network :network-dims '(2 3 1)))
+;;; (matrix-from-data '((8 7)))
+;;; (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 
 (load "math2")
 
 (defclass neural-network ()
-  ((network_dims :initarg :network-dims)
-   (num_layers   :reader  num_layers)
-   (biases       :reader  biases)
-   (weights      :reader  weights)))
+  ((nn-dims    :reader nn-dims :initarg :nn-dims)
+   (num-layers :reader num-layers)
+   (biases     :reader biases)
+   (weights    :reader weights)))
 
-(defmethod initialize-instance :after (neural-network &key)
-  (let* ((network_dims (slot-value neural-network 'network_dims))
-         (front (subseq network_dims 0 (1- (length network_dims))))
-         (back (subseq network_dims 1)))
+(defmethod initialize-instance :after ((nn neural-network) &rest args)
+  (let* ((nn-dims (nn-dims nn))
+         (front (subseq nn-dims 0 (1- (length nn-dims))))
+         (back  (subseq nn-dims 1)))
 
-    (with-slots (num_layers)   neural-network
-    (with-slots (network_dims) neural-network
-      (setf num_layers (length network_dims))))
+    (with-slots (num-layers) nn
+    (with-slots (nn-dims)    nn
+      (setf num-layers (length nn-dims))))
 
-    (with-slots (biases) neural-network
+    (with-slots (biases) nn
       (setf biases
         (mapcar #'(lambda (x) (rand-norm-matrix x 1)) back)))
 
-    (with-slots (weights) neural-network
+    (with-slots (weights) nn
       (setf weights
         (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front)))))
+
+(defgeneric feed-forward (nn input)
+  (:documentation "Computation of feed forward step within neural network."))
+
+(defmethod feed-forward ((nn neural-network) input)
+  (let ((a input))
+    (mapcar #'(lambda (w b)
+                (setf a (sigmoid (add (dot w a) b))))
+    (weights nn) (biases nn))
+
+  a))
+
+(defparameter *input* (matrix-from-data '((8)(7))))
+(defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
+;(setf b (feed-forward *nn* *input*))
