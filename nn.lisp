@@ -15,9 +15,9 @@
 
 (defclass neural-network ()
   ((network_dims :initarg :network-dims)
-   num_layers
-   biases
-   weights))
+   (num_layers :reader num_layers)
+   (biases :reader biases)
+   (weights :reader weights)))
 
 (defmethod initialize-instance :after (neural-network &key)
   (let* ((network_dims (slot-value neural-network 'network_dims))
@@ -31,5 +31,4 @@
           (mapcar #'(lambda (x) (rand-norm-matrix x 1)) back))
 
     (setf (slot-value neural-network 'weights) 
-          (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front))
-    ))
+          (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front))))
