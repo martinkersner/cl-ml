@@ -11,6 +11,8 @@
 ;;; nth-row nth-col base functions for returning complete matrices
 ;;; rewrite remove-nth function and move to file with list operations
 ;;; unit test for sigmoid functions
+;;; merge similar code from multiply, power, value-matrix-subtract functions together
+;;; more inspiration from numpy
 
 (load "random")
 
@@ -45,6 +47,10 @@
 ;;; Create a matrix of size rowsxcols filled with nil values.
 (defun empty-matrix (rows cols &optional default)
   (empty-matrix-macro rows cols (make-list cols :initial-element nil)))
+
+;;; Create an empty matrix of the same size as given matrix.
+(defun empty-matrix-like (mat)
+  (empty-matrix (matrix-rows mat) (matrix-cols mat)))
 
 ;;; Generate and initialize matrix with given value.
 (defun initialize-matrix (rows cols val)
@@ -180,15 +186,36 @@
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (sigmoid-base y)) x))
             (matrix-data mat))))
 
+;;; Derivation of sigmoid function.
+;;; Accepts only matrix arguments.
+(defun sigmoid-prime (mat)
+  (let ((s (sigmoid mat)))
+    (matrix-mult s (value-matrix-subtract 1 s))))
+
 ;;; Elementwise add for vectors and matrices.
 (defun add (mat_l mat_r)
   (matrix-from-data
     (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'+)))
 
-;;; Elementwise add for vectors and matrices.
+;;; Elementwise subtract for vectors and matrices.
 (defun subtract (mat_l mat_r)
   (matrix-from-data
     (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'-)))
+
+;;; Elementwise matrix/vector multiplication.
+(defun matrix-mult (mat_l mat_r)
+  (matrix-from-data
+    (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'*)))
+
+(defun element-wise-op (lst_l lst_r op)
+  (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
+
+;;; Subtract matrix value from given matrix/vector.
+;;; TODO unit test
+(defun value-matrix-subtract (val mat)
+  (matrix-from-data
+    (mapcar #'(lambda (x) (mapcar #'(lambda (y) (- val y)) x))
+            (matrix-data mat))))
 
 ;;; Multiply matrix/vector with a given value.
 (defun multiply (val mat)
@@ -196,13 +223,11 @@
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (* y val)) x))
             (matrix-data mat))))
 
+;;; Compute power using given exponent at each cell of matrix.
 (defun power (val mat)
   (matrix-from-data
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (expt y val)) x))
             (matrix-data mat))))
-
-(defun element-wise-op (lst_l lst_r op)
-  (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
 
 ;;; Element-wise subtract values of given row from all rows in matrix.
 (defun subtract-row (mat row)
@@ -232,8 +257,21 @@
 
     (mapcar #'(lambda (x) (cdr x)) (stable-sort join-vec-idxs #'< :key #'car))))
 
+;;; LISTS
+
 ;;; http://aima.cs.berkeley.edu/lisp/utilities/utilities.lisp
 ;;; Return a list of n consecutive integers, by default starting at 0.
-;;; TODO rename?
 (defun iota (n &optional (start-at 0))
   (if (<= n 0) nil (cons start-at (iota (- n 1) (+ start-at 1)))))
+
+;;; Return the last element of given list.
+(defun last-elem (lst)
+  (car (last lst)))
+
+;;; Return given element of list even if the index is negative number.
+;(defun nth-pos-neg (idx lst)
+;  (let* ((l (length lst))
+;         (start-idx (if (< idx 0) l 0))
+;         (real-index (+ start-idx idx)))
+;
+;    (nth real-index lst)))

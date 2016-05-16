@@ -42,10 +42,33 @@
   (let ((a input))
     (mapcar #'(lambda (w b)
                 (setf a (sigmoid (add (dot w a) b))))
-    (weights nn) (biases nn))
+      (weights nn) (biases nn))
 
   a))
 
-(defparameter *input* (matrix-from-data '((8)(7))))
+(defmethod backpropagation ((nn neural-network) x y)
+  (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
+        (grad-w (mapcar #'empty-matrix-like (weights nn)))
+        (a x)
+        (a-hist (list x))
+        (z-hist nil))
+
+    (mapcar #'(lambda (w b)
+                (progn (setf z (add (dot w a) b))
+                       (setf z-hist (append z-hist (list z)))
+                       (setf a (sigmoid z))
+                       (setf a-hist (append a-hist (list a)))))
+      (weights nn) (biases nn))
+
+    (setf delta (matrix-mult (subtract (last-elem a-hist) y)
+                             (sigmoid-prime (last-elem z-hist))))
+
+    ;(setf (nth-pos-neg -1 grad-b) delta)
+))
+
+
+(defparameter *x* (matrix-from-data '((8)(7))))
+(defparameter *y* (matrix-from-data '((1))))
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
-;(setf b (feed-forward *nn* *input*))
+;(setf b (feed-forward *nn* *x*))
+(backpropagation *nn* *x* *y*)
