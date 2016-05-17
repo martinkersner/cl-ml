@@ -117,6 +117,11 @@
    (compare-matrix (multiply 3 (matrix-from-data '((1)(2)))) (matrix-from-data '((3)(6))))
    (compare-matrix (multiply 4 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((4 8)(12 16))))
 
+   ;; value-matrix-subtract
+   (compare-matrix (value-matrix-subtract 0 (matrix-from-data '((1)))) (matrix-from-data '((-1))))
+   (compare-matrix (value-matrix-subtract 1 (matrix-from-data '((1)(2)))) (matrix-from-data '((0)(-1))))
+   (compare-matrix (value-matrix-subtract 2 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 0)(-1 -2))))
+
    ;; matrix-mult
    (compare-matrix (matrix-mult  (matrix-from-data '((1))) (matrix-from-data '((-1)))) (matrix-from-data '((-1))))
    (compare-matrix (matrix-mult  (matrix-from-data '((1)(2))) (matrix-from-data '((2)(8)))) (matrix-from-data '((2)(16))))

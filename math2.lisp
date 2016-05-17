@@ -211,7 +211,6 @@
   (mapcar #'(lambda (x y) (mapcar op x y)) lst_l lst_r))
 
 ;;; Subtract matrix value from given matrix/vector.
-;;; TODO unit test
 (defun value-matrix-subtract (val mat)
   (matrix-from-data
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (- val y)) x))
