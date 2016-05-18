@@ -5,6 +5,13 @@
 ;;;; Mathematical operations, mainly with matrices. Matrices are represented by 
 ;;;; lists. Most operations have strict prototype in order to avoid additional
 ;;;; within functions.
+;;;;
+
+;;;; Simple example of matrix creation
+;;; (defvar *my-matrix* (make-matrix :rows 2
+;;;                                  :cols 2
+;;;                                  :data '((1 2)
+;;;                                          (3 4))))
 
 ;;; TODO 
 ;;; smart operations (add vector to all rows or columns of matrix)
@@ -13,6 +20,7 @@
 ;;; unit test for sigmoid functions
 ;;; merge similar code from multiply, power, value-matrix-subtract functions together
 ;;; more inspiration from numpy
+;;; generate all functions, keep them in categories
 
 (load "random")
 
@@ -20,12 +28,6 @@
 
 (define-condition matrix-error (error)
   ((text :initarg :text :reader text)))
-
-;;; Simple example of matrix creation
-(defvar *my-matrix* (make-matrix :rows 2 
-                                 :cols 2 
-                                 :data '((1 2)
-                                         (3 4))))
 
 ;;; Compare rows and columns of two matrices and their data.
 (defun compare-matrix (mat_a mat_b)
@@ -214,6 +216,13 @@
 (defun value-matrix-subtract (val mat)
   (matrix-from-data
     (mapcar #'(lambda (x) (mapcar #'(lambda (y) (- val y)) x))
+            (matrix-data mat))))
+
+;;; Add constant value to given matrix/vector.
+;;; TODO merge base of value-matrix based functions
+(defun add-value (val mat)
+  (matrix-from-data
+    (mapcar #'(lambda (x) (mapcar #'(lambda (y) (+ y val)) x))
             (matrix-data mat))))
 
 ;;; Multiply matrix/vector with a given value.
