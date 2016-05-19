@@ -148,12 +148,12 @@
                  :data (transpose-list data))))
 
 ;;; Return n-th row from given matrix.
-(defun nth-row (row matrix)
-  (list (nth row (matrix-data matrix))))
+(defun nth-row (row mat)
+  (list (nth row (matrix-data mat))))
 
 ;;; Return n-th col from given matrix.
-(defmacro nth-col (col matrix)
-  `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,matrix)))
+(defmacro nth-col (col mat)
+  `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,mat)))
 
 ;;; Samuel Edwin Ward
 ;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
