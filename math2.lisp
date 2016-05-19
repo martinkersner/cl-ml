@@ -349,11 +349,22 @@
 (defun last-elem (lst)
   (car (last lst)))
 
+;;; Creates valid index in list.
+;;; TODO unit test
 (defun circular-index (idx lst)
   (let* ((l (length lst))
-         (start-idx (if (< idx 0) l 0)))
+         (new-idx (mod (abs idx) l))
+         (start-idx (if (< idx 0) 
+                      (if (equal new-idx 0) 
+                        (progn 
+                          (setf new-idx 0) 
+                          0)
+                        (progn 
+                          (setf new-idx (- new-idx))
+                          l))
+                      0)))
 
-    (+ start-idx idx)))
+    (+ start-idx new-idx)))
 
 ;;; Access list with positive or negative index.
 (defun nth-pos-neg (idx lst)
