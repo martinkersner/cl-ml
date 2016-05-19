@@ -315,7 +315,6 @@
   (mapcar #'(lambda (x) (elwise-row-row-op x lst_row op)) lst_mat))
 
 ;;; Element-wise subtract values of given row from all rows in matrix.
-;;; TODO change prototype, swap mat and row
 (defun subtract-row (mat row)
   (matrix-from-data
     (elwise-mat-row-op (matrix-data mat) (car (matrix-data row)) #'-)))
@@ -351,9 +350,9 @@
   (car (last lst)))
 
 ;;; Return given element of list even if the index is negative number.
-;(defun nth-pos-neg (idx lst)
-;  (let* ((l (length lst))
-;         (start-idx (if (< idx 0) l 0))
-;         (real-index (+ start-idx idx)))
-;
-;    (nth real-index lst)))
+(defun (setf nth-pos-neg) (val idx lst)
+  (let* ((l (length lst))
+         (start-idx (if (< idx 0) l 0))
+         (real-index (+ start-idx idx)))
+
+    (setf (nth real-index lst) val)))

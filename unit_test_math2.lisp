@@ -171,6 +171,21 @@
    (< (abs (- (sigmoid-base -10) 0)) 1E-4)
   ))
 
+(deftest test-list-functions ()
+  (defparameter *list* '(1 2 3 4 5 6))
+
+  (check
+    ;; nth-pos-neg
+    (equal (setf (nth-pos-neg 0 *list*) 99) 99)
+    (equal *list* '(99 2 3 4 5 6))
+    (equal (setf (nth-pos-neg 2 *list*) 88) 88)
+    (equal *list* '(99 2 88 4 5 6))
+    (equal (setf (nth-pos-neg -1 *list*) 77) 77)
+    (equal *list* '(99 2 88 4 5 77))
+    (equal (setf (nth-pos-neg -5 *list*) 66) 66)
+    (equal *list* '(99 66 88 4 5 77))
+  ))
+
 (deftest test-all ()
   (combine-results
     (test-generate-matrix)
@@ -182,4 +197,5 @@
     (test-aggregating-functions)
     (test-sort-functions)
     (test-mathematical-functions)
+    (test-list-functions)
    ))
