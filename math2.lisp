@@ -349,10 +349,16 @@
 (defun last-elem (lst)
   (car (last lst)))
 
-;;; Return given element of list even if the index is negative number.
-(defun (setf nth-pos-neg) (val idx lst)
+(defun circular-index (idx lst)
   (let* ((l (length lst))
-         (start-idx (if (< idx 0) l 0))
-         (real-index (+ start-idx idx)))
+         (start-idx (if (< idx 0) l 0)))
 
-    (setf (nth real-index lst) val)))
+    (+ start-idx idx)))
+
+;;; Access list with positive or negative index.
+(defun nth-pos-neg (idx lst)
+  (nth (circular-index idx lst) lst))
+
+;;; SETF expander for NTH set with positive or negative indiex.
+(defun (setf nth-pos-neg) (val idx lst)
+  (setf (nth (circular-index idx lst) lst) val))
