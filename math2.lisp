@@ -277,6 +277,10 @@
   (matrix-from-data
     (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'*)))
 
+(defun matrix-div (mat_l mat_r)
+  (matrix-from-data
+    (element-wise-op (matrix-data mat_l) (matrix-data mat_r) #'/)))
+
 ;;; MATRIX & VALUE OPERATIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Subtract matrix value from given matrix.
