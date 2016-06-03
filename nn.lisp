@@ -49,6 +49,26 @@
 
   a))
 
+;;; Individual records are expected to be in row-like formatting.
+(defmethod SGD ((nn neural-network) train-data epochs mini-batch-size eta &optional test-data)
+  (let ((n-test (if test-data (matrix-rows test-data)))
+        (n (matrix-rows train-data)))
+
+  (dotimes (j epochs)
+    )
+  )
+)
+
+(defmethod update-mini-batch ((nn neural-network) mini-batch eta)
+  (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
+        (grad-w (mapcar #'empty-matrix-like (weights nn))))
+
+  ;; mini-batch is matrix with X rows and 2 columns
+  ;; the first list corresponds to training data and second is for response value
+  (mapcar #'(lambda () ()) mini-batch)
+
+  ))
+
 (defmethod backpropagation ((nn neural-network) x y)
   (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
         (grad-w (mapcar #'empty-matrix-like (weights nn)))

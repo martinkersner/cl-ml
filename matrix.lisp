@@ -22,7 +22,7 @@
 ;;; * (nth-row row mat)
 ;;; * (nth-col col mat)
 ;;; * (remove-col col mat)
-;;; * TODO (remove-row col mat)
+;;; * (remove-row col mat)
 ;;; * (prefix-const-val val mat)
 ;;; * TODO (suffix-const-val val mat)
 ;;; * TODO insert constant value (whole column) at given position
@@ -184,6 +184,11 @@
   (matrix-from-data
     (mapcar #'(lambda (x) (remove-nth col x)) (matrix-data mat))))
 
+;;; Removes row from given matrix.
+;;; Create a new matrix.
+(defun remove-row (row mat)
+  (matrix-from-data (remove-nth row (matrix-data mat))))
+
 ;;; Append constant number at the beginning of each row of given matrix.
 (defun prefix-const-val (val mat)
   (matrix-from-data (mapcar #'(lambda (x) (push val x)) (matrix-data mat))))
@@ -217,6 +222,19 @@
 (defun sigmoid-prime (mat)
   (let ((s (sigmoid mat)))
     (matrix-mult s (value-matrix-subtract 1 s))))
+
+;;; Randomly shuffle rows of matrix.
+;(defun shuffle-rows (mat)
+;  (let ((n-rows (matrix-rows mat))
+;        (mat-list (matrix-data-peel mat))
+;        (mat-shuffled NIL))
+;
+;  (dotimes (i n-rows)
+;    (push (nth (random (- n-rows i)) mat-list) mat-shuffled)
+;   )
+;
+;  mat-shuffled
+;  ))
 
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
