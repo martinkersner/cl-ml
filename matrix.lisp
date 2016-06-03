@@ -14,6 +14,8 @@
 ;;; * (initialize-matrix rows cols val)
 ;;; * (rand-norm-matrix rows cols)
 ;;; * (matrix-from-data data)
+;;; * (matrix-from-data-peel data)
+;;; * (matrix-data-peel data)
 ;;;
 ;;; SINGLE MATRIX OPERATIONS
 ;;; * (transpose mat)
@@ -130,6 +132,15 @@
     (make-matrix :rows rows
                  :cols cols
                  :data data)))
+
+;;; Adds additional layer (list) around given data in order to be able to create
+;;; matrix from this data.
+(defun matrix-from-data-peel (data)
+  (matrix-from-data (list data)))
+
+;;; Removes layer (access the first item of list) from given matrix.
+(defun matrix-data-peel (data)
+  (car (matrix-data data)))
 
 ;;; SINGLE MATRIX OPERATIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

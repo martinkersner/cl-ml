@@ -13,6 +13,7 @@
 ;;; (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 
 (load "matrix")
+(load "math")
 
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims :initarg :nn-dims)
@@ -80,16 +81,24 @@
   (values grad-b grad-w)
 ))
 
-;(defmethod evaluate ((nn neural-network) test-x test-y)
-;  (let ((correct 0))
-;  )
-;
-;    (mapcar #'(lambda (x) (feed-forward nn x)) test-x)
-;)
+(defmethod evaluate ((nn neural-network) test-x test-y)
+  (let ((correct 0))
+
+    (mapcar #'(lambda (x y) (if (= y 
+                                   (maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x)))))) ; TODO keep transpose or change input of feed-forward?
+                              (incf correct 1)))
+            (matrix-data test-x) (car (matrix-data test-y)))
+
+  correct))
 
 ;;;;;;;;;;;;;;;;;
 (defparameter *x* (matrix-from-data '((8)(7))))
 (defparameter *y* (matrix-from-data '((1))))
+(defparameter *x-row* (matrix-from-data '((8 7)(7 6))))
+(defparameter *y-row* (matrix-from-data '((1 0))))
+
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 ;(setf b (feed-forward *nn* *x*))
 (multiple-value-setq (grad-b grad-w) (backpropagation *nn* *x* *y*))
+
+(princ (evaluate *nn* *x-row* *y-row*))
