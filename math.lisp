@@ -15,3 +15,11 @@
           lst (iota (length lst)))
 
   (values max-val max-idx)))
+
+;;; Find the maximum value in a list.
+(defun maximum-val (lst)
+  (car (multiple-value-list (maximum lst))))
+
+;;; Find the index of maximum value in a list.
+(defun maximum-idx (lst)
+  (cadr (multiple-value-list (maximum lst))))
