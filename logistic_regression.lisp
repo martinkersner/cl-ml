@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Logistic regression
 
-(load "math2")
+(load "matrix")
 (load "dataset2")
 
 ; training data preparation

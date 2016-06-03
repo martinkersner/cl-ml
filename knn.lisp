@@ -7,7 +7,7 @@
 ;;; prepare dataset specially for knn
 ;;; and also include tests for algorithm verification
 
-(load "math2")
+(load "matrix")
 (load "dataset2")
 
 ; training data preparation

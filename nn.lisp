@@ -2,15 +2,17 @@
 ;;;; 2016/05/11 
 ;;;;
 ;;;; Neural Networks 
+;;;; Inspired by https://github.com/mnielsen/neural-networks-and-deep-learning/blob/master/src/network.py
 ;;;
 ;;; TODO
 ;;; control of object initialization 
+;;; create a simple dataset
 ;;;
 ;;; How to use?
 ;;; (matrix-from-data '((8 7)))
 ;;; (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 
-(load "math2")
+(load "matrix")
 
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims :initarg :nn-dims)
@@ -78,6 +80,14 @@
   (values grad-b grad-w)
 ))
 
+;(defmethod evaluate ((nn neural-network) test-x test-y)
+;  (let ((correct 0))
+;  )
+;
+;    (mapcar #'(lambda (x) (feed-forward nn x)) test-x)
+;)
+
+;;;;;;;;;;;;;;;;;
 (defparameter *x* (matrix-from-data '((8)(7))))
 (defparameter *y* (matrix-from-data '((1))))
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))

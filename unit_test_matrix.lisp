@@ -4,7 +4,7 @@
 ;;; TODO check error conditions in tests
 
 (load "unit_test")
-(load "math2")
+(load "matrix")
 
 (deftest test-generate-matrix ()
   (check
