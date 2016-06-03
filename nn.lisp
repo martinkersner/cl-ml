@@ -63,12 +63,23 @@
     (setf delta (matrix-mult (subtract (last-elem a-hist) y)
                              (sigmoid-prime (last-elem z-hist))))
 
-    ;(setf (nth-pos-neg -1 grad-b) delta)
-))
+    (setf (nth-pos-neg -1 grad-b) delta)
+    (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
 
+    (loop for l from 2 to (1- (num-layers nn))
+      do ((lambda () (progn
+          ;; TODO shorten expression
+          (setf delta (multiply (caar (matrix-data (sigmoid-prime (nth-pos-neg (- l) z-hist))))
+                                (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta)))
+          (setf (nth-pos-neg (- l) grad-b) delta)
+          (setf (nth-pos-neg (- l) grad-w) (dot delta (transpose (nth-pos-neg (1- (- l)) a-hist))))
+    ))))
+
+  (values grad-b grad-w)
+))
 
 (defparameter *x* (matrix-from-data '((8)(7))))
 (defparameter *y* (matrix-from-data '((1))))
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 ;(setf b (feed-forward *nn* *x*))
-(backpropagation *nn* *x* *y*)
+(multiple-value-setq (grad-b grad-w) (backpropagation *nn* *x* *y*))
