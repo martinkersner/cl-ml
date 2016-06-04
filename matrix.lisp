@@ -172,11 +172,12 @@
 ;;; Access subset of rows from given matrix.
 ;;; idx >= from AND idx <= to
 (defun [] (from to mat)
-  (let ((mat-list (matrix-data mat)))
+  (let ((mat-list (matrix-data mat))
+        (to-verif (min to (1- (matrix-rows mat)))))
 
     (matrix-from-data
       (mapcar #'(lambda (idx) (nth idx mat-list))
-            (iota (1+ (- to from)) from)))))
+            (iota (1+ (- to-verif from)) from)))))
 
 ;;; Samuel Edwin Ward
 ;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
