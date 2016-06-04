@@ -23,12 +23,14 @@
 ;;; * (nth-col col mat)
 ;;; * (remove-col col mat)
 ;;; * (remove-row col mat)
+;;; * (remove-row-list-matrix row list-mat)
 ;;; * (prefix-const-val val mat)
 ;;; * TODO (suffix-const-val val mat)
 ;;; * TODO insert constant value (whole column) at given position
 ;;; * (matrix-indices rows cols)
 ;;; * (sigmoid mat)
 ;;; * (sigmoid-prime mat)
+;;; * (shuffle-rows mat)
 ;;;
 ;;; MATRIX MULTIPLICATION
 ;;; ** number of cols of mat1 has to be equal number of rows of mat2
@@ -189,6 +191,10 @@
 (defun remove-row (row mat)
   (matrix-from-data (remove-nth row (matrix-data mat))))
 
+;;; Remove row from matrix composed of lists.
+(defun remove-row-list-matrix (row list-mat)
+  (remove-nth row list-mat))
+
 ;;; Append constant number at the beginning of each row of given matrix.
 (defun prefix-const-val (val mat)
   (matrix-from-data (mapcar #'(lambda (x) (push val x)) (matrix-data mat))))
@@ -224,17 +230,19 @@
     (matrix-mult s (value-matrix-subtract 1 s))))
 
 ;;; Randomly shuffle rows of matrix.
-;(defun shuffle-rows (mat)
-;  (let ((n-rows (matrix-rows mat))
-;        (mat-list (matrix-data-peel mat))
-;        (mat-shuffled NIL))
-;
-;  (dotimes (i n-rows)
-;    (push (nth (random (- n-rows i)) mat-list) mat-shuffled)
-;   )
-;
-;  mat-shuffled
-;  ))
+;;; TODO unit test?
+(defun shuffle-rows (mat)
+  (let ((n-rows (matrix-rows mat))
+        (mat-list (matrix-data mat))
+        (mat-shuffled NIL)
+        (rand-idx 0))
+
+  (dotimes (i n-rows)
+    (setf rand-idx (random (- n-rows i)))
+    (push (nth rand-idx mat-list) mat-shuffled)
+    (setf mat-list (remove-row-list-matrix rand-idx mat-list)))
+
+  (matrix-from-data mat-shuffled)))
 
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
