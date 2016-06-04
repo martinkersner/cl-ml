@@ -5,6 +5,7 @@
 ;;;; Inspired by https://github.com/mnielsen/neural-networks-and-deep-learning/blob/master/src/network.py
 ;;;
 ;;; TODO
+;;; change algorithm in order to be able to access data which are stored in row-like style
 ;;; control of object initialization 
 ;;; create a simple dataset
 ;;;
@@ -13,6 +14,7 @@
 ;;; (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 
 (load "matrix")
+(load "list")
 (load "math")
 
 (defclass neural-network ()
@@ -50,15 +52,26 @@
   a))
 
 ;;; Individual records are expected to be in row-like formatting.
-(defmethod SGD ((nn neural-network) train-data epochs mini-batch-size eta &optional test-data)
+(defmethod SGD ((nn neural-network) train-data epochs mini-batch-size eta &optional (test-data NIL))
   (let ((n-test (if test-data (matrix-rows test-data)))
-        (n (matrix-rows train-data)))
+        (n (matrix-rows train-data))
+        (mini-batch NIL))
 
   (dotimes (j epochs)
-    )
-  )
-)
+    (setf train-data (shuffle-rows train-data))
+    (setf mini-batch-range (range 0 n mini-batch-size))
 
+    (mapcar #'(lambda (idx) (progn
+                           (setf mini-batch ([] idx (+ idx mini_batch_size) train-data))
+                           (update-mini-batch nn mini-batch eta)))
+            mini-batch-range)
+
+    (if test-data
+      (evaluate nn test-x test-y))
+
+    )))
+
+;;; TODO update inner state of network
 (defmethod update-mini-batch ((nn neural-network) mini-batch eta)
   (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
         (grad-w (mapcar #'empty-matrix-like (weights nn))))
