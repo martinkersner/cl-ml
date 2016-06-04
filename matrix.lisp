@@ -21,6 +21,7 @@
 ;;; * (transpose mat)
 ;;; * (nth-row row mat)
 ;;; * (nth-col col mat)
+;;; * ([] from to mat)
 ;;; * (remove-col col mat)
 ;;; * (remove-row col mat)
 ;;; * (remove-row-list-matrix row list-mat)
@@ -167,6 +168,15 @@
 ;;; Return n-th col from given matrix.
 (defmacro nth-col (col mat)
   `(mapcar #'(lambda (x) (list (nth ,col x))) (matrix-data ,mat)))
+
+;;; Access subset of rows from given matrix.
+;;; idx >= from AND idx <= to
+(defun [] (from to mat)
+  (let ((mat-list (matrix-data mat)))
+
+    (matrix-from-data
+      (mapcar #'(lambda (idx) (nth idx mat-list))
+            (iota (1+ (- to from)) from)))))
 
 ;;; Samuel Edwin Ward
 ;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
