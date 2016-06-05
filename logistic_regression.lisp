@@ -4,13 +4,17 @@
 ;;;; Logistic regression
 
 (load "matrix")
-(load "dataset2")
+(load "csv_reader")
+
+; load data
+(defparameter *dataset*
+  (matrix-from-data (read-csv "dataset_small.csv")))
 
 ; training data preparation
 (defparameter *label-col* 2)
 
-(defparameter *data* (remove-col *label-col* *dataset2*))
-(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset2*)))
+(defparameter *data* (remove-col *label-col* *dataset*))
+(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset*)))
 
 (defun grad-ascent (data_mat labels_mat &key (lr 0.001) (max_iter 500))
   (let* ((data_mat (prefix-const-val 1.0 data_mat))
