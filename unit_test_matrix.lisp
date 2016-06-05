@@ -169,6 +169,12 @@
    (compare-matrix (sum-rows (matrix-from-data '((1 2)))) (matrix-from-data '((3))))
    (compare-matrix (sum-rows (matrix-from-data '((1 2 3)))) (matrix-from-data '((6))))
    (compare-matrix (sum-rows (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((6)(15))))
+
+   ;; sum-cols
+   (compare-matrix (sum-cols (matrix-from-data '((1)))) (matrix-from-data '((1))))
+   (compare-matrix (sum-cols (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 2 3))))
+   (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)))) (matrix-from-data '((2 4 6))))
+   (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)(1 2 3)))) (matrix-from-data '((3 6 9))))
   ))
 
 (deftest test-sort-functions ()

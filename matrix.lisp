@@ -44,7 +44,7 @@
 ;;; * (add mat1 mat2)
 ;;; * (subtract mat1 mat2)
 ;;; * (matrix-mult mat1 mat2)
-;;; * TODO (matrix-div mat1 mat2)
+;;; * (matrix-div mat1 mat2)
 ;;;
 ;;; MATRIX & VALUE OPERATIONS
 ;;; TODO unite names
@@ -57,7 +57,7 @@
 ;;; * (subtract-row mat row)
 ;;; * TODO (subtract-col col mat)
 ;;; * (sum-rows mat)
-;;; * TODO (sum-cols mat)
+;;; * (sum-cols mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
 ;;; * TODO (arg-sort-row-mat row_mat)
 
@@ -380,6 +380,11 @@
 (defun sum-rows (mat)
   (matrix-from-data
     (rows-op (matrix-data mat) #'+)))
+
+;;; Sum values at each column of matrix.
+(defun sum-cols (mat)
+  (transpose (matrix-from-data
+               (rows-op (matrix-data (transpose mat)) #'+))))
 
 ;;; Sorts column vector and return indices of sorted vector.
 (defun arg-sort-col-mat (col_mat)
