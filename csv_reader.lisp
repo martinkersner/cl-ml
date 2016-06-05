@@ -12,13 +12,15 @@
       (with-input-from-string (in str-clean)
         (loop for x = (read in nil nil) while x collect x)))))
 
-(defun read-csv (csv-file)
+(defun read-csv (csv-file &optional (header nil))
   (let ((in (open csv-file :if-does-not-exist nil)))
     (when in
+      (if header (read-line in)) ; skip the first line containing header
+
       (let ((csv-list (loop for line = (read-line in nil)
                             for tmp-csv-list = (str2list line)
                             while line
                             do() collect tmp-csv-list)))
 
-        (close in)
-        csv-list))))
+            (close in)
+            csv-list))))
