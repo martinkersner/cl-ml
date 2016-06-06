@@ -8,13 +8,17 @@
 ;;; and also include tests for algorithm verification
 
 (load "matrix")
-(load "dataset2")
+(load "csv_reader")
+
+; load data
+(defparameter *dataset*
+  (matrix-from-data (read-csv "dataset_small.csv")))
 
 ; training data preparation
 (defparameter *label-col* 2)
 
-(defparameter *data* (remove-col *label-col* *dataset2*))
-(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset2*)))
+(defparameter *data* (remove-col *label-col* *dataset*))
+(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset*)))
 
 (defparameter *row-data* (matrix-from-data '((2 5))))
 ;(defparameter *row-data* (matrix-from-data '((0 8))))
