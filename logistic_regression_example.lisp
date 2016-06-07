@@ -19,3 +19,5 @@
 (grad-ascent *data* *labels*) 
 ;(grad-ascent *data* *labels* :lr 0.01)
 ;(grad-ascent *data* *labels* :lr 0.001 :max_iter 10)
+
+;(ext:shell "./plot dataset_small.csv -10 -5 10 4")
