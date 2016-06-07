@@ -39,3 +39,11 @@
 ;;; SETF expander for NTH set with positive or negative indiex.
 (defun (setf nth-pos-neg) (val idx lst)
   (setf (nth (circular-index idx lst) lst) val))
+
+;;; Find minimum value in a list.
+(defun minimum (lst)
+  (apply 'min lst))
+
+;;; Find maximum value in a list.
+(defun maximum (lst)
+  (apply 'max lst))

@@ -60,6 +60,8 @@
 ;;; * (sum-cols mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
 ;;; * TODO (arg-sort-row-mat row_mat)
+;;; * TODO (nth-col-max col mat)
+;;; * TODO (nth-col-min col mat)
 
 ;;; TODO 
 ;;; smart operations (add vector to all rows or columns of matrix)
