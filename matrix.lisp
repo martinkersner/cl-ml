@@ -60,6 +60,7 @@
 ;;; * (sum-rows mat)
 ;;; * (sum-cols mat)
 ;;; * (mean-cols mat)
+;;; * (std-cols mat mean)
 ;;; * TODO (mean-rows mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
 ;;; * TODO (arg-sort-row-mat row_mat)
@@ -428,6 +429,16 @@
 
     (matrix-from-data-peel (mapcar #'sqrt
       (mapcar #'(lambda (val) (/ val row-num)) std-list)))))
+
+;;; Normalize data.
+(defun normalize (mat mean std)
+  (let ((mean-list (matrix-data-peel mean))
+        (std-list (matrix-data-peel std)))
+
+    (matrix-from-data
+      (mapcar #'(lambda (row)
+                  (mapcar #'/ (mapcar #'- row mean-list) std-list))
+              (matrix-data mat)))))
 
 ;;; Sorts column vector and return indices of sorted vector.
 (defun arg-sort-col-mat (col_mat)
