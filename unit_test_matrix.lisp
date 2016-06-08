@@ -155,6 +155,15 @@
    (compare-matrix (subtract-row  (matrix-from-data '((1 2)(3 4))) (matrix-from-data '((2 3)))) (matrix-from-data '((-1 -1)(1 1))))
    (compare-matrix (subtract-row  (matrix-from-data '((1 2 3)(4 5 6)(7 8 9))) (matrix-from-data '((1 5 9)))) (matrix-from-data '((0 -3 -6)(3 0 -3)(6 3 0))))
 
+
+   ;; subtract-val-col
+  (compare-matrix (subtract-val-col 1 0 (matrix-from-data '((1 2 3)))) (matrix-from-data '((0 2 3))))
+  (compare-matrix (subtract-val-col 1 1 (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 1 3))))
+  (compare-matrix (subtract-val-col 1 2 (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 2 2))))
+  (compare-matrix (subtract-val-col 1 0 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((0 2 3)(3 5 6))))
+  (compare-matrix (subtract-val-col 1 1 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((1 1 3)(4 4 6))))
+  (compare-matrix (subtract-val-col 1 2 (matrix-from-data '((1 2 3)(4 5 6)))) (matrix-from-data '((1 2 2)(4 5 5))))
+
    ;; power
    (compare-matrix (power  3 (matrix-from-data '((2)))) (matrix-from-data '((8))))
    (compare-matrix (power  2 (matrix-from-data '((1 2)))) (matrix-from-data '((1 4))))

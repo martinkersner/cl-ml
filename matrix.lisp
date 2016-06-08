@@ -56,6 +56,7 @@
 ;;; MATRIX-ROW/COL OPERATIONS
 ;;; * (subtract-row mat row)
 ;;; * TODO (subtract-col col mat)
+;;; * (subtract-val-col val col mat)
 ;;; * (sum-rows mat)
 ;;; * (sum-cols mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
@@ -375,6 +376,14 @@
 (defun subtract-row (mat row)
   (matrix-from-data
     (elwise-mat-row-op (matrix-data mat) (car (matrix-data row)) #'-)))
+
+;;; Subtract value from specified column in matrix.
+(defun subtract-val-col (val col mat)
+  (matrix-from-data
+    (mapcar #'(lambda (row) (let ((row-val (nth col row)))
+                                   (setf (nth col row) (- row-val val))
+                                   row))
+              (matrix-data mat))))
 
 ;;; Perform aggregating operation on each row of matrix.
 ;;; Auxiliary function for SUM-ROWS.
