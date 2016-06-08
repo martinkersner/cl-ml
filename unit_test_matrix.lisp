@@ -193,6 +193,19 @@
    (< (abs (- (sigmoid-base -10) 0)) 1E-4)
   ))
 
+(deftest test-value-extremes ()
+  (check
+    ;; nth-col-max
+    (equal (nth-col-max 0 (matrix-from-data '((1 2 3)))) 1)
+    (equal (nth-col-max 1 (matrix-from-data '((1 2 3)))) 2)
+    (equal (nth-col-max 2 (matrix-from-data '((1 2 3)))) 3)
+    (equal (nth-col-max 0 (matrix-from-data '((1 2 3)(4 5 6)))) 4)
+    (equal (nth-col-max 1 (matrix-from-data '((1 2 3)(4 5 6)))) 5)
+    (equal (nth-col-max 2 (matrix-from-data '((2 2 3)(4 5 6)))) 6)
+    (equal (nth-col-max 0 (matrix-from-data '((1 2 3)(7 8 9)(4 5 6)))) 7)
+    (equal (nth-col-max 1 (matrix-from-data '((1 2 3)(7 8 9)(4 5 6)))) 8)
+    (equal (nth-col-max 2 (matrix-from-data '((2 2 3)(7 8 9)(4 5 6)))) 9)
+  ))
 
 (deftest test-all ()
   (combine-results
@@ -205,4 +218,5 @@
     (test-aggregating-functions)
     (test-sort-functions)
     (test-mathematical-functions)
-   ))
+    (test-value-extremes)
+  ))

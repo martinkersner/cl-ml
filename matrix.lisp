@@ -396,3 +396,7 @@
          (join-vec-idxs (mapcar #'(lambda (x y) (cons (car x) y)) vec idxs)))
 
     (mapcar #'(lambda (x) (cdr x)) (stable-sort join-vec-idxs #'< :key #'car))))
+
+;;; Find the smallest values in specific column of a given matrix.
+(defun nth-col-max (col mat)
+  (maximum (nth col (transpose-list (matrix-data mat)))))
