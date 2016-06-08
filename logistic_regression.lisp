@@ -20,14 +20,13 @@
 
   weights))
 
-(defun stochastic-grad-ascent (data_matrix labels_matrix &key (max_iter 500))
-  (let* ((data_mat (append-const-val 1.0 data_matrix))
+(defun stochastic-grad-ascent (data_mat labels_mat &key (max_iter 1))
+  (let* ((data_mat (prefix-const-val 1.0 data_mat))
          (m (matrix-rows data_mat))
          (n (matrix-cols data_mat))
          (weights (initialize-matrix n 1 1))
          (h)
-         (err)
-         (output))
+         (err))
 
     (dotimes (i max_iter)
       (let ((data_index (iota m))
@@ -39,23 +38,14 @@
       (dotimes(j m)
         (setf lr (+ 0.01 (/ 4 (+ 1.0 i j)))) ; why 4?
         (setf rand_index (random (length data_index)))
-        (setf current_data (nth-row rand_index data_mat))
-        (setf current_label (nth-row rand_index label_mat))
+        (setf current_data (matrix-from-data (nth-row (nth rand_index data_index) data_mat)))
+        (setf current_label (matrix-from-data (nth-row (nth rand_index data_index) labels_mat)))
 
-        ;(setf h (sigmoid (dot current_data weights)))
-        ;(setf err (subtract current_label h))
-        ;(setf weights (add weights (dot (multiply lr current_data) err)))
+        (setf h (sigmoid (dot current_data weights)))
+        (setf err (subtract current_label h))
+        (setf current_data_T (transpose current_data))
 
-        ;(setf data_index (remove-nth rand_index data_index))
-        )
+        (setf weights (add weights (dot (multiply lr current_data_T) err)))
+        (setf data_index (remove-nth rand_index data_index)))))
 
-  ;(setf output
-  ;weights
-  ;current_data
-  ;)
-     )
-      )
-
-  ;output
-  ;weights
-   ))
+  weights))
