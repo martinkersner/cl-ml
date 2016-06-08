@@ -411,6 +411,24 @@
                   (list (/ (apply #'+ column) num-rows)))
               (transpose-list (matrix-data mat)))))))
 
+;;; Compute standard deviation for all columns.
+;;; TODO unit tests
+(defun std-cols (mat mean)
+  (let ((mat-list (matrix-data mat))
+        (mean-list (matrix-data-peel mean))
+        (row-num (matrix-rows mat))
+        (std-list (make-list (matrix-cols mat) :initial-element 0)))
+
+    (mapcar #'(lambda (row)
+      (setf std-list
+        (mapcar #'+ std-list ;; add to temporary value
+                (mapcar #'(lambda (val) (expt val 2)) ;; compute squares
+                                     (mapcar #'- row mean-list)))))
+      mat-list)
+
+    (matrix-from-data-peel (mapcar #'sqrt
+      (mapcar #'(lambda (val) (/ val row-num)) std-list)))))
+
 ;;; Sorts column vector and return indices of sorted vector.
 (defun arg-sort-col-mat (col_mat)
   (let* ((vec (matrix-data col_mat))
