@@ -184,6 +184,11 @@
    (compare-matrix (sum-cols (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 2 3))))
    (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)))) (matrix-from-data '((2 4 6))))
    (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)(1 2 3)))) (matrix-from-data '((3 6 9))))
+
+   ;;; mean-cols
+   (compare-matrix (mean-cols (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 2 3))))
+   (compare-matrix (mean-cols (matrix-from-data '((1 2 3)(3 4 5)))) (matrix-from-data '((2 3 4))))
+   (compare-matrix (mean-cols (matrix-from-data '((1 2 3)(3 4 5)(5 6 7)))) (matrix-from-data '((3 4 5))))
   ))
 
 (deftest test-sort-functions ()

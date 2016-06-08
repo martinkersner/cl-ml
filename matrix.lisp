@@ -59,6 +59,8 @@
 ;;; * (subtract-val-col val col mat)
 ;;; * (sum-rows mat)
 ;;; * (sum-cols mat)
+;;; * (mean-cols mat)
+;;; * TODO (mean-rows mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
 ;;; * TODO (arg-sort-row-mat row_mat)
 ;;; * (nth-col-max col mat)
@@ -399,6 +401,15 @@
 (defun sum-cols (mat)
   (transpose (matrix-from-data
                (rows-op (matrix-data (transpose mat)) #'+))))
+
+;;; Compute mean for all columns.
+(defun mean-cols (mat)
+  (let ((num-rows (matrix-rows mat)))
+
+    (matrix-from-data (transpose-list
+      (mapcar #'(lambda (column)
+                  (list (/ (apply #'+ column) num-rows)))
+              (transpose-list (matrix-data mat)))))))
 
 ;;; Sorts column vector and return indices of sorted vector.
 (defun arg-sort-col-mat (col_mat)
