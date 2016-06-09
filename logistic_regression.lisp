@@ -20,7 +20,7 @@
 
   weights))
 
-(defun stochastic-grad-ascent (data_mat labels_mat &key (max_iter 1))
+(defun stochastic-grad-ascent (data_mat labels_mat &key (max_iter 500))
   (let* ((data_mat (prefix-const-val 1.0 data_mat))
          (m (matrix-rows data_mat))
          (n (matrix-cols data_mat))
