@@ -45,7 +45,7 @@
 ;(defparameter *weights* (matrix-data (grad-ascent *data* *labels* :lr 0.001 :max_iter 10)))
 
 ;;; Stochastic logistic regression.
-;(defparameter *weights* (stochastic-grad-ascent *data* *labels*))
+;(defparameter *weights* (matrix-data (stochastic-grad-ascent *data* *labels*)))
 
 ;;; Processing weights for plotting decision boundary.
 (defparameter *col-idx* 0)

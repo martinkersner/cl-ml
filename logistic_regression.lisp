@@ -31,21 +31,26 @@
     (dotimes (i max_iter)
       (let ((data_index (iota m))
             (rand_index)
+            (index)
             (lr)
             (current_data)
+            (current_data_T)
             (current_label))
 
       (dotimes(j m)
         (setf lr (+ 0.01 (/ 4 (+ 1.0 i j)))) ; why 4?
         (setf rand_index (random (length data_index)))
-        (setf current_data (matrix-from-data (nth-row (nth rand_index data_index) data_mat)))
-        (setf current_label (matrix-from-data (nth-row (nth rand_index data_index) labels_mat)))
+        (setf index (nth rand_index data_index))
+
+        (setf current_data (matrix-from-data (nth-row index data_mat)))
+        (setf current_data_T (transpose current_data))
+        (setf current_label (matrix-from-data (nth-row index labels_mat)))
 
         (setf h (sigmoid (dot current_data weights)))
         (setf err (subtract current_label h))
-        (setf current_data_T (transpose current_data))
 
         (setf weights (add weights (dot (multiply lr current_data_T) err)))
-        (setf data_index (remove-nth rand_index data_index)))))
+        (setf data_index (remove-nth rand_index data_index))
+        )))
 
   weights))

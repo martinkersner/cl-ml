@@ -236,7 +236,11 @@
 ;;; Accept only single number.
 ;;; TODO move to only mathematical library for common functions?
 (defun sigmoid-base (num)
-  (/ 1 (+ 1 (exp (- num)))))
+    (handler-bind
+      ((floating-point-underflow #'(lambda (x) (return-from sigmoid-base 1.0)))
+       (floating-point-overflow  #'(lambda (x) (return-from sigmoid-base 0.0))))
+
+      (/ 1 (+ 1 (exp (- num))))))
 
 ;;; Calculate sigmoid of each value in given matrix.
 (defun sigmoid (mat)
