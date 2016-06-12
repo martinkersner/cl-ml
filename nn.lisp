@@ -8,14 +8,9 @@
 ;;; change algorithm in order to be able to access data which are stored in row-like style
 ;;; control of object initialization 
 ;;; create a simple dataset
-;;;
-;;; How to use?
-;;; (matrix-from-data '((8 7)))
-;;; (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
 
 (load "matrix")
 (load "list")
-(load "math")
 
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims :initarg :nn-dims)

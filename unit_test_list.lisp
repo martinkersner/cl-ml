@@ -28,8 +28,21 @@
     (equal *list* '(99 66 88 4 5 77))
   ))
 
+(deftest test-maximum ()
+  (check
+    ;; base maximum function, return both maximum value and index
+    (equal (multiple-value-list (maximum '()))         '(NIL 0))
+    (equal (multiple-value-list (maximum '(1)))        '(1 0))
+    (equal (multiple-value-list (maximum '(9 8 7)))    '(9 0))
+    (equal (multiple-value-list (maximum '(9 10 8)))   '(10 1))
+    (equal (multiple-value-list (maximum '(9 10 11)))  '(11 2))
+    (equal (multiple-value-list (maximum '(9 10 10)))  '(10 1))
+    (equal (multiple-value-list (maximum '(10 10 10))) '(10 0))
+  ))
+
 (deftest test-all ()
   (combine-results
     (test-range)
     (test-nth-pos-neg)
+    (test-maximum)
   ))
