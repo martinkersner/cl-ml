@@ -19,7 +19,7 @@
 (defparameter *lr* 0.0001)
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 4 2)))
 
-(SGD *nn* *data* *epoch-num* *mini-batch-size* *lr*)
+(SGD *nn* *data* *labels* *epoch-num* *mini-batch-size* *lr*)
 
 ;(defparameter *x* (matrix-from-data '((8)(7))))
 ;(defparameter *y* (matrix-from-data '((1))))

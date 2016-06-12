@@ -47,18 +47,19 @@
   a))
 
 ;;; Individual records are expected to be in row-like formatting.
-(defmethod SGD ((nn neural-network) train-data epochs mini-batch-size lr &optional (test-data NIL))
+(defmethod SGD ((nn neural-network) train-data train-labels epochs mini-batch-size lr &optional (test-data NIL))
   (let (;(n-test (if test-data (matrix-rows test-data)))
         (n (matrix-rows train-data))
-        (mini-batch NIL))
+        (mini-batch NIL)
+        (mini-batch-range (range 0 n mini-batch-size)))
 
   (dotimes (j epochs)
-    (setf train-data (shuffle-rows train-data))
-    (setf mini-batch-range (range 0 n mini-batch-size))
+    (setf train-data (shuffle-rows-spec train-data))
 
-    (mapcar #'(lambda (idx) (progn
-                              (setf mini-batch ([] idx (+ idx mini-batch-size) train-data))
-                              (update-mini-batch nn mini-batch lr)))
+    (mapcar #'(lambda (idx)
+                (progn
+                  (setf mini-batch ([] idx (+ idx mini-batch-size) train-data))
+                  (update-mini-batch nn mini-batch lr)))
             mini-batch-range)
 
     (if test-data
@@ -71,7 +72,7 @@
 
   ;; mini-batch is matrix with X rows and 2 columns
   ;; the first list corresponds to training data and second is for response value
-  (mapcar #'(lambda () ()) mini-batch)
+  (mapcar #'(lambda (x) (print x)) (matrix-data mini-batch))
 
   ))
 
