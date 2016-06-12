@@ -232,6 +232,16 @@
     (equal (nth-col-min 2 (matrix-from-data '((7 8 9)(2 2 3)(4 5 6)))) 3)
   ))
 
+(deftest test-shuffling ()
+  (check
+    ;; shuffle-rows-spec
+    (compare-matrix (shuffle-rows-spec (matrix-from-data '((1)(2)(3))) '(0 1 2)) (matrix-from-data '((1)(2)(3))))
+    (compare-matrix (shuffle-rows-spec (matrix-from-data '((1)(2)(3))) '(2 1 0)) (matrix-from-data '((3)(2)(1))))
+    (compare-matrix (shuffle-rows-spec (matrix-from-data '((1)(2)(3))) '(1 2 0)) (matrix-from-data '((2)(3)(1))))
+    (compare-matrix (shuffle-rows-spec (matrix-from-data '((4)(3)(2))) '(1 1 1)) (matrix-from-data '((3)(3)(3))))
+    (compare-matrix (shuffle-rows-spec (matrix-from-data '((1 2)(2 3)(3 4))) '(2 1 0)) (matrix-from-data '((3 4)(2 3)(1 2))))
+  ))
+
 (deftest test-all ()
   (combine-results
     (test-generate-matrix)
@@ -244,4 +254,5 @@
     (test-sort-functions)
     (test-mathematical-functions)
     (test-value-extremes)
+    (test-shuffling)
   ))

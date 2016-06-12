@@ -32,6 +32,7 @@
 ;;; * (sigmoid mat)
 ;;; * (sigmoid-prime mat)
 ;;; * (shuffle-rows mat)
+;;; * (shuffle-rows-spec mat idx-list)
 ;;;
 ;;; MATRIX MULTIPLICATION
 ;;; ** number of cols of mat1 has to be equal number of rows of mat2
@@ -267,6 +268,15 @@
     (setf mat-list (remove-row-list-matrix rand-idx mat-list)))
 
   (matrix-from-data mat-shuffled)))
+
+;;; Shuffle rows according to specification.
+;;; Specification is list with index ordering.
+;;; Function assumes number of indexes less than number of matrix rows.
+(defun shuffle-rows-spec (mat idx-list)
+  (let ((mat-list (matrix-data mat)))
+
+    (matrix-from-data
+      (mapcar #'(lambda (idx) (nth idx mat-list)) idx-list))))
 
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
