@@ -64,3 +64,29 @@
 ;;; Find the index of maximum value in a list.
 (defun maximum-idx (lst)
   (cadr (multiple-value-list (maximum lst))))
+
+;;; Samuel Edwin Ward
+;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
+;;; Remove the nth element from list.
+;;; TODO move to some simplier library?
+(defun remove-nth (n list)
+  (declare
+    (type (integer 0) n)
+    (type list list))
+  (if (or (zerop n) (null list))
+    (cdr list)
+    (cons (car list) (remove-nth (1- n) (cdr list)))))
+
+;;; Reorganize values from given list in random fashion.
+(defun randomize-list (lst)
+  (let* ((len-lst (length lst))
+         ;(idx-lst (iota len-lst))
+         (rand-idx 0) ; 0 or NIL?
+         (rand-lst NIL))
+
+    (dotimes (i len-lst)
+      (setf rand-idx (random (- len-lst i)))
+      (push (nth rand-idx lst) rand-lst)
+      (setf lst (remove-nth rand-idx lst)))
+
+    rand-lst))

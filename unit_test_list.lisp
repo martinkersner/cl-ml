@@ -40,9 +40,19 @@
     (equal (multiple-value-list (maximum '(10 10 10))) '(10 0))
   ))
 
+(deftest test-random ()
+  (check
+    (defparameter *lst0* (iota 6))
+    (defparameter *lst1* '(9 3 2))
+
+    (equal (reduce #'+ (randomize-list *lst0*)) (reduce #'+ *lst0*))
+    (equal (reduce #'+ (randomize-list *lst1*)) (reduce #'+ *lst1*))
+  ))
+
 (deftest test-all ()
   (combine-results
     (test-range)
     (test-nth-pos-neg)
     (test-maximum)
+    (test-random)
   ))

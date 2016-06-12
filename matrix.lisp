@@ -73,7 +73,6 @@
 ;;; TODO 
 ;;; smart operations (add vector to all rows or columns of matrix)
 ;;; nth-row nth-col base functions for returning complete matrices
-;;; rewrite remove-nth function and move to file with list operations
 ;;; unit test for EVERY FUNCTION
 ;;; merge similar code from multiply, power, value-matrix-subtract functions together
 ;;; more inspiration from numpy
@@ -188,18 +187,6 @@
     (matrix-from-data
       (mapcar #'(lambda (idx) (nth idx mat-list))
             (iota (1+ (- to-verif from)) from)))))
-
-;;; Samuel Edwin Ward
-;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
-;;; Remove the nth element from list.
-;;; TODO move to some simplier library?
-(defun remove-nth (n list)
-  (declare
-    (type (integer 0) n)
-    (type list list))
-  (if (or (zerop n) (null list))
-    (cdr list)
-    (cons (car list) (remove-nth (1- n) (cdr list)))))
 
 ;;; Remove column from given matrix.
 ;;; Create new matrix.
