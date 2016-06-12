@@ -48,7 +48,7 @@
 
 ;;; Individual records are expected to be in row-like formatting.
 (defmethod SGD ((nn neural-network) train-data epochs mini-batch-size eta &optional (test-data NIL))
-  (let ((n-test (if test-data (matrix-rows test-data)))
+  (let (;(n-test (if test-data (matrix-rows test-data)))
         (n (matrix-rows train-data))
         (mini-batch NIL))
 
@@ -57,14 +57,12 @@
     (setf mini-batch-range (range 0 n mini-batch-size))
 
     (mapcar #'(lambda (idx) (progn
-                           (setf mini-batch ([] idx (+ idx mini_batch_size) train-data))
+                           (setf mini-batch ([] idx (+ idx mini-batch-size) train-data))
                            (update-mini-batch nn mini-batch eta)))
             mini-batch-range)
 
     (if test-data
-      (evaluate nn test-x test-y))
-
-    )))
+      (evaluate nn test-x test-y)))))
 
 ;;; TODO update inner state of network
 (defmethod update-mini-batch ((nn neural-network) mini-batch eta)
@@ -118,15 +116,3 @@
             (matrix-data test-x) (car (matrix-data test-y)))
 
   correct))
-
-;;;;;;;;;;;;;;;;;
-(defparameter *x* (matrix-from-data '((8)(7))))
-(defparameter *y* (matrix-from-data '((1))))
-(defparameter *x-row* (matrix-from-data '((8 7)(7 6))))
-(defparameter *y-row* (matrix-from-data '((1 0))))
-
-(defparameter *nn* (make-instance 'neural-network :nn-dims '(2 3 1)))
-;(setf b (feed-forward *nn* *x*))
-(multiple-value-setq (grad-b grad-w) (backpropagation *nn* *x* *y*))
-
-(princ (evaluate *nn* *x-row* *y-row*))
