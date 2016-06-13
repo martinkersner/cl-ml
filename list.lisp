@@ -68,7 +68,6 @@
 ;;; Samuel Edwin Ward
 ;;; http://stackoverflow.com/questions/9444885/common-lisp-how-to-return-a-list-without-the-nth-element-of-a-given-list
 ;;; Remove the nth element from list.
-;;; TODO move to some simplier library?
 (defun remove-nth (n list)
   (declare
     (type (integer 0) n)
@@ -80,7 +79,6 @@
 ;;; Reorganize values from given list in random fashion.
 (defun randomize-list (lst)
   (let* ((len-lst (length lst))
-         ;(idx-lst (iota len-lst))
          (rand-idx 0) ; 0 or NIL?
          (rand-lst NIL))
 

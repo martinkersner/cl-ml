@@ -44,9 +44,11 @@
   (check
     (defparameter *lst0* (iota 6))
     (defparameter *lst1* '(9 3 2))
+    (defparameter *lst2* (mapcar #'(lambda (x) (random x)) (iota 100 1)))
 
     (equal (reduce #'+ (randomize-list *lst0*)) (reduce #'+ *lst0*))
     (equal (reduce #'+ (randomize-list *lst1*)) (reduce #'+ *lst1*))
+    (equal (reduce #'+ (randomize-list *lst2*)) (reduce #'+ *lst2*))
   ))
 
 (deftest test-all ()
