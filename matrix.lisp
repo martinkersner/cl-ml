@@ -56,7 +56,7 @@
 ;;;
 ;;; MATRIX-ROW/COL OPERATIONS
 ;;; * (subtract-row mat row)
-;;; * TODO (subtract-col col mat)
+;;; * (subtract-col mat col)
 ;;; * (subtract-val-col val col mat)
 ;;; * (sum-rows mat)
 ;;; * (sum-cols mat)
@@ -380,6 +380,14 @@
 (defun subtract-row (mat row)
   (matrix-from-data
     (elwise-mat-row-op (matrix-data mat) (car (matrix-data row)) #'-)))
+
+;;; Element-wise subtract values of given column from all columns in matrix.
+(defun subtract-col (col mat)
+  (let ((col-trans (transpose col))
+        (mat-trans (transpose mat)))
+
+    (transpose
+      (subtract-row col-trans mat-trans))))
 
 ;;; Subtract value from specified column in matrix.
 (defun subtract-val-col (val col mat)
