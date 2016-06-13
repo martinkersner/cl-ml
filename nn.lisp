@@ -48,32 +48,34 @@
 
 ;;; Individual records are expected to be in row-like formatting.
 (defmethod SGD ((nn neural-network) train-data train-labels epochs mini-batch-size lr &optional (test-data NIL))
-  (let (;(n-test (if test-data (matrix-rows test-data)))
-        (n (matrix-rows train-data))
-        (mini-batch NIL)
-        (mini-batch-range (range 0 n mini-batch-size)))
+  (let* ((n (matrix-rows train-data))
+         (mini-batch-range (range 0 n mini-batch-size)))
 
-  (dotimes (j epochs)
-    (setf train-data (shuffle-rows-spec train-data))
+    (dotimes (j epochs)
+      (setf indexes (randomize-list (iota n)))
+      (setf train-data-rand   (shuffle-rows-spec train-data indexes))
+      (setf train-labels-rand (shuffle-rows-spec train-labels indexes))
 
-    (mapcar #'(lambda (idx)
-                (progn
-                  (setf mini-batch ([] idx (+ idx mini-batch-size) train-data))
-                  (update-mini-batch nn mini-batch lr)))
-            mini-batch-range)
+      (mapcar #'(lambda (idx)
+                  (progn
+                    (setf train-mini-batch  ([] idx (+ idx mini-batch-size) train-data-rand))
+                    (setf labels-mini-batch ([] idx (+ idx mini-batch-size) train-labels-rand))
+                    (update-mini-batch nn train-mini-batch labels-mini-batch lr)))
 
-    (if test-data
-      (evaluate nn test-x test-y)))))
+              mini-batch-range)
+
+      (if test-data
+        (evaluate nn test-x test-y)))))
 
 ;;; TODO update inner state of network
-(defmethod update-mini-batch ((nn neural-network) mini-batch lr)
+(defmethod update-mini-batch ((nn neural-network) train-mini-batch labels-mini-batch lr)
   (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
         (grad-w (mapcar #'empty-matrix-like (weights nn))))
 
-  ;; mini-batch is matrix with X rows and 2 columns
-  ;; the first list corresponds to training data and second is for response value
-  (mapcar #'(lambda (x) (print x)) (matrix-data mini-batch))
-
+  (mapcar #'(lambda (x y) (progn
+                            (print x)
+                            (print y)))
+          (matrix-data train-mini-batch) (matrix-data labels-mini-batch))
   ))
 
 (defmethod backpropagation ((nn neural-network) x y)
