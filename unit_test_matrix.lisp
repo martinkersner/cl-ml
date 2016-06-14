@@ -28,6 +28,18 @@
     (compare-matrix (matrix-from-data '((1)(2))) (make-matrix :rows 2 :cols 1 :data '((1)(2))))
     (compare-matrix (matrix-from-data '((1 2)(3 4))) (make-matrix :rows 2 :cols 2 :data '((1 2)(3 4))))
     (compare-matrix (matrix-from-data '((1 2 3)(4 5 6)(7 8 9))) (make-matrix :rows 3 :cols 3 :data '((1 2 3)(4 5 6)(7 8 9))))
+
+    ;; empty-matrix-like
+    (compare-matrix (empty-matrix-like (matrix-from-data '((0))))        (matrix-from-data '((NIL))))
+    (compare-matrix (empty-matrix-like (matrix-from-data '((0)(1))))     (matrix-from-data '((NIL)(NIL))))
+    (compare-matrix (empty-matrix-like (matrix-from-data '((0 1))))      (matrix-from-data '((NIL NIL))))
+    (compare-matrix (empty-matrix-like (matrix-from-data '((0 1)(2 3)))) (matrix-from-data '((NIL NIL)(NIL NIL))))
+
+    ;; empty-matrix-like
+    (compare-matrix (zero-matrix-like (matrix-from-data '((0))))        (matrix-from-data '((0))))
+    (compare-matrix (zero-matrix-like (matrix-from-data '((0)(1))))     (matrix-from-data '((0)(0))))
+    (compare-matrix (zero-matrix-like (matrix-from-data '((0 1))))      (matrix-from-data '((0 0))))
+    (compare-matrix (zero-matrix-like (matrix-from-data '((0 1)(2 3)))) (matrix-from-data '((0 0)(0 0))))
   ))
 
 (deftest test-transpose-matrix ()

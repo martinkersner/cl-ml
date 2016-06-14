@@ -11,6 +11,7 @@
 ;;; MATRIX CREATION
 ;;; * (empty-matrix rows cols)
 ;;; * (empty-matrix-like mat)
+;;; * (zero-matrix-like mat)
 ;;; * (initialize-matrix rows cols val)
 ;;; * (rand-norm-matrix rows cols)
 ;;; * (matrix-from-data data)
@@ -106,12 +107,16 @@
                  :data (generate-empty-matrix ,rows ,cols))))
 
 ;;; Create a matrix of size [rows; cols] filled with NIL values.
-(defun empty-matrix (rows cols &optional default)
-  (empty-matrix-macro rows cols (make-list cols :initial-element nil)))
+(defun empty-matrix (rows cols &optional (default NIL))
+  (empty-matrix-macro rows cols (make-list cols :initial-element default)))
 
 ;;; Create an empty matrix of the same size as given matrix.
 (defun empty-matrix-like (mat)
   (empty-matrix (matrix-rows mat) (matrix-cols mat)))
+
+;;; Create a matrix of the same size as given matrix with 0 values.
+(defun zero-matrix-like (mat)
+  (empty-matrix (matrix-rows mat) (matrix-cols mat) 0))
 
 ;;; Generate and initialize matrix with a given value.
 (defun initialize-matrix (rows cols val)
