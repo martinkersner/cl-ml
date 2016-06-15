@@ -248,6 +248,16 @@
     (equal (nth-col-min 0 (matrix-from-data '((7 8 9)(1 2 3)(4 5 6)))) 1)
     (equal (nth-col-min 1 (matrix-from-data '((7 8 9)(1 2 3)(4 5 6)))) 2)
     (equal (nth-col-min 2 (matrix-from-data '((7 8 9)(2 2 3)(4 5 6)))) 3)
+
+    ;; nth-row-max
+    (equal (nth-row-max 0 (matrix-from-data '((1)(2)(3)))) 1)
+    (equal (nth-row-max 1 (matrix-from-data '((1)(2)(3)))) 2)
+    (equal (nth-row-max 2 (matrix-from-data '((1)(2)(3)))) 3)
+    (equal (nth-row-max 0 (matrix-from-data '((1 2 3)))) 3)
+    (equal (nth-row-max 1 (matrix-from-data '((1 2 3)(4 5 6)))) 6)
+    (equal (nth-row-max 0 (matrix-from-data '((1 2 3)(7 8 9)(4 5 6)))) 3)
+    (equal (nth-row-max 1 (matrix-from-data '((1 2 3)(7 8 9)(4 5 6)))) 9)
+    (equal (nth-row-max 2 (matrix-from-data '((2 2 3)(7 8 9)(4 5 6)))) 6)
   ))
 
 (deftest test-shuffling ()

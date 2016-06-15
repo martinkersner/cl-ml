@@ -68,7 +68,7 @@
 ;;; * TODO (arg-sort-row-mat row_mat)
 ;;; * (nth-col-max col mat)
 ;;; * (nth-col-min col mat)
-;;; * TODO (nth-row-max col mat)
+;;; * (nth-row-max row mat)
 ;;; * TODO (nth-row-min col mat)
 
 ;;; TODO 
@@ -462,11 +462,15 @@
 
     (mapcar #'(lambda (x) (cdr x)) (stable-sort join-vec-idxs #'< :key #'car))))
 
-;;; Find the smallest value in specific column of a given matrix.
+;;; Find the largest value in specific column of a given matrix.
 ;;; TODO merge common function for nth-col-max and nth-col-min
 (defun nth-col-max (col mat)
   (maximum (nth col (transpose-list (matrix-data mat)))))
 
-;;; Find the largest value in specific column of a given matrix.
+;;; Find the smallest value in specific column of a given matrix.
 (defun nth-col-min (col mat)
   (minimum (nth col (transpose-list (matrix-data mat)))))
+
+;;; Find the largest value in specific row of a given matrix.
+(defun nth-row-max (row mat)
+  (maximum (nth row (matrix-data mat))))
