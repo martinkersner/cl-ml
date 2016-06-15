@@ -69,7 +69,7 @@
 ;;; * (nth-col-max col mat)
 ;;; * (nth-col-min col mat)
 ;;; * (nth-row-max row mat)
-;;; * TODO (nth-row-min col mat)
+;;; * (nth-row-min row mat)
 
 ;;; TODO 
 ;;; smart operations (add vector to all rows or columns of matrix)
@@ -474,3 +474,7 @@
 ;;; Find the largest value in specific row of a given matrix.
 (defun nth-row-max (row mat)
   (maximum (nth row (matrix-data mat))))
+
+;;; Find the largest value in specific row of a given matrix.
+(defun nth-row-min (row mat)
+  (minimum (nth row (matrix-data mat))))
