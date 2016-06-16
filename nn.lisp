@@ -47,7 +47,7 @@
   a))
 
 ;;; Individual records are expected to be in row-like formatting.
-(defmethod SGD ((nn neural-network) train-data train-labels epochs mini-batch-size lr &optional (test-data NIL))
+(defmethod SGD ((nn neural-network) train-data train-labels epochs mini-batch-size lr &optional test-data  test-labels)
   (let* ((n (matrix-rows train-data))
          (mini-batch-range (range 0 n mini-batch-size)))
 
@@ -66,9 +66,8 @@
               mini-batch-range)
 
       (if test-data
-        (evaluate nn test-x test-y)))))
+        (evaluate nn test-data test-labels)))))
 
-;;; TODO update inner state of network
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
   (let* ((grad-b (mapcar #'zero-matrix-like (biases nn)))
          (grad-w (mapcar #'zero-matrix-like (weights nn)))
@@ -127,9 +126,10 @@
 (defmethod evaluate ((nn neural-network) test-x test-y)
   (let ((correct 0))
 
-    (mapcar #'(lambda (x y) (if (= y 
-                                   (maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x)))))) ; TODO keep transpose or change input of feed-forward?
+    (mapcar #'(lambda (x y) (if (= (car y)
+                                   (maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
                               (incf correct 1)))
-            (matrix-data test-x) (car (matrix-data test-y)))
+            (matrix-data test-x) (matrix-data test-y))
 
+    (print correct) ; only for debugging purposes
   correct))

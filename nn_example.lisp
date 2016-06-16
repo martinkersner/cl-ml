@@ -14,12 +14,13 @@
 (defparameter *labels* (matrix-from-data (nth-col *label-col-idx* *dataset*)))
 
 ;;; Define neural network.
-(defparameter *epoch-num* 1)
+(defparameter *epoch-num* 4)
 (defparameter *mini-batch-size* 50)
 (defparameter *lr* 0.0001)
 (defparameter *nn* (make-instance 'neural-network :nn-dims '(2 4 2)))
 
-(SGD *nn* *data* *labels* *epoch-num* *mini-batch-size* *lr*)
+(SGD *nn* *data* *labels* *epoch-num* *mini-batch-size* *lr*
+     *data* *labels*)
 
 ;(defparameter *x* (matrix-from-data '((8)(7))))
 ;(defparameter *y* (matrix-from-data '((1))))
