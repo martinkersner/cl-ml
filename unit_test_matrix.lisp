@@ -161,6 +161,12 @@
    (compare-matrix (matrix-mult  (matrix-from-data '((1 2)(3 4))) (matrix-from-data '((2 3)(9 0)))) (matrix-from-data '((2 6)(27 0))))
    (compare-matrix (matrix-mult  (matrix-from-data '((1 2 3)(4 5 6)(7 8 9))) (matrix-from-data '((0 0 0)(7 6 5)(1 2 3)))) (matrix-from-data '((0 0 0)(28 30 30)(7 16 27))))
 
+   ;; matrix-div
+   (compare-matrix (matrix-div  (matrix-from-data '((1))) (matrix-from-data '((-1)))) (matrix-from-data '((-1))))
+   (compare-matrix (matrix-div  (matrix-from-data '((2)(8))) (matrix-from-data '((2)(4)))) (matrix-from-data '((1)(2))))
+   (compare-matrix (matrix-div  (matrix-from-data '((1 4)(6 10))) (matrix-from-data '((1 2)(3 5)))) (matrix-from-data '((1 2)(2 2))))
+   (compare-matrix (matrix-div  (matrix-from-data '((10 9 8)(7 6 5)(4 3 2))) (matrix-from-data '((5 3 4)(7 3 5)(1 3 2)))) (matrix-from-data '((2 3 2)(1 2 1)(4 1 1))))
+
    ;; subtract-row
    (compare-matrix (subtract-row  (matrix-from-data '((1))) (matrix-from-data '((-1)))) (matrix-from-data '((2))))
    (compare-matrix (subtract-row  (matrix-from-data '((1)(2))) (matrix-from-data '((1)))) (matrix-from-data '((0)(1))))
