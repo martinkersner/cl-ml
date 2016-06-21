@@ -58,8 +58,8 @@
 
       (mapcar #'(lambda (idx)
                   (progn
-                    (setf data-mini-batch   ([] idx (+ idx mini-batch-size) train-data-rand))
-                    (setf labels-mini-batch ([] idx (+ idx mini-batch-size) train-labels-rand))
+                    (setf data-mini-batch   ([] idx (+ idx (- mini-batch-size 1)) train-data-rand))
+                    (setf labels-mini-batch ([] idx (+ idx (- mini-batch-size 1)) train-labels-rand))
                     (update-mini-batch nn data-mini-batch labels-mini-batch lr)
                     ))
 
@@ -73,8 +73,6 @@
          (grad-w (mapcar #'zero-matrix-like (weights nn)))
          (mini-batch-size (matrix-rows data-mini-batch))
          (modif-lr (/ lr mini-batch-size)))
-
-  ;(print mini-batch-size) ; TODO too big the first batch!
 
   (mapcar #'(lambda (x y) (progn
                             (multiple-value-setq (delta-grad-b delta-grad-w) (backpropagation nn x y))
