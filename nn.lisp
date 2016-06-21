@@ -58,15 +58,18 @@
 
       (mapcar #'(lambda (idx)
                   (progn
-                    (setf data-mini-batch   ([] idx (+ idx (- mini-batch-size 1)) train-data-rand))
-                    (setf labels-mini-batch ([] idx (+ idx (- mini-batch-size 1)) train-labels-rand))
-                    (update-mini-batch nn data-mini-batch labels-mini-batch lr)
-                    ))
+                    (setf data-mini-batch   (create-mini-batch train-data-rand   mini-batch-size idx))
+                    (setf labels-mini-batch (create-mini-batch train-labels-rand mini-batch-size idx))
+                    (update-mini-batch nn data-mini-batch labels-mini-batch lr)))
 
               mini-batch-range)
 
       (if test-data
         (evaluate nn test-data test-labels)))))
+
+;;; Access and return specified mini-batch of data.
+(defun create-mini-batch (data mini-batch-size idx)
+  ([] idx (+ idx (- mini-batch-size 1)) data))
 
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
   (let* ((grad-b (mapcar #'zero-matrix-like (biases nn)))
