@@ -61,6 +61,7 @@
 ;;; * (subtract-val-col val col mat)
 ;;; * (sum-rows mat)
 ;;; * (sum-cols mat)
+;;; * (sum mat)
 ;;; * (mean-cols mat)
 ;;; * (std-cols mat mean)
 ;;; * TODO (mean-rows mat)
@@ -416,6 +417,14 @@
 (defun sum-cols (mat)
   (transpose (matrix-from-data
                (rows-op (matrix-data (transpose mat)) #'+))))
+
+;;; Sum all values in a given matrix.
+(defun sum (mat)
+  (let ((total-sum 0))
+    (mapcar #'(lambda (x) (incf total-sum (reduce #'+ x)))
+            (matrix-data mat))
+
+    total-sum))
 
 ;;; Compute mean for all columns.
 (defun mean-cols (mat)

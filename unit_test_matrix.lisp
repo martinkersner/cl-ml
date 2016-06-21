@@ -209,6 +209,14 @@
    (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)))) (matrix-from-data '((2 4 6))))
    (compare-matrix (sum-cols (matrix-from-data '((1 2 3)(1 2 3)(1 2 3)))) (matrix-from-data '((3 6 9))))
 
+   ;; sum
+   (equal (sum (matrix-from-data '((1))))         1)
+   (equal (sum (matrix-from-data '((1)(2))))      3)
+   (equal (sum (matrix-from-data '((1)(2)(3))))   6)
+   (equal (sum (matrix-from-data '((1 2))))       3)
+   (equal (sum (matrix-from-data '((1 2 3))))     6)
+   (equal (sum (matrix-from-data '((1 2)(3 4)))) 10)
+
    ;;; mean-cols
    (compare-matrix (mean-cols (matrix-from-data '((1 2 3)))) (matrix-from-data '((1 2 3))))
    (compare-matrix (mean-cols (matrix-from-data '((1 2 3)(3 4 5)))) (matrix-from-data '((2 3 4))))
