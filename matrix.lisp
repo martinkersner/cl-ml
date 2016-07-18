@@ -64,7 +64,7 @@
 ;;; * (sum mat)
 ;;; * (mean-cols mat)
 ;;; * (std-cols mat mean)
-;;; * TODO (mean-rows mat)
+;;; * (mean-rows mat)
 ;;; *(arg-sort-col-mat col_mat) TODO accept matrices with more than one column
 ;;; * TODO (arg-sort-row-mat row_mat)
 ;;; * (nth-col-max col mat)
@@ -434,6 +434,15 @@
       (mapcar #'(lambda (column)
                   (list (/ (apply #'+ column) num-rows)))
               (transpose-list (matrix-data mat)))))))
+
+;;; Compute mean for all rows
+(defun mean-rows (mat)
+  (let ((num-cols (matrix-cols mat)))
+    
+    (matrix-from-data 
+      (mapcar #'(lambda (row) 
+                  (list (/ (apply #'+ row) num-cols)) )
+              (matrix-data mat)))))
 
 ;;; Compute standard deviation for all columns.
 ;;; TODO unit tests

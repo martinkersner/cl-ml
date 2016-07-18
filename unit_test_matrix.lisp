@@ -223,6 +223,12 @@
    (compare-matrix (mean-cols (matrix-from-data '((1 2 3)(3 4 5)(5 6 7)))) (matrix-from-data '((3 4 5))))
   ))
 
+  ;;; mean-rows
+  (compare-matrix (mean-rows (matrix-from-data '((1)))) (matrix-from-data '((1))))
+  (compare-matrix (mean-rows (matrix-from-data '((1)(2)))) (matrix-from-data '((1)(2))))
+  (compare-matrix (mean-rows (matrix-from-data '((1 2 3)))) (matrix-from-data '((2))))
+  (compare-matrix (mean-rows (matrix-from-data '((1 2 3)(2 3 4)))) (matrix-from-data '((2)(3))))
+
 (deftest test-sort-functions ()
   (check
    ;; arg-sort-col-mat
