@@ -114,6 +114,12 @@
     (compare-matrix (prefix-const-val 0 (matrix-from-data '((1 2)))) (matrix-from-data '((0 1 2))))
     (compare-matrix (prefix-const-val 0 (matrix-from-data '((1)(2)))) (matrix-from-data '((0 1)(0 2))))
     (compare-matrix (prefix-const-val 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((0 1 2)(0 3 4))))
+
+    ;;prefix-const-val
+    (compare-matrix (suffix-const-val 0 (matrix-from-data '((1)))) (matrix-from-data '((1 0))))
+    (compare-matrix (suffix-const-val 0 (matrix-from-data '((1 2)))) (matrix-from-data '((1 2 0))))
+    (compare-matrix (suffix-const-val 0 (matrix-from-data '((1)(2)))) (matrix-from-data '((1 0)(2 0))))
+    (compare-matrix (suffix-const-val 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 2 0)(3 4 0))))
   ))
 
 (deftest test-dot-product ()
