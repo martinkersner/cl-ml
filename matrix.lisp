@@ -28,7 +28,7 @@
 ;;; * (remove-row-list-matrix row list-mat)
 ;;; * (prefix-const-val val mat)
 ;;; * (suffix-const-val val mat)
-;;; * TODO insert constant value (whole column) at given position
+;;; * (insert-const-val idx val mat)
 ;;; * (matrix-indices rows cols)
 ;;; * (sigmoid mat)
 ;;; * (sigmoid-prime mat)
@@ -216,6 +216,13 @@
 ;;; Append constant number at the end of each row of given matrix.
 (defun suffix-const-val (val mat)
   (matrix-from-data (mapcar #'(lambda (x) (append x (list val))) (matrix-data mat))))
+
+;;; Insert constant value (whole column) at given position (column) in matrix.
+;;; Does not control access out of boundaries.
+(defun insert-const-val (idx val mat)
+  (let ((end (matrix-cols mat)))
+    (matrix-from-data (mapcar #'(lambda (x) (append (subseq x 0 idx) (list val) (subseq x idx end)))
+                              (matrix-data mat)))))
 
 ;;; Auxiliary function for MATRIX-INDICES.
 (defun matrix-indices-rec (rows cols orig_cols)

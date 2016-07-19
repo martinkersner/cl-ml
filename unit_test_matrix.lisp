@@ -120,6 +120,18 @@
     (compare-matrix (suffix-const-val 0 (matrix-from-data '((1 2)))) (matrix-from-data '((1 2 0))))
     (compare-matrix (suffix-const-val 0 (matrix-from-data '((1)(2)))) (matrix-from-data '((1 0)(2 0))))
     (compare-matrix (suffix-const-val 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 2 0)(3 4 0))))
+
+    ;;insert-const-val
+    (compare-matrix (insert-const-val 0 0 (matrix-from-data '((1)))) (matrix-from-data '((0 1))))
+    (compare-matrix (insert-const-val 1 0 (matrix-from-data '((1)))) (matrix-from-data '((1 0))))
+    (compare-matrix (insert-const-val 0 0 (matrix-from-data '((1 2)))) (matrix-from-data '((0 1 2))))
+    (compare-matrix (insert-const-val 1 0 (matrix-from-data '((1 2)))) (matrix-from-data '((1 0 2))))
+    (compare-matrix (insert-const-val 2 0 (matrix-from-data '((1 2)))) (matrix-from-data '((1 2 0))))
+    (compare-matrix (insert-const-val 0 0 (matrix-from-data '((1)(2)))) (matrix-from-data '((0 1)(0 2))))
+    (compare-matrix (insert-const-val 1 0 (matrix-from-data '((1)(2)))) (matrix-from-data '((1 0)(2 0))))
+    (compare-matrix (insert-const-val 0 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((0 1 2)(0 3 4))))
+    (compare-matrix (insert-const-val 1 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 0 2)(3 0 4))))
+    (compare-matrix (insert-const-val 2 0 (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((1 2 0)(3 4 0))))
   ))
 
 (deftest test-dot-product ()
