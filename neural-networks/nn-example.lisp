@@ -1,11 +1,10 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/06/12 
 
-(load "csv_reader")
-(load "nn")
+(in-package :lispml)
 
 ;;; Load data.
-(defparameter *dataset-path* "dataset_small.csv")
+(defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset* (matrix-from-data (read-csv *dataset-path*)))
 
 ;;; Data preprocessing.

@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Logistic regression
 
-(load "matrix")
+(in-package :lispml)
 
 (defun grad-ascent (data_mat labels_mat &key (lr 0.001) (max_iter 500))
   (let* ((data_mat (prefix-const-val 1.0 data_mat))

@@ -9,8 +9,7 @@
 ;;; control of object initialization 
 ;;; create a simple dataset
 
-(load "matrix")
-(load "list")
+(in-package :lispml)
 
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims :initarg :nn-dims)

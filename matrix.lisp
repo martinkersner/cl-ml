@@ -80,8 +80,7 @@
 ;;; more inspiration from numpy
 ;;; generate all functions, keep them in categories
 
-(load "random") ; TODO necessary?
-(load "list")
+(in-package :lispml)
 
 (defstruct matrix rows cols data)
 

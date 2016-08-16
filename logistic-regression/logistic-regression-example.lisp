@@ -3,8 +3,7 @@
 ;;;;
 ;;;; Logistic regression example for two dimensional data with binary labels.
 
-(load "csv_reader")
-(load "logistic_regression")
+(in-package :lispml)
 
 (defun compute-y-coordinate (weights x)
   (let ((w0 (caar weights))
@@ -27,7 +26,7 @@
       complete)))
 
 ;;; Load data.
-(defparameter *dataset-path* "dataset_small.csv")
+(defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset* (matrix-from-data (read-csv *dataset-path*)))
 
 ;;; Data preprocessing.

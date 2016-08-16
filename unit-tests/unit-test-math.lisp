@@ -1,13 +1,12 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/06/03
 
-(load "unit_test")
-(load "math")
+(in-package :lispml)
 
 (deftest test-xx ()
   (check
   ))
 
-(deftest test-all ()
+(deftest test-math ()
   (combine-results
   ))

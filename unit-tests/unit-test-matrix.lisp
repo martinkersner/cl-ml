@@ -3,8 +3,7 @@
 
 ;;; TODO check error conditions in tests
 
-(load "unit_test")
-(load "matrix")
+(in-package :lispml)
 
 (deftest test-generate-matrix ()
   (check
@@ -318,7 +317,7 @@
     (compare-matrix (shuffle-rows-spec (matrix-from-data '((1 2)(2 3)(3 4))) '(2 1 0)) (matrix-from-data '((3 4)(2 3)(1 2))))
   ))
 
-(deftest test-all ()
+(deftest test-matrix ()
   (combine-results
     (test-generate-matrix)
     (test-matrix-modifications)

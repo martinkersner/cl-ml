@@ -6,6 +6,8 @@
 ;;;; TODO
 ;;;; unit tests?
 
+(in-package :lispml)
+
 (defun rand-normal-spec (mean std)
   (+ mean (* std 
              (sqrt (* -2 (log (random 1.0)))) 

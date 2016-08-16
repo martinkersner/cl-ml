@@ -1,8 +1,7 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/06/04
 
-(load "unit_test")
-(load "list")
+(in-package :lispml)
 
 (deftest test-range ()
   (check
@@ -51,7 +50,7 @@
     (equal (reduce #'+ (randomize-list *lst2*)) (reduce #'+ *lst2*))
   ))
 
-(deftest test-all ()
+(deftest test-list ()
   (combine-results
     (test-range)
     (test-nth-pos-neg)

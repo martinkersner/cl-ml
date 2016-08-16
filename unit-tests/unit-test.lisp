@@ -1,5 +1,7 @@
 ;;;; by http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html
 
+(in-package :lispml)
+
 (defvar *test-name* nil)
 
 ;;; If macro WITH-GENSYSM is locked type continue and hit enter. (clisp)

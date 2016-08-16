@@ -7,21 +7,7 @@
 ;;; prepare dataset specially for knn
 ;;; and also include tests for algorithm verification
 
-(load "matrix")
-(load "csv_reader")
-
-; load data
-(defparameter *dataset*
-  (matrix-from-data (read-csv "dataset_small.csv")))
-
-; training data preparation
-(defparameter *label-col* 2)
-
-(defparameter *data* (remove-col *label-col* *dataset*))
-(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset*)))
-
-(defparameter *row-data* (matrix-from-data '((2 5))))
-;(defparameter *row-data* (matrix-from-data '((0 8))))
+(in-package :lispml)
 
 (defun knn (data_row data_mat labels_mat k)
   (let* ((class_count (make-hash-table))
@@ -50,4 +36,4 @@
                         (setf final_class k))))
              class_count)
 
-    final_class))
+  final_class))
