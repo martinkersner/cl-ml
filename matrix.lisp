@@ -35,6 +35,7 @@
 ;;; * (sigmoid-prime mat)
 ;;; * (shuffle-rows mat)
 ;;; * (shuffle-rows-spec mat idx-list)
+;;; * TODO (det mat)
 ;;;
 ;;; MATRIX MULTIPLICATION
 ;;; ** number of cols of mat1 has to be equal number of rows of mat2
@@ -289,6 +290,19 @@
 
     (matrix-from-data
       (mapcar #'(lambda (idx) (nth idx mat-list)) idx-list))))
+
+;;; Calculate determinanf of given matrix.
+;;; Matrix has to have square shape.
+(defun det (mat)
+  (let ((rows (matrix-rows mat))
+        (cols (matrix-cols mat)))
+
+    (cond
+      ((not (eq rows cols))
+        (error 'matrix-error :text "Matrix must be square"))
+      ((eq rows 2) (- (* ([][] 0 0 mat) ([][] 1 1 mat))
+                      (* ([][] 0 1 mat) ([][] 1 0 mat))))
+    )))
 
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
