@@ -23,6 +23,7 @@
 ;;; * (nth-row row mat)
 ;;; * (nth-col col mat)
 ;;; * ([] from to mat)
+;;; * ([][] row col mat)
 ;;; * (remove-col col mat)
 ;;; * (remove-row col mat)
 ;;; * (remove-row-list-matrix row list-mat)
@@ -192,6 +193,14 @@
     (matrix-from-data
       (mapcar #'(lambda (idx) (nth idx mat-list))
             (iota (1+ (- to-verif from)) from)))))
+
+;;; Access value of 2D matrix.
+;;; Does not control access outside of matrix.
+(defun [][] (row col mat)
+  (let ((selected-row ([] row row mat)))
+    (setf val (mapcar #'(lambda (x) (nth col x)) (matrix-data selected-row)))
+
+    (nth 0 val)))
 
 ;;; Remove column from given matrix.
 ;;; Create new matrix.

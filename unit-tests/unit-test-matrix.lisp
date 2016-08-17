@@ -90,6 +90,14 @@
     (compare-matrix ([] 0 1 (matrix-from-data '((1 1)(2 2)(3 3)))) (matrix-from-data '((1 1)(2 2))))
     (compare-matrix ([] 0 2 (matrix-from-data '((1 1)(2 2)(3 3)))) (matrix-from-data '((1 1)(2 2)(3 3))))
     (compare-matrix ([] 1 2 (matrix-from-data '((1 1)(2 2)(3 3)))) (matrix-from-data '((2 2)(3 3))))
+
+    ;; [][]
+    (equal ([][] 0 0 (matrix-from-data '((1))))   1)
+    (equal ([][] 0 1 (matrix-from-data '((1 2)))) 2)
+    (equal ([][] 0 0 (matrix-from-data '((1 2)(3 4)))) 1)
+    (equal ([][] 0 1 (matrix-from-data '((1 2)(3 4)))) 2)
+    (equal ([][] 1 0 (matrix-from-data '((1 2)(3 4)))) 3)
+    (equal ([][] 1 1 (matrix-from-data '((1 2)(3 4)))) 4)
   ))
 
 (deftest test-matrix-modifications()
