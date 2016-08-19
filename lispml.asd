@@ -8,6 +8,7 @@
   :long-description "Machine Learning library for Common Lisp"
   :serial t
   :components ((:file "package")
+               (:file "math")
                (:file "random")
                (:file "list")
                (:file "matrix")

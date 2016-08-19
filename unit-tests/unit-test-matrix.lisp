@@ -323,6 +323,12 @@
     (compare-matrix (shuffle-rows-spec (matrix-from-data '((1)(2)(3))) '(1 2 0)) (matrix-from-data '((2)(3)(1))))
     (compare-matrix (shuffle-rows-spec (matrix-from-data '((4)(3)(2))) '(1 1 1)) (matrix-from-data '((3)(3)(3))))
     (compare-matrix (shuffle-rows-spec (matrix-from-data '((1 2)(2 3)(3 4))) '(2 1 0)) (matrix-from-data '((3 4)(2 3)(1 2))))
+
+    ;; det
+    (eq (det (matrix-from-data '((4 6)(3 8)))) 14)
+    (eq (det (matrix-from-data '((1 1 1)(4 3 4)(1 0 1)))) 0)
+    (eq (det (matrix-from-data '((6 1 1)(4 -2 5)(2 8 7)))) -306)
+    (eq (det (matrix-from-data '((1 3 2)(4 1 3)(2 5 2)))) 17)
   ))
 
 (deftest test-matrix ()

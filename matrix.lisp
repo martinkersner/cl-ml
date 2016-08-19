@@ -35,7 +35,7 @@
 ;;; * (sigmoid-prime mat)
 ;;; * (shuffle-rows mat)
 ;;; * (shuffle-rows-spec mat idx-list)
-;;; * TODO (det mat)
+;;; * (det mat)
 ;;;
 ;;; MATRIX MULTIPLICATION
 ;;; ** number of cols of mat1 has to be equal number of rows of mat2
@@ -291,17 +291,26 @@
     (matrix-from-data
       (mapcar #'(lambda (idx) (nth idx mat-list)) idx-list))))
 
-;;; Calculate determinanf of given matrix.
+;;; Calculate determinant of given matrix.
 ;;; Matrix has to have square shape.
 (defun det (mat)
   (let ((rows (matrix-rows mat))
-        (cols (matrix-cols mat)))
+        (cols (matrix-cols mat))
+        (first-row (nth 0 (nth-row 0 mat))))
 
     (cond
       ((not (eq rows cols))
         (error 'matrix-error :text "Matrix must be square"))
-      ((eq rows 2) (- (* ([][] 0 0 mat) ([][] 1 1 mat))
-                      (* ([][] 0 1 mat) ([][] 1 0 mat))))
+
+      ((eq rows 2)
+        (- (* ([][] 0 0 mat) ([][] 1 1 mat))
+           (* ([][] 0 1 mat) ([][] 1 0 mat))))
+
+      (t
+        (apply #'+ (mapcar #'(lambda (idx val) (if (is-odd idx)
+                                                  (apply #'* (list -1 val (det (det-submatrix idx mat))))
+                                                  (apply #'* (list val (det (det-submatrix idx mat))))))
+                                (iota cols) first-row)))
     )))
 
 ;;; Extract submatrix used in recursive determinant calculation.
