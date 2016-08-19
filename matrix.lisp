@@ -304,6 +304,11 @@
                       (* ([][] 0 1 mat) ([][] 1 0 mat))))
     )))
 
+;;; Extract submatrix used in recursive determinant calculation.
+(defun det-submatrix (col mat)
+  (let ((last-row-idx (- (matrix-rows mat) 1)))
+    (remove-col col ([] 1 last-row-idx mat))))
+
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Element-wise product of two vectors.
