@@ -3,10 +3,15 @@
 
 (in-package :lispml)
 
-(deftest test-xx ()
+(deftest test-basics ()
   (check
+    ;; mean
+    (= (mean '(1))     1)
+    (= (mean '(1 2))   1.5)
+    (= (mean '(1 2 3)) 2)
   ))
 
 (deftest test-math ()
   (combine-results
+    (test-basics)
   ))

@@ -14,3 +14,9 @@
   (if (eq (mod val 2) 0)
     nil
     t))
+
+;;; Compute mean of a given list.
+(defun mean (lst)
+  (let ((len-lst (length lst)))
+
+    (/ (apply #'+ lst) len-lst)))
