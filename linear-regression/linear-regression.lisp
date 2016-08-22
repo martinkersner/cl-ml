@@ -15,3 +15,13 @@
          (alpha   (- mean-y (* beta mean-x))))
 
     (list alpha beta)))
+
+(defun predict-linear-regression-1D (alpha beta x)
+  (+ alpha (* beta x)))
+
+(defun test-linear-regression-1D (alpha beta data-lst labels-lst)
+  (let* ((ss-res (apply #'+ (mapcar #'(lambda (x y) (expt (- y (predict-linear-regression-1D alpha beta x)) 2)) data-lst labels-lst)))
+         (mean-y (mean labels-lst))
+         (ss-tot (apply #'+ (mapcar #'(lambda (y) (expt (- y mean-y) 2)) labels-lst))))
+
+    (- 1 (/ ss-res ss-tot))))
