@@ -31,3 +31,14 @@
       (apply #'+
              (mapcar #'(lambda (x) (expt (- x mean-lst) 2)) lst))
       len-lst))) ; TODO use (- len-lst 1) instead?
+
+;;; Compute covariance of two variables.
+;;; Does not control if lists are of the same length.
+(defun cov (lst-a lst-b)
+  (let* ((len-lst (length lst-a))
+         (mean-a (mean lst-a len-lst))
+         (mean-b (mean lst-b len-lst)))
+    (/
+      (apply #'+
+             (mapcar #'(lambda (a b) (* (- a mean-a) (- b mean-b))) lst-a lst-b))
+      (- len-lst 1))))
