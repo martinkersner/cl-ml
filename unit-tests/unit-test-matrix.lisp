@@ -329,6 +329,10 @@
     (eq (det (matrix-from-data '((1 1 1)(4 3 4)(1 0 1)))) 0)
     (eq (det (matrix-from-data '((6 1 1)(4 -2 5)(2 8 7)))) -306)
     (eq (det (matrix-from-data '((1 3 2)(4 1 3)(2 5 2)))) 17)
+
+    ;; inverse of matrix
+    (compare-matrix (inv (matrix-from-data '((3 0 2)(2 0 -2)(0 1 1)))) (matrix-from-data '((1/5 1/5 0)(-1/5 3/10 1)(1/5 -3/10 0))))
+    (compare-matrix (inv (matrix-from-data '((1 2)(3 4)))) (matrix-from-data '((-2 1)(3/2 -1/2))))
   ))
 
 (deftest test-matrix ()

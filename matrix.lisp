@@ -36,6 +36,7 @@
 ;;; * (shuffle-rows mat)
 ;;; * (shuffle-rows-spec mat idx-list)
 ;;; * (det mat)
+;;; * (inv mat)
 ;;;
 ;;; MATRIX MULTIPLICATION
 ;;; ** number of cols of mat1 has to be equal number of rows of mat2
@@ -317,6 +318,30 @@
 (defun det-submatrix (col mat)
   (let ((last-row-idx (- (matrix-rows mat) 1)))
     (remove-col col ([] 1 last-row-idx mat))))
+
+;;; Compute inverse of a given matrix.
+(defun inv (mat)
+  (let ((rows (matrix-rows mat))
+        (cols (matrix-cols mat))
+        (tmp-row-flag NIL)
+        (tmp-col-flag NIL))
+
+    (cond
+      ((not (eq rows cols))
+        (error 'matrix-error :text "Matrix must be square"))
+
+      ((eq rows 2)
+        (multiply (/ 1 (det mat))
+                  (matrix-from-data (list (list    ([][] 1 1 mat)  (- ([][] 0 1 mat)))
+                                          (list (- ([][] 1 0 mat))    ([][] 0 0 mat))))))
+
+      (t
+        (multiply (/ 1 (det mat))
+           (transpose (matrix-from-data
+             (mapcar #'(lambda (row) (progn (setf tmp-row-flag (if (is-odd row) -1 1))
+                                            (mapcar #'(lambda (col) (progn (setf tmp-col-flag (if (is-odd col) -1 1))
+                                                                           (apply #'* (list tmp-row-flag tmp-col-flag (det (remove-col col (remove-row row mat)))))))
+                               (iota cols)))) (iota rows)))))))))
 
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
