@@ -24,13 +24,13 @@
     (/ (apply #'+ lst) len-lst)))
 
 ;;; Compute variance of a given list.
-(defun var (lst)
+(defun var (lst &key (ddof 0))
   (let* ((len-lst (length lst))
          (mean-lst (mean lst len-lst)))
     (/
       (apply #'+
              (mapcar #'(lambda (x) (expt (- x mean-lst) 2)) lst))
-      len-lst))) ; TODO use (- len-lst 1) instead?
+      (- len-lst ddof)))) ; TODO use (- len-lst 1) instead?
 
 ;;; Compute covariance of two variables.
 ;;; Does not control if lists are of the same length.
