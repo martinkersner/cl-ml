@@ -12,6 +12,7 @@
                (:file "random")
                (:file "list")
                (:file "matrix")
+               (:file "feature-extraction-and-preprocessing")
                (:file "csv-reader")
 
                (:module k-nearest-neighbors
