@@ -28,18 +28,32 @@
     (- 1 (/ ss-res ss-tot))))
 
 ;;; n-D linear regression
-(defun train-linear-regression (X y)
-  (let ((X-T (transpose X)))
-      (dot (inv (dot X-T X)) (dot X-T y))))
+(defclass linear-regression ()
+  ((weights :accessor get-weights)))
 
-(defun predict-linear-regression (w X)
-  (nth 0 (matrix-data-peel (dot X w))))
+(defgeneric fit (linreg X y)
+  (:documentation "Fit linear model"))
 
-(defun test-linear-regression (w data-mat labels-mat)
-  (let* ((labels-lst (nth 0 (matrix-data (transpose labels-mat))))
-         (ss-res (apply #'+ (mapcar #'(lambda (x y) (expt (- y (predict-linear-regression w (matrix-from-data-peel x))) 2)) (matrix-data data-mat) labels-lst)))
+(defmethod fit ((linreg linear-regression) X y)
+  (let* ((X (prefix-const-val 1.0 X))
+         (X-T (transpose X)))
 
-         (mean-y (mean labels-lst))
-         (ss-tot (apply #'+ (mapcar #'(lambda (y) (expt (- y mean-y) 2)) labels-lst))))
+    (setf (get-weights linreg)
+      (dot (inv (dot X-T X)) (dot X-T y)))))
 
-    (- 1 (/ ss-res ss-tot))))
+(defgeneric predict (linreg X)
+  (:documentation "Predict using linear model"))
+
+(defmethod predict ((linreg linear-regression) X)
+  (let ((X (prefix-const-val 1.0 X)))
+    (dot X (get-weights linreg))))
+
+(defgeneric score (linreg X y)
+  (:documentation "Return the coefficient of determination R^2 of the prediction."))
+
+(defmethod score ((linreg linear-regression) X y)
+  (let* ((ss-res (sum-cols (apply-matrix (lambda (val) (expt val 2)) (subtract y (predict linreg X)))))
+         (mean-y (nth 0 (matrix-data-peel (mean-cols y))))
+         (ss-tot (sum-cols (apply-matrix (lambda (val) (expt (- val mean-y) 2)) y))))
+
+    (- 1 (nth 0 (matrix-data-peel (matrix-div ss-res ss-tot))))))

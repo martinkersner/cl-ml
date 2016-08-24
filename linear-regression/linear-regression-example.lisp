@@ -12,24 +12,30 @@
         ;;; Data preprocessing.
         (label-col-idx (- (matrix-cols dataset) 1)) ; labels are located in the last column of data matrix
         (data  
-          (prefix-const-val 1 (remove-col label-col-idx dataset)))
+          (remove-col label-col-idx dataset))
         (labels 
           (matrix-from-data (nth-col label-col-idx dataset))))
 
   (values data labels)))
 
+;;; INITIALIZATION
+(defparameter *linreg* (make-instance 'linear-regression))
+
 ;;; TRAINING
 (defparameter *train-dataset-path* "datasets/linear-regression/pizza-nd-train.csv")
 (multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path*))
 
-;;; Linear regression computation.
-(defparameter *weights* (train-linear-regression train-data train-labels))
+;;; Train model.
+(fit *linreg* train-data train-labels)
+
+;;; PREDICTION
+(print
+  (predict *linreg* (matrix-from-data '((8 2)(10 10)))))
 
 ;;; TESTING
 (defparameter *test-dataset-path* "datasets/linear-regression/pizza-nd-test.csv")
 (multiple-value-setq (test-data test-labels) (load-dataset *test-dataset-path*))
 
 ;;; Evaluate model.
-(defparameter *r-squared* (test-linear-regression *weights* test-data test-labels))
-
+(defparameter *r-squared* (score *linreg* test-data test-labels))
 (print *r-squared*)
