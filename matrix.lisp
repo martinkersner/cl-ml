@@ -343,6 +343,14 @@
                                                                            (apply #'* (list tmp-row-flag tmp-col-flag (det (remove-col col (remove-row row mat)))))))
                                (iota cols)))) (iota rows)))))))))
 
+;;; Apply lambda function to each value of matrix.
+(defmacro apply-matrix (mat lmbd-fun)
+  `(let ((matrix-lst (matrix-data ,mat)))
+
+     (matrix-from-data
+       (mapcar #'(lambda (row)
+                   (mapcar #',lmbd-fun row)) matrix-lst))))
+
 ;;; MATRIX MULTIPLICATION ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Element-wise product of two vectors.
