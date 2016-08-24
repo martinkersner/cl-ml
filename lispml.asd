@@ -21,6 +21,9 @@
                (:module linear-regression
                   :components ((:file "linear-regression")))
 
+               (:module decision-trees
+                  :components ((:file "id3")))
+
                (:module logistic-regression
                   :components ((:file "logistic-regression")))
 
