@@ -344,7 +344,7 @@
                                (iota cols)))) (iota rows)))))))))
 
 ;;; Apply lambda function to each value of matrix.
-(defmacro apply-matrix (mat lmbd-fun)
+(defmacro apply-matrix (lmbd-fun mat)
   `(let ((matrix-lst (matrix-data ,mat)))
 
      (matrix-from-data
