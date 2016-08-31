@@ -36,7 +36,7 @@
 
     (mapcar #'(lambda (idx item)
                 (setf (gethash item ht) idx))
-            (iota (length lst))
+            (iota (length set-lst))
             set-lst)
 
     ht))
