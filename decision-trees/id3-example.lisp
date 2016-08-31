@@ -18,6 +18,43 @@
 
   (values data labels)))
 
+(defun preprocess-data (data)
+  (let ((uniq-lst nil)
+        (ht-list '())
+        (ht nil))
+
+    (mapcar #'(lambda (lst) (progn
+                              (setf uniq-lst (remove-duplicates lst :test 'equal))
+                              (if (> (length uniq-lst) 2)
+                                ;; TODO send a flag that list is already unique
+                                (progn
+                                  (setf ht (one-hot-encoding uniq-lst))
+                                  (setf ht-list (nconc ht-list (list ht)))
+                                  (transpose-list (apply-hash-table-on-list ht lst)))
+
+                                (progn
+                                  (setf ht (unique-numbers uniq-lst))
+                                  (setf ht-list (nconc ht-list (list ht)))
+                                  (apply-hash-table-on-list ht lst)))
+                              ))
+
+      (matrix-data (transpose data)))))
+
+(defun flatten-list (l)
+  (cond ((null l) nil)
+        ((atom l) (list l))
+        (t (loop for a in l appending (flatten-list a)))))
+
+(defun transform-list (lst rows cols)
+  (let ((pos-prev 0)
+        (pos-next 0))
+
+    (mapcar #'(lambda (row-id) (progn
+                                 (setf pos-prev pos-next)
+                                 (setf pos-next (+ pos-prev rows))
+                                 (subseq lst pos-prev pos-next)))
+            (iota cols))))
+
 ;;; INITIALIZATION
 (defparameter *dt* (make-instance 'id3-dt))
 
@@ -25,11 +62,19 @@
 (defparameter *train-dataset-path* "datasets/decision-trees/cat-dog.csv")
 (multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path*))
 
-;(print train-data)
-;(print train-labels)
+;;; PREPROCESS DATASET
+(setf train-data-processed
+  (matrix-from-data (transpose-list
+                      (transform-list (flatten-list (preprocess-data train-data)) 14 5))))
+
+(setf train-labels-processed
+  (matrix-from-data (preprocess-data train-labels)))
+
+(print train-data-processed)
+(print train-labels-processed)
 
 ;;; Train model.
-(fit *dt* train-data train-labels)
+;(fit *dt* train-data train-labels)
 
 ;;;; PREDICTION
 ;(print
