@@ -3,7 +3,7 @@
 
 (in-package :lispml)
 
-;;; Create signle one hot encoding vector.
+;;; Create single one hot encoding vector.
 (defun create-one-hot (len pos)
   (let* ((tmp-one-hot (make-list len :initial-element 0)))
     (setf (nth pos tmp-one-hot) 1)
@@ -25,5 +25,18 @@
     ht))
 
 ;;; Apply one hot encoding on given categories.
-(defun apply-one-hot-encoding (ht lst)
+(defun apply-hash-table-on-list (ht lst)
     (mapcar #'(lambda (item) (gethash item ht)) lst))
+
+;;; Create hash table where *keys* are unique items from given list
+;;; and *values* are ascending numbers counted from 0.
+(defun unique-numbers (lst)
+  (let ((set-lst (remove-duplicates lst :test 'equal))
+        (ht (make-hash-table :test 'equal)))
+
+    (mapcar #'(lambda (idx item)
+                (setf (gethash item ht) idx))
+            (iota (length lst))
+            set-lst)
+
+    ht))
