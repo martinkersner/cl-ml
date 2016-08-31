@@ -18,6 +18,6 @@ Martin Kersner, <m.kersner@gmail.com>
 ## Install
 ```common-lisp
 # load asdf
-(push "<directory of lisp-ml>" asdf:*central-registry*)
+(push (namestring (ext:cd)) asdf:*central-registry*)
 (asdf:load-system :lispml)
 ```
