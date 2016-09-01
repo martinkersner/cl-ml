@@ -6,6 +6,8 @@
 
 (in-package :lispml)
 
+;;; Compute entropy of given list.
+;;; Created for decision trees algorithm.
 ;;; TODO unit tests!
 (defun entropy (lst)
   (let ((ht (make-hash-table :test 'equal))
@@ -37,3 +39,21 @@
                                  (* tmp-div (log tmp-div 2)))) 
               count-lst)))
   ))
+
+;;; Compute information gain for two children and one parent.
+;;; Created for decision trees algorithm.
+;;; TODO unit tests!
+(defun information-gain (parent-entropy lst1 lst2)
+  (let* ((lst1-len (length lst1))
+         (lst2-len (length lst2))
+         (total-len (+ lst1-len lst2-len))
+         (lst1-entr (entropy lst1))
+         (lst2-entr (entropy lst2)))
+
+    (flet ((weighted-average (entr cnt tot)
+                   (* entr (/ cnt tot))))
+
+      (- parent-entropy (+
+                          (weighted-average lst1-entr lst1-len total-len)
+                          (weighted-average lst2-entr lst2-len total-len)))
+  )))
