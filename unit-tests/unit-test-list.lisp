@@ -39,6 +39,18 @@
     (equal (multiple-value-list (maximum '(10 10 10))) '(10 0))
   ))
 
+(deftest test-minimum ()
+  (check
+    ;; base minimum function, return both minimum value and index
+    (equal (multiple-value-list (minimum '()))         '(NIL 0))
+    (equal (multiple-value-list (minimum '(1)))        '(1 0))
+    (equal (multiple-value-list (minimum '(9 10 11)))  '(9 0))
+    (equal (multiple-value-list (minimum '(11 10 12))) '(10 1))
+    (equal (multiple-value-list (minimum '(13 12 11))) '(11 2))
+    (equal (multiple-value-list (minimum '(11 10 10))) '(10 1))
+    (equal (multiple-value-list (minimum '(10 10 10))) '(10 0))
+  ))
+
 (deftest test-random ()
   (check
     (defparameter *lst0* (iota 6))
@@ -55,5 +67,6 @@
     (test-range)
     (test-nth-pos-neg)
     (test-maximum)
+    (test-minimum)
     (test-random)
   ))

@@ -43,9 +43,26 @@
 (defun (setf nth-pos-neg) (val idx lst)
   (setf (nth (circular-index idx lst) lst) val))
 
-;;; Find minimum value in a list.
+;;; Find the minimum value and its index in list.
 (defun minimum (lst)
+  (let ((min-idx 0)
+        (min-val (car lst)))
+
+  (mapcar #'(lambda (x y) (if (< x min-val)
+                            (progn
+                              (setf min-val x)
+                              (setf min-idx y))))
+          lst (iota (length lst)))
+
+  (values min-val min-idx)))
+
+;;; Find minimum value in a list.
+(defun minimum-val (lst)
   (apply 'min lst))
+
+;;; Find the index of minimum value in a list.
+(defun minimum-idx (lst)
+  (cadr (multiple-value-list (minimum lst))))
 
 ;;; Find the maximum value and its index in list.
 (defun maximum (lst)
