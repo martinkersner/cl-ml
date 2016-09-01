@@ -13,6 +13,7 @@
                (:file "list")
                (:file "matrix")
                (:file "feature-extraction-and-preprocessing")
+               (:file "utils")
                (:file "csv-reader")
 
                (:module k-nearest-neighbors
