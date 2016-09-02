@@ -6,13 +6,13 @@
 (in-package :lispml)
 
 (defclass id3-dt ()
-  ;((weights :accessor get-weights)))
-  ())
+  ((tree :accessor get-tree
+         :initform nil)))
 
-(defun split-node (x-lst y-lst)
+(defun split-node (x-lst)
   (let ((left-idx  nil)
         (right-idx nil)
-        (threshold (mean (remove-duplicates y-lst :test 'equal))))
+        (threshold (mean (remove-duplicates x-lst :test 'equal))))
 
     (mapcar #'(lambda (idx val) (if (< val threshold)
                                   (push idx left-idx)
@@ -21,64 +21,70 @@
             (iota (length x-lst))
             x-lst)
 
-    (list left-idx right-idx)
-  ))
+    (list left-idx right-idx)))
 
 (defun extract-rows (idxs lst)
   (mapcar #'(lambda (idx) (nth idx lst)) idxs))
 
 (defun fit-id3-rec (parent-entropy X-lst y-lst)
-  (let ((max-val    0) ; TODO change!
-        (max-ixd    0)
-
+  (let ((max-information-gain 0)
         (tmp-information-gain 0)
-        (split-idxs  nil)
+        (split-idxs nil)
         (left-idxs  nil)
         (right-idxs nil)
         (feature-idx-split 0)
-        (current-entropy (entropy y-lst))
-        )
+        (entropy-left  0)
+        (entropy-right 0))
 
     (mapcar #'(lambda (idx x-veclst) (progn
-                                       (setf split-idxs (split-node x-veclst y-lst))
+                                       (setf split-idxs (split-node x-veclst))
                                        (setf tmp-information-gain (information-gain
                                                                     parent-entropy
-                                                                    (extract-rows (car split-idxs) y-lst)
+                                                                    (extract-rows (car split-idxs)  y-lst)
                                                                     (extract-rows (cadr split-idxs) y-lst)))
 
-                                       (if (> max-val tmp-information-gain)
+                                       (if (< max-information-gain tmp-information-gain)
                                          (progn
-                                           (setf left-idxs (car split-idxs))
+                                           (setf max-information-gain tmp-information-gain)
+                                           (setf left-idxs  (car split-idxs))
                                            (setf right-idxs (cadr split-idxs))
                                            (setf feature-idx-split idx)))))
             (iota (length X-lst))
             X-lst)
 
-    (list feature-idx-split
+    ;; Compute entropy for both (left and right) child of the best split according to information gain.
+    (setf entropy-left  (entropy (extract-rows left-idxs y-lst)))
+    (setf entropy-right (entropy (extract-rows right-idxs y-lst)))
 
-          (if (> (length left-idxs) 0)
-            (fit-id3-rec current-entropy
+    (list 'id-split feature-idx-split
+          'entropy (entropy y-lst)
+          'samples (length y-lst)
+
+          (if (and (> (length left-idxs) 1)
+                   (> entropy-left 0))
+            (fit-id3-rec entropy-left
                          (transpose-list (extract-rows left-idxs (transpose-list X-lst)))
                          (extract-rows left-idxs y-lst))
-            NIL)
+            (list 'entropy entropy-left
+                  'samples (length left-idxs)))
 
-          (if (> (length right-idxs) 0)
-            (fit-id3-rec current-entropy
+          (if (and (> (length right-idxs) 1)
+                   (> entropy-right 0))
+            (fit-id3-rec entropy-right
                          (transpose-list (extract-rows right-idxs (transpose-list X-lst)))
                          (extract-rows right-idxs y-lst))
-            NIL))
-  ))
+            (list 'entropy entropy-right
+                  'samples (length right-idxs))))))
 
 (defgeneric fit (dt X y)
-  (:documentation ""))
+  (:documentation "Build a decision tree from the training set (X, y)."))
 
 (defmethod fit ((dt id3-dt) X y)
   (let ((X-lst (matrix-data (transpose X)))
-        (y-lst (matrix-data-peel y))
-        (tree nil))
+        (y-lst (matrix-data-peel y)))
 
-    (fit-id3-rec 1 X-lst y-lst)
-  ))
+    (setf (get-tree dt)
+      (fit-id3-rec (entropy y-lst) X-lst y-lst))))
 
 (defgeneric predict (dt X)
   (:documentation ""))
@@ -91,3 +97,9 @@
 
 (defmethod score ((dt id3-dt) X y)
   )
+
+(defgeneric print-tree (dt)
+  (:documentation "Prints built decision tree."))
+
+(defmethod print-tree ((dt id3-dt))
+  (print (get-tree dt)))

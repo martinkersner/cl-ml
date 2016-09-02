@@ -20,25 +20,26 @@
 
 (defun preprocess-data (data)
   (let ((uniq-lst nil)
+        (preprocess-data nil)
         (ht-list '())
         (ht nil))
 
+    (setf preprocessed-data
     (mapcar #'(lambda (lst) (progn
                               (setf uniq-lst (remove-duplicates lst :test 'equal))
                               (if (> (length uniq-lst) 2)
-                                ;; TODO send a flag that list is already unique
                                 (progn
-                                  (setf ht (one-hot-encoding uniq-lst))
+                                  (setf ht (one-hot-encoding uniq-lst T))
                                   (setf ht-list (nconc ht-list (list ht)))
                                   (transpose-list (apply-hash-table-on-list ht lst)))
 
                                 (progn
-                                  (setf ht (unique-numbers uniq-lst))
+                                  (setf ht (unique-numbers uniq-lst T))
                                   (setf ht-list (nconc ht-list (list ht)))
-                                  (apply-hash-table-on-list ht lst)))
-                              ))
+                                  (apply-hash-table-on-list ht lst)))))
+            (matrix-data (transpose data))))
 
-      (matrix-data (transpose data)))))
+    (values preprocessed-data ht-list)))
 
 (defun flatten-list (l)
   (cond ((null l) nil)
@@ -63,18 +64,24 @@
 (multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path*))
 
 ;;; PREPROCESS DATASET
-(setf train-data-processed
-  (matrix-from-data (transpose-list
-                      (transform-list (flatten-list (preprocess-data train-data)) 14 5))))
+(multiple-value-setq (prep-labels ht-labels)
+  (preprocess-data train-labels))
 
 (setf train-labels-processed
-  (matrix-from-data (preprocess-data train-labels)))
+  (matrix-from-data prep-labels))
 
-(print train-data-processed)
-(print train-labels-processed)
+(multiple-value-setq (prep-data ht-data)
+  (preprocess-data train-data))
+
+(setf train-data-processed
+  (matrix-from-data (transpose-list
+                      (transform-list (flatten-list prep-data) 14 5))))
 
 ;;; Train model.
-;(fit *dt* train-data train-labels)
+(fit *dt* train-data-processed train-labels-processed)
+
+;;; Display trained tree
+(print-tree *dt*)
 
 ;;;; PREDICTION
 ;(print
