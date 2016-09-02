@@ -10,9 +10,14 @@
     
     tmp-one-hot))
 
+(defun make-uniq (lst &optional (is-uniq nil))
+  (if is-uniq
+    lst
+    (remove-duplicates lst :test 'equal)))
+
 ;;; Create one hot encoding from given categorical values.
-(defun one-hot-encoding (lst)
-  (let* ((set-lst (remove-duplicates lst :test 'equal))
+(defun one-hot-encoding (lst &optional (is-uniq nil))
+  (let* ((set-lst (make-uniq lst is-uniq))
          (len-lst (length set-lst))
          (ht (make-hash-table :test 'equal))
          (tmp-one-hot nil))
@@ -30,8 +35,8 @@
 
 ;;; Create hash table where *keys* are unique items from given list
 ;;; and *values* are ascending numbers counted from 0.
-(defun unique-numbers (lst)
-  (let ((set-lst (remove-duplicates lst :test 'equal))
+(defun unique-numbers (lst &optional (is-uniq nil))
+  (let ((set-lst (make-uniq lst is-uniq))
         (ht (make-hash-table :test 'equal)))
 
     (mapcar #'(lambda (idx item)
