@@ -62,6 +62,14 @@
     (equal (reduce #'+ (randomize-list *lst2*)) (reduce #'+ *lst2*))
   ))
 
+(deftest test-math-list ()
+  (check
+    ;; sum
+    (equal (sum-list-of-lists '((1 1) (2 2))) '(3 3))
+    (equal (sum-list-of-lists '((1 1) (2 2) (2 1))) '(5 4))
+    (equal (sum-list-of-lists '((1 1 4) (2 2 1) (2 1 2))) '(5 4 7))
+  ))
+
 (deftest test-list ()
   (combine-results
     (test-range)
@@ -69,4 +77,5 @@
     (test-maximum)
     (test-minimum)
     (test-random)
+    (test-math-list)
   ))

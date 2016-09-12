@@ -108,3 +108,15 @@
       (setf lst (remove-nth rand-idx lst)))
 
     rand-lst))
+
+(defun sum-two-lists (lst-1 lst-2)
+  (mapcar #'(lambda (num-1 num-2) (+ num-1 num-2)) lst-1 lst-2))
+
+;;; Sum lists.
+;;; ((1 1) (2 2)) = > (3 3)
+(defun sum-list-of-lists (lst-lsts)
+  (let ((zero-vec (make-list (length (car lst-lsts)) :initial-element 0)))
+
+    (mapcar #'(lambda (lst) (setf zero-vec (sum-two-lists zero-vec lst))) lst-lsts)
+
+    zero-vec))
