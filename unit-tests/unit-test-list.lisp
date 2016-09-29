@@ -96,7 +96,7 @@
     (equal (remove-nth 1 '(0 1 2 3)) '(0 2 3))
     (equal (remove-nth 2 '(0 1 2 3)) '(0 1 3))
     (equal (remove-nth 3 '(0 1 2 3)) '(0 1 2))
-   ))
+  ))
 
 (deftest test-random ()
   (check
@@ -111,7 +111,12 @@
 
 (deftest test-math-list ()
   (check
-    ;; sum
+    ;; sum two lists
+    (equal (sum-two-lists '(0) '(1)) '(1))
+    (equal (sum-two-lists '(1) '(0)) '(1))
+    (equal (sum-two-lists '(0 1 2 3) '(1 2 3 4)) '(1 3 5 7))
+
+    ;; sum list of lists
     (equal (sum-list-of-lists '((1 1) (2 2))) '(3 3))
     (equal (sum-list-of-lists '((1 1) (2 2) (2 1))) '(5 4))
     (equal (sum-list-of-lists '((1 1 4) (2 2 1) (2 1 2))) '(5 4 7))
