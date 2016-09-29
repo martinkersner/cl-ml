@@ -12,6 +12,23 @@
     (equal (range 0 4 3) '(0 3))
   ))
 
+(deftest test-iota ()
+  (check
+    (equal (iota 0) '())
+    (equal (iota 1) '(0))
+    (equal (iota 2) '(0 1))
+    (equal (iota 3) '(0 1 2))
+
+    ;; test of various start position
+    (equal (iota 0 0) '())
+    (equal (iota 1 1) '(1))
+    (equal (iota 2 2) '(2 3))
+    (equal (iota 3 3) '(3 4 5))
+
+    (equal (iota 2 5) '(5 6))
+    (equal (iota 4 9) '(9 10 11 12))
+  ))
+
 (deftest test-circular-index ()
   (check
     ;; access list with positive or negative indexes that circle around list
@@ -96,6 +113,7 @@
   (combine-results
     (test-range)
     (test-circular-index)
+    (test-iota)
     (test-nth-pos-neg)
     (test-maximum)
     (test-minimum)
