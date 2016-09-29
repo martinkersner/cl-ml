@@ -90,6 +90,14 @@
     (equal (multiple-value-list (minimum '(10 10 10))) '(10 0))
   ))
 
+(deftest test-remove-nth ()
+  (check
+    (equal (remove-nth 0 '(0 1 2 3)) '(1 2 3))
+    (equal (remove-nth 1 '(0 1 2 3)) '(0 2 3))
+    (equal (remove-nth 2 '(0 1 2 3)) '(0 1 3))
+    (equal (remove-nth 3 '(0 1 2 3)) '(0 1 2))
+   ))
+
 (deftest test-random ()
   (check
     (defparameter *lst0* (iota 6))
@@ -117,6 +125,7 @@
     (test-nth-pos-neg)
     (test-maximum)
     (test-minimum)
+    (test-remove-nth)
     (test-random)
     (test-math-list)
   ))
