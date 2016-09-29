@@ -67,6 +67,6 @@
 
 ;;; Plot decision boundary.
 (ext:shell
-  (concatenate-with-space (list "./plot" *dataset-path*
+  (concatenate-with-space (list "./plot-log-reg-2d.bash" *dataset-path*
                                          *x-min* *y-min*
                                          *x-max* *y-max*)))
