@@ -57,3 +57,16 @@
                           (weighted-average lst1-entr lst1-len total-len)
                           (weighted-average lst2-entr lst2-len total-len)))
   )))
+
+(defun concatenate-with-space (str-lst &optional (complete ""))
+  (let* ((space " ")
+         (item-tmp (car str-lst))
+         (item (if (stringp item-tmp)
+                 item-tmp
+                 (write-to-string item-tmp))))
+
+    (if str-lst
+      (concatenate-with-space
+        (cdr str-lst)
+        (concatenate 'string complete item space))
+      complete)))

@@ -12,19 +12,6 @@
 
     (/ (- (- w0) (* w1 x)) w2)))
 
-(defun concatenate-with-space (str-lst &optional (complete ""))
-  (let* ((space " ")
-         (item-tmp (car str-lst))
-         (item (if (stringp item-tmp)
-                 item-tmp
-                 (write-to-string item-tmp))))
-
-    (if str-lst
-      (concatenate-with-space
-        (cdr str-lst)
-        (concatenate 'string complete item space))
-      complete)))
-
 ;;; Load data.
 (defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset* (matrix-from-data (read-csv *dataset-path*)))
