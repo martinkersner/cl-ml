@@ -6,10 +6,10 @@
 (deftest test-range ()
   (check
     ;; create ascending series of numbers
-    (equal (range 0 0) '(0))
-    (equal (range 0 4) '(0 1 2 3 4))
-    (equal (range 0 4 2) '(0 2 4))
-    (equal (range 0 4 3) '(0 3 ))
+    (equal (range 0 0) '())
+    (equal (range 0 4) '(0 1 2 3))
+    (equal (range 0 4 2) '(0 2))
+    (equal (range 0 4 3) '(0 3))
   ))
 
 (deftest test-nth-pos-neg ()

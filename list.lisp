@@ -3,7 +3,8 @@
 
 (in-package :lispml)
 
-;;; TODO fix unit tests!
+;;; Generate range of numbers.
+;;; Output similar to Python.
 (defun range (start end &optional (step 1) (lst NIL))
   (if (< start end)
     (range (+ start step) end step (append lst (list start)))
