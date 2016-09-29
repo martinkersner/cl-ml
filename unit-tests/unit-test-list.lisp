@@ -12,6 +12,28 @@
     (equal (range 0 4 3) '(0 3))
   ))
 
+(deftest test-circular-index ()
+  (check
+    ;; access list with positive or negative indexes that circle around list
+    (equal (circular-index 0 '(0 1 2 3)) 0)
+    (equal (circular-index 1 '(0 1 2 3)) 1)
+    (equal (circular-index 2 '(0 1 2 3)) 2)
+    (equal (circular-index 3 '(0 1 2 3)) 3)
+    (equal (circular-index 4 '(0 1 2 3)) 0)
+    (equal (circular-index 5 '(0 1 2 3)) 1)
+    (equal (circular-index 6 '(0 1 2 3)) 2)
+    (equal (circular-index 7 '(0 1 2 3)) 3)
+
+    (equal (circular-index -1 '(0 1 2 3)) 3)
+    (equal (circular-index -2 '(0 1 2 3)) 2)
+    (equal (circular-index -3 '(0 1 2 3)) 1)
+    (equal (circular-index -4 '(0 1 2 3)) 0)
+    (equal (circular-index -5 '(0 1 2 3)) 3)
+    (equal (circular-index -6 '(0 1 2 3)) 2)
+    (equal (circular-index -7 '(0 1 2 3)) 1)
+    (equal (circular-index -8 '(0 1 2 3)) 0)
+  ))
+
 (deftest test-nth-pos-neg ()
   (defparameter *list* '(1 2 3 4 5 6))
 
@@ -73,6 +95,7 @@
 (deftest test-list ()
   (combine-results
     (test-range)
+    (test-circular-index)
     (test-nth-pos-neg)
     (test-maximum)
     (test-minimum)

@@ -20,7 +20,6 @@
   (car (last lst)))
 
 ;;; Creates valid index in list.
-;;; TODO unit test
 (defun circular-index (idx lst)
   (let* ((l (length lst))
          (new-idx (mod (abs idx) l))
