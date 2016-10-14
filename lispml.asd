@@ -16,6 +16,9 @@
                (:file "utils")
                (:file "csv-reader")
 
+               (:module optimizers
+                  :components ((:file "SGD")))
+
                (:module k-nearest-neighbors
                   :components ((:file "knn")))
 

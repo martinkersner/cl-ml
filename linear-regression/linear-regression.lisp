@@ -36,12 +36,21 @@
 (defgeneric fit (linreg X y)
   (:documentation "Fit linear model"))
 
+;(defmethod fit ((linreg linear-regression) X y)
+;  (let* ((X (prefix-const-val 1.0 X))
+;         (X-T (transpose X)))
+;
+;    (setf (get-weights linreg)
+;      (dot (inv (dot X-T X)) (dot X-T y)))))
+
 (defmethod fit ((linreg linear-regression) X y)
-  (let* ((X (prefix-const-val 1.0 X))
-         (X-T (transpose X)))
+  (let ((X (prefix-const-val 1.0 X))
+        (num-epoch 2)
+        (lr 0.005))
 
     (setf (get-weights linreg)
-      (dot (inv (dot X-T X)) (dot X-T y)))))
+          (SGD-optimizer #'(lambda (d w) (dot d w)) 
+                         X y num-epoch lr))))
 
 (defgeneric predict (linreg X)
   (:documentation "Predict using linear model"))

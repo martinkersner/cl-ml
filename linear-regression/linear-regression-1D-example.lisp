@@ -6,11 +6,14 @@
 (in-package :lispml)
 
 ;;; INITIALIZATION
-(fit *linreg* train-data train-labels)
+(defparameter *linreg* (make-instance 'linear-regression))
 
 ;;; TRAINING
 (defparameter *train-dataset-path* "datasets/linear-regression/pizza-train.csv")
 (multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path* 1))
+
+;;; Train model.
+(fit *linreg* train-data train-labels)
 
 ;;; TESTING
 (defparameter *test-dataset-path* "datasets/linear-regression/pizza-test.csv")
