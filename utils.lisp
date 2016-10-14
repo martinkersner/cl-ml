@@ -70,3 +70,16 @@
         (cdr str-lst)
         (concatenate 'string complete item space))
       complete)))
+
+
+(defun load-dataset (dataset-path label-col-idx)
+  (let* (;;; Load data.
+        (dataset (matrix-from-data (read-csv dataset-path)))
+
+        ;;; Data preprocessing.
+        (data
+          (remove-col label-col-idx dataset))
+        (labels
+          (matrix-from-data (nth-col label-col-idx dataset))))
+
+  (values data labels)))
