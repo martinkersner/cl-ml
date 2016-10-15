@@ -22,3 +22,19 @@
 ;;; Evaluate model.
 (defparameter *r-squared* (score *linreg* test-data test-labels))
 (print *r-squared*)
+
+(setf *weights*
+      (matrix-data (get-weights *linreg*)))
+
+;;; Processing weights for plotting decision boundary.
+(defparameter *col-idx* 0)
+(defparameter *x-min* (nth-col-min *col-idx* test-data))
+(defparameter *x-max* (nth-col-max *col-idx* test-data))
+(defparameter *y-min* ([][] 0 0 (predict *linreg* (matrix-from-data (list (list *x-min*))))))
+(defparameter *y-max* ([][] 0 0 (predict *linreg* (matrix-from-data (list (list *x-max*))))))
+
+;;; Plot regression line.
+(ext:shell
+  (concatenate-with-space (list "./plot-lin-reg-2d.bash" *test-dataset-path*
+                                         *x-min* *y-min*
+                                         *x-max* *y-max*)))
