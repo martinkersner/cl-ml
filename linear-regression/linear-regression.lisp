@@ -29,20 +29,13 @@
 ;    (- 1 (/ ss-res ss-tot))))
 
 ;;; n-D linear regression
-;;; TODO use SGD
 (defclass linear-regression ()
   ((weights :accessor get-weights)))
 
 (defgeneric fit (linreg X y)
   (:documentation "Fit linear model"))
 
-;(defmethod fit ((linreg linear-regression) X y)
-;  (let* ((X (prefix-const-val 1.0 X))
-;         (X-T (transpose X)))
-;
-;    (setf (get-weights linreg)
-;      (dot (inv (dot X-T X)) (dot X-T y)))))
-
+;;; TODO take num-epoch and lr out of method
 (defmethod fit ((linreg linear-regression) X y)
   (let ((X (prefix-const-val 1.0 X))
         (num-epoch 2)
