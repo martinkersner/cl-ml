@@ -12,7 +12,7 @@
 (defclass k-nearest-neighbors ()
   ((X :accessor get-X)
    (y :accessor get-y)
-   (k :reader   get-k :initform 2))) ; default number of nearest neighbors
+   (k :reader   get-k :initform 1))) ; default number of nearest neighbors
 
 (defgeneric fit (knn X y &optional params)
   (:documentation "Fit the model using X as training data and y as target values."))
@@ -25,31 +25,18 @@
   (:documentation "Predict the class labels for the provided data."))
 
 (defmethod predict ((knn k-nearest-neighbors) X &optional params)
-  (let* ((class-count (make-hash-table))
-         (labels-lst (matrix-data (get-y knn)))
-         (k (read-param params 'k (get-k knn)))
-         (k-neighbors (subseq (arg-sort-col-mat
-                                (L2 (get-x knn) X))
-                              0 k)) ; take only the closest k data points
-         (k-labels (mapcar #'(lambda (x) (car (nth x labels-lst))) k-neighbors))
-         (final-class 0)
-         (max_count 0))
+  (let ((labels-lst (matrix-data (get-y knn)))
+        (k (read-param params 'k (get-k knn))))
 
-    ;; count number of class occurences
-    (mapcar #'(lambda (x)
-                (let ((val (gethash x class-count)))
-                   (if val
-                     (setf (gethash x class-count) (+ 1 val))
-                     (setf (gethash x class-count) 1))
-                   ))
-            k-labels)
+    ;;; Compute distances between training data and given feature vector
+    ;;; and return labels of first k closest instances.
+    (setf k-labels
+          (mapcar #'(lambda (idx)
+                      (car (nth idx labels-lst))) ; access label using index
 
-    ; find class with the highest occurence
-    (maphash #'(lambda (k v)
-                  (if (> v max_count)
-                      (progn
-                        (setf max_count v)
-                        (setf final-class k))))
-             class-count)
+                  (subseq (arg-sort-col-mat ; arg sort L2 differences
+                            (L2 (get-x knn) X)) ; compute difference between training data and given feature vector
+                          0 k))) ; return first k indices
 
-  final-class))
+    ;; Return the class with the most frequent class within k closest neighbors.
+    (aggregate-maximum k-labels)))

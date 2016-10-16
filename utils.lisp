@@ -58,6 +58,7 @@
                           (weighted-average lst2-entr lst2-len total-len)))
   )))
 
+;;; TODO unit tests!
 (defun concatenate-with-space (str-lst &optional (complete ""))
   (let* ((space " ")
          (item-tmp (car str-lst))
@@ -71,7 +72,7 @@
         (concatenate 'string complete item space))
       complete)))
 
-
+;;; TODO unit tests!
 (defun load-dataset (dataset-path label-col-idx)
   (let* (;;; Load data.
         (dataset (matrix-from-data (read-csv dataset-path)))
@@ -88,6 +89,7 @@
 ;;; Definition of parameters is expected as list of couples where
 ;;; the first is name of parameter and second is value.
 ;;; Example: '((num-epoch 10) (lr 0.001))
+;;; TODO unit tests
 (defun generate-params (param-lst)
   (let ((params (make-hash-table)))
 
@@ -99,6 +101,7 @@
 
 ;;; Read item from hash table of parameters. If sought key does not exist return
 ;;; default value for particular parameter.
+;;; TODO unit tests
 (defun read-param (ht-params param-name default-val)
   (if (not ht-params)
     default-val
@@ -107,3 +110,45 @@
       (if (not found)
         default-val
         val))))
+
+;;; TODO unit test
+(defun aggregate-count (lst)
+  (let ((value-count-ht (make-hash-table :test 'equal)))
+
+    (mapcar #'(lambda (key)
+                (progn
+                  (multiple-value-setq (val found) (gethash key value-count-ht))
+                   (if found
+                     (setf (gethash key value-count-ht) (+ 1 val))
+                     (setf (gethash key value-count-ht) 1))))
+
+                lst)
+
+  value-count-ht))
+
+;;; TODO unit test
+(defun aggregate-maximum (lst)
+  (let ((value-count-ht (make-hash-table :test 'equal))
+        (max-count 0)
+        (max-key NIL))
+
+  (flet ((update-maximum-value (key cnt)
+            (progn
+              (setf (gethash key value-count-ht) cnt)
+
+              (if (> cnt max-count)
+                (progn
+                  (setf max-count cnt)
+                  (setf max-key key))))))
+
+    (mapcar #'(lambda (key)
+                (progn
+                  (multiple-value-setq (val found) (gethash key value-count-ht))
+
+                   (if found
+                     (update-maximum-value key (+ 1 val))
+                     (update-maximum-value key 1))))
+
+                lst)
+
+  max-key)))

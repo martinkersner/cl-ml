@@ -29,7 +29,7 @@
 (fit *knn* *train-data* *train-labels*)
 
 (defparameter *params*
-  (generate-params '((k 4))))
+  (generate-params '((k 3))))
 
 (defparameter *y-test*
   (predict *knn* *row-data* *params*))
