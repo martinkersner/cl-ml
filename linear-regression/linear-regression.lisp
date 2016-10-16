@@ -24,10 +24,10 @@
           (SGD-optimizer #'(lambda (d w) (dot d w))
                          X y :num-epoch num-epoch :lr lr))))
 
-(defgeneric predict (linreg X)
+(defgeneric predict (linreg X &optional params)
   (:documentation "Predict using linear model."))
 
-(defmethod predict ((linreg linear-regression) X)
+(defmethod predict ((linreg linear-regression) X &optional params)
   (let ((X (prefix-const-val 1.0 X)))
     (dot X (get-weights linreg))))
 

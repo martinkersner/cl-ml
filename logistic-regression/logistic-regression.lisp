@@ -22,9 +22,9 @@
           (SGD-optimizer #'(lambda (d w) (sigmoid (dot d w)))
                          X y :num-epoch num-epoch :lr lr))))
 
-(defgeneric predict (logreg X)
+(defgeneric predict (logreg X &optional params)
   (:documentation "Predict class labels for samples in X."))
 
-(defmethod predict ((logreg logistic-regression) X)
+(defmethod predict ((logreg logistic-regression) X &optional params)
   (let ((X (prefix-const-val 1.0 X)))
     (sigmoid (dot X (get-weights logreg)))))

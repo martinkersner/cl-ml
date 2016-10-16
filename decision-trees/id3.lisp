@@ -86,10 +86,10 @@
     (setf (get-tree dt)
       (fit-id3-rec (entropy y-lst) X-lst y-lst))))
 
-(defgeneric predict (dt X)
+(defgeneric predict (dt X &optional params)
   (:documentation ""))
 
-(defmethod predict ((dt id3-dt) X)
+(defmethod predict ((dt id3-dt) X &optional params)
   )
 
 (defgeneric score (dt X y)
