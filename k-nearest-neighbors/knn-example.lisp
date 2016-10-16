@@ -6,25 +6,33 @@
 (in-package :lispml)
 
 ;;; Load data
+(defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset*
-  (matrix-from-data (read-csv "datasets/logistic-regression/dataset_small.csv")))
+  (matrix-from-data (read-csv *dataset-path*)))
 
 ;;; Training data preparation
 (defparameter *label-col* 2)
 
-(defparameter *data* (remove-col *label-col* *dataset*))
-(defparameter *labels* (matrix-from-data (nth-col *label-col* *dataset*)))
+(defparameter *train-data* (remove-col *label-col* *dataset*))
+(defparameter *train-labels* (matrix-from-data (nth-col *label-col* *dataset*)))
 
-;(defparameter *x-test* '((2 5)))
-;(defparameter *x-test* '((-1 8)))
-(defparameter *x-test* '((0 8.5)))
+;(defparameter *x-test* '((2 5))) ; 1 class
+;(defparameter *x-test* '((-1 8))) ; 0 class
+(defparameter *x-test* '((0 8.5))) ; 0 class
 
 (defparameter *row-data* (matrix-from-data *x-test*))
 
-(defparameter *k* 4)
+;;; INITIALIZATION
+(defparameter *knn* (make-instance 'k-nearest-neighbors))
+
+;;; Train model.
+(fit *knn* *train-data* *train-labels*)
+
+(defparameter *params*
+  (generate-params '((k 4))))
 
 (defparameter *y-test*
-  (knn *row-data* *data* *labels* *k*))
+  (predict *knn* *row-data* *params*))
 
 (print *y-test*)
 

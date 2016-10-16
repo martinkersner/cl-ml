@@ -2,38 +2,54 @@
 ;;;; 2016/05/08 
 ;;;;
 ;;;; k-Nearest Neighbors 
-
-;;; TODO
-;;; prepare dataset specially for knn
-;;; and also include tests for algorithm verification
+;;;
+;;; TODO prepare dataset specially for knn
+;;; TODO and also include tests for algorithm verification
+;;; TODO predict from more feature vectors at once
 
 (in-package :lispml)
 
-(defun knn (data_row data_mat labels_mat k)
-  (let* ((class_count (make-hash-table))
-         (labels (matrix-data labels_mat))
-         (k_neighbors (subseq (arg-sort-col-mat ; take only the closest k data points
-                        (power 0.5 (sum-rows (power 2 (subtract-row data_mat data_row))))) ; Euclidean distance
+(defclass k-nearest-neighbors ()
+  ((X :accessor get-X)
+   (y :accessor get-y)
+   (k :reader   get-k :initform 2))) ; default number of nearest neighbors
+
+(defgeneric fit (knn X y &optional params)
+  (:documentation "Fit the model using X as training data and y as target values."))
+
+(defmethod fit ((knn k-nearest-neighbors) X y &optional params)
+  (progn (setf (get-X knn) X)
+         (setf (get-y knn) y)))
+
+(defgeneric predict (knn X &optional params)
+  (:documentation "Predict the class labels for the provided data."))
+
+(defmethod predict ((knn k-nearest-neighbors) X &optional params)
+  (let* ((class-count (make-hash-table))
+         (labels-lst (matrix-data (get-y knn)))
+         (k (read-param params 'k (get-k knn)))
+         (k-neighbors (subseq (arg-sort-col-mat ; take only the closest k data points
+                        (power 0.5 (sum-rows (power 2 (subtract-row (get-X knn) X))))) ; Euclidean distance
                        0 k))
-         (k_labels (mapcar #'(lambda (x) (car (nth x labels))) k_neighbors))
-         (final_class 0)
+         (k-labels (mapcar #'(lambda (x) (car (nth x labels-lst))) k-neighbors))
+         (final-class 0)
          (max_count 0))
 
     ;; count number of class occurences
     (mapcar #'(lambda (x)
-                (let ((val (gethash x class_count)))
+                (let ((val (gethash x class-count)))
                    (if val
-                     (setf (gethash x class_count) (+ 1 val))
-                     (setf (gethash x class_count) 1))
+                     (setf (gethash x class-count) (+ 1 val))
+                     (setf (gethash x class-count) 1))
                    ))
-            k_labels)
+            k-labels)
 
-    ;; find class with the highest occurence
+    ; find class with the highest occurence
     (maphash #'(lambda (k v)
                   (if (> v max_count)
                       (progn
                         (setf max_count v)
-                        (setf final_class k))))
-             class_count)
+                        (setf final-class k))))
+             class-count)
 
-  final_class))
+  final-class))
