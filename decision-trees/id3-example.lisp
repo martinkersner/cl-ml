@@ -5,19 +5,6 @@
 
 (in-package :lispml)
 
-(defun load-dataset (dataset-path)
-  (let* (;;; Load data.
-        (dataset (matrix-from-data (read-csv dataset-path t)))
-
-        ;;; Data preprocessing.
-        (label-col-idx (- (matrix-cols dataset) 1)) ; labels are located in the last column of data matrix
-        (data  
-          (remove-col label-col-idx dataset))
-        (labels 
-          (matrix-from-data (nth-col label-col-idx dataset))))
-
-  (values data labels)))
-
 (defun preprocess-data (data)
   (let ((uniq-lst nil)
         (preprocess-data nil)
@@ -61,7 +48,7 @@
 
 ;;; TRAINING
 (defparameter *train-dataset-path* "datasets/decision-trees/cat-dog.csv")
-(multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path*))
+(multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path* 3))
 
 ;;; PREPROCESS DATASET
 (multiple-value-setq (prep-labels ht-labels)
