@@ -28,9 +28,9 @@
   (let* ((class-count (make-hash-table))
          (labels-lst (matrix-data (get-y knn)))
          (k (read-param params 'k (get-k knn)))
-         (k-neighbors (subseq (arg-sort-col-mat ; take only the closest k data points
-                        (power 0.5 (sum-rows (power 2 (subtract-row (get-X knn) X))))) ; Euclidean distance
-                       0 k))
+         (k-neighbors (subseq (arg-sort-col-mat
+                                (L2 (get-x knn) X))
+                              0 k)) ; take only the closest k data points
          (k-labels (mapcar #'(lambda (x) (car (nth x labels-lst))) k-neighbors))
          (final-class 0)
          (max_count 0))

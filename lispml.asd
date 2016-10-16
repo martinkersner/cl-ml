@@ -16,6 +16,9 @@
                (:file "utils")
                (:file "csv-reader")
 
+               (:module norms
+                  :components ((:file "L2")))
+
                (:module optimizers
                   :components ((:file "SGD"))
                   :components ((:file "BGD")))
