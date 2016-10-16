@@ -32,21 +32,21 @@
 (defclass linear-regression ()
   ((weights :accessor get-weights)))
 
-(defgeneric fit (linreg X y)
-  (:documentation "Fit linear model"))
+(defgeneric fit (linreg X y &optional params)
+  (:documentation "Fit linear model."))
 
 ;;; TODO take num-epoch and lr out of method
-(defmethod fit ((linreg linear-regression) X y)
+(defmethod fit ((linreg linear-regression) X y &optional params)
   (let ((X (prefix-const-val 1.0 X))
-        (num-epoch 2)
-        (lr 0.005))
+        (num-epoch (gethash 'num-epoch params))
+        (lr        (gethash 'lr        params)))
 
     (setf (get-weights linreg)
           (SGD-optimizer #'(lambda (d w) (dot d w)) 
-                         X y num-epoch lr))))
+                         X y :num-epoch num-epoch :lr lr))))
 
 (defgeneric predict (linreg X)
-  (:documentation "Predict using linear model"))
+  (:documentation "Predict using linear model."))
 
 (defmethod predict ((linreg linear-regression) X)
   (let ((X (prefix-const-val 1.0 X)))

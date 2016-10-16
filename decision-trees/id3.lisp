@@ -76,10 +76,10 @@
             (list 'entropy entropy-right
                   'samples (length right-idxs))))))
 
-(defgeneric fit (dt X y)
+(defgeneric fit (dt X y &optional params)
   (:documentation "Build a decision tree from the training set (X, y)."))
 
-(defmethod fit ((dt id3-dt) X y)
+(defmethod fit ((dt id3-dt) X y &optional params)
   (let ((X-lst (matrix-data (transpose X)))
         (y-lst (matrix-data-peel y)))
 

@@ -13,7 +13,10 @@
 (multiple-value-setq (train-data train-labels) (load-dataset *train-dataset-path* 2))
 
 ;;; Train model.
-(fit *linreg* train-data train-labels)
+(defparameter *params*
+  (generate-params '(('num-epoch 50)
+                     ('lr        0.005))))
+(fit *linreg* train-data train-labels *params*)
 
 ;;; PREDICTION
 (print
