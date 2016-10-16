@@ -100,8 +100,10 @@
 ;;; Read item from hash table of parameters. If sought key does not exist return
 ;;; default value for particular parameter.
 (defun read-param (ht-params param-name default-val)
-  (progn
-    (multiple-value-setq (val found) (gethash param-name ht-params))
-    (if (not found)
-      default-val
-      val)))
+  (if (not ht-params)
+    default-val
+    (progn
+      (multiple-value-setq (val found) (gethash param-name ht-params))
+      (if (not found)
+        default-val
+        val))))
