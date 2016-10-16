@@ -83,3 +83,16 @@
           (matrix-from-data (nth-col label-col-idx dataset))))
 
   (values data labels)))
+
+;;; Generate hash of parameters that are passed to training functions.
+;;; Definition of parameters is expected as list of couples where
+;;; the first is name of parameter and second is value.
+;;; Example: '(('num-epoch 10) ('lr 0.001))
+(defun generate-params (param-lst)
+  (let ((params (make-hash-table)))
+
+    (mapcar #'(lambda (name-val)
+                (setf (gethash (nth 0 name-val) params) (nth 1 name-val)))
+            param-lst)
+
+  params))

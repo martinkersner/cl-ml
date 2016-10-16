@@ -29,9 +29,9 @@
 (defparameter *logreg* (make-instance 'logistic-regression))
 
 ;;; Train model.
-(defparameter *params* (make-hash-table))
-(setf (gethash 'num-epoch *params*) 10)
-(setf (gethash 'lr        *params*) 0.005)
+(defparameter *params*
+  (generate-params '(('num-epoch 50)
+                     ('lr        0.005))))
 (fit *logreg* *data* *labels* *params*)
 
 ;;; Extract parameters of trained model.
