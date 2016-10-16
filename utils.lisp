@@ -87,7 +87,7 @@
 ;;; Generate hash of parameters that are passed to training functions.
 ;;; Definition of parameters is expected as list of couples where
 ;;; the first is name of parameter and second is value.
-;;; Example: '(('num-epoch 10) ('lr 0.001))
+;;; Example: '((num-epoch 10) (lr 0.001))
 (defun generate-params (param-lst)
   (let ((params (make-hash-table)))
 

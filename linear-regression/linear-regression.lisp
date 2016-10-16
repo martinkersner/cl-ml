@@ -42,7 +42,8 @@
         (lr        (gethash 'lr        params)))
 
     (setf (get-weights linreg)
-          (SGD-optimizer #'(lambda (d w) (dot d w)) 
+          ;(BGD-optimizer #'(lambda (d w) (dot d w))
+          (SGD-optimizer #'(lambda (d w) (dot d w))
                          X y :num-epoch num-epoch :lr lr))))
 
 (defgeneric predict (linreg X)

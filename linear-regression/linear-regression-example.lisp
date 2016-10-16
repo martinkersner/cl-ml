@@ -14,8 +14,8 @@
 
 ;;; Train model.
 (defparameter *params*
-  (generate-params '(('num-epoch 50)
-                     ('lr        0.005))))
+  (generate-params '((num-epoch 10)
+                     (lr        0.0005))))
 (fit *linreg* train-data train-labels *params*)
 
 ;;; PREDICTION
