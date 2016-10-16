@@ -5,52 +5,76 @@
 
 (in-package :lispml)
 
-(defun grad-ascent (data_mat labels_mat &key (lr 0.001) (max_iter 500))
-  (let* ((data_mat (prefix-const-val 1.0 data_mat))
-         (n (matrix-cols data_mat))
-         (weights (initialize-matrix n 1 1))
-         (data_mat_T (transpose data_mat))
-         (h)
-         (err))
+;;; Deprecated
+;(defun grad-ascent (data_mat labels_mat &key (lr 0.001) (max_iter 500))
+;  (let* ((data_mat (prefix-const-val 1.0 data_mat))
+;         (n (matrix-cols data_mat))
+;         (weights (initialize-matrix n 1 1))
+;         (data_mat_T (transpose data_mat))
+;         (h)
+;         (err))
+;
+;    (dotimes (i max_iter)
+;      (setf h (sigmoid (dot data_mat weights)))
+;      (setf err (subtract labels_mat h))
+;      (setf weights (add weights (dot (multiply lr data_mat_T) err))))
+;
+;  weights))
 
-    (dotimes (i max_iter)
-      (setf h (sigmoid (dot data_mat weights)))
-      (setf err (subtract labels_mat h))
-      (setf weights (add weights (dot (multiply lr data_mat_T) err))))
+;;; Deprecated
+;(defun stochastic-grad-ascent (data_mat labels_mat &key (max_iter 500))
+;  (let* ((data_mat (prefix-const-val 1.0 data_mat))
+;         (m (matrix-rows data_mat))
+;         (n (matrix-cols data_mat))
+;         (weights (initialize-matrix n 1 1))
+;         (h)
+;         (err))
+;
+;    (dotimes (i max_iter)
+;      (let ((data_index (iota m))
+;            (rand_index)
+;            (index)
+;            (lr)
+;            (current_data)
+;            (current_data_T)
+;            (current_label))
+;
+;      (dotimes(j m)
+;        (setf lr (+ 0.01 (/ 4 (+ 1.0 i j)))) ; why 4?
+;        (setf rand_index (random (length data_index)))
+;        (setf index (nth rand_index data_index))
+;
+;        (setf current_data (matrix-from-data (nth-row index data_mat)))
+;        (setf current_data_T (transpose current_data))
+;        (setf current_label (matrix-from-data (nth-row index labels_mat)))
+;
+;        (setf h (sigmoid (dot current_data weights)))
+;        (setf err (subtract current_label h))
+;
+;        (setf weights (add weights (dot (multiply lr current_data_T) err)))
+;        (setf data_index (remove-nth rand_index data_index))
+;        )))
+;
+;  weights))
 
-  weights))
+(defclass logistic-regression ()
+  ((weights :accessor get-weights)))
 
-(defun stochastic-grad-ascent (data_mat labels_mat &key (max_iter 500))
-  (let* ((data_mat (prefix-const-val 1.0 data_mat))
-         (m (matrix-rows data_mat))
-         (n (matrix-cols data_mat))
-         (weights (initialize-matrix n 1 1))
-         (h)
-         (err))
+(defgeneric fit (logreg X y &optional params)
+  (:documentation "Fit the model according to the given training data."))
 
-    (dotimes (i max_iter)
-      (let ((data_index (iota m))
-            (rand_index)
-            (index)
-            (lr)
-            (current_data)
-            (current_data_T)
-            (current_label))
+(defmethod fit ((logreg logistic-regression) X y &optional params)
+  (let ((X (prefix-const-val 1.0 X))
+        (num-epoch (gethash 'num-epoch params))
+        (lr        (gethash 'lr        params)))
 
-      (dotimes(j m)
-        (setf lr (+ 0.01 (/ 4 (+ 1.0 i j)))) ; why 4?
-        (setf rand_index (random (length data_index)))
-        (setf index (nth rand_index data_index))
+    (setf (get-weights logreg)
+          (SGD-optimizer #'(lambda (d w) (sigmoid (dot d w)))
+                         X y :num-epoch num-epoch :lr lr))))
 
-        (setf current_data (matrix-from-data (nth-row index data_mat)))
-        (setf current_data_T (transpose current_data))
-        (setf current_label (matrix-from-data (nth-row index labels_mat)))
+(defgeneric predict (logreg X)
+  (:documentation "Predict class labels for samples in X."))
 
-        (setf h (sigmoid (dot current_data weights)))
-        (setf err (subtract current_label h))
-
-        (setf weights (add weights (dot (multiply lr current_data_T) err)))
-        (setf data_index (remove-nth rand_index data_index))
-        )))
-
-  weights))
+(defmethod predict ((logreg logistic-regression) X)
+  (let ((X (prefix-const-val 1.0 X)))
+    (sigmoid (dot X (get-weights logreg)))))

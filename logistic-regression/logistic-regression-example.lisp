@@ -6,9 +6,9 @@
 (in-package :lispml)
 
 (defun compute-y-coordinate (weights x)
-  (let ((w0 (caar weights))
-        (w1 (caadr weights))
-        (w2 (caaddr weights)))
+  (let ((w0 (nth 0 weights))
+        (w1 (nth 1 weights))
+        (w2 (nth 2 weights)))
 
     (/ (- (- w0) (* w1 x)) w2)))
 
@@ -18,15 +18,28 @@
 
 ;;; Data preprocessing.
 (defparameter *label-col-idx* 2)
-(defparameter *data* (remove-col *label-col-idx* *dataset*))
+(defparameter *data*   (remove-col *label-col-idx* *dataset*))
 (defparameter *labels* (matrix-from-data (nth-col *label-col-idx* *dataset*)))
 
-(defparameter *mean* (mean-cols *data*))
-(defparameter *std* (std-cols *data* *mean*))
+;(defparameter *mean* (mean-cols *data*))
+;(defparameter *std* (std-cols *data* *mean*))
 ;(setf *data* (normalize *data* *mean* *std*))
 
+;;; INITIALIZATION
+(defparameter *logreg* (make-instance 'logistic-regression))
+
+;;; Train model.
+(defparameter *params* (make-hash-table))
+(setf (gethash 'num-epoch *params*) 10)
+(setf (gethash 'lr        *params*) 0.005)
+(fit *logreg* *data* *labels* *params*)
+
+;;; Extract parameters of trained model.
+(setf *weights*
+  (nth 0 (matrix-data (transpose (get-weights *logreg*)))))
+
 ;;; Logistic regression computation.
-(defparameter *weights* (matrix-data (grad-ascent *data* *labels*)))
+;(defparameter *weights* (matrix-data (grad-ascent *data* *labels*)))
 ;(defparameter *weights* (matrix-data (grad-ascent *data* *labels* :lr 0.01)))
 ;(defparameter *weights* (matrix-data (grad-ascent *data* *labels* :lr 0.001 :max_iter 10)))
 
