@@ -34,14 +34,24 @@
       (setf weights
         (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front)))))
 
+;(defgeneric fit (nn X y &optional params)
+;  (:documentation "Train neural network."))
+;
+;(defmethod fit ((nn neural-network) X y &optional params)
+;  (SGD nn X y *epoch-num* *mini-batch-size* *lr*
+;       *data* *labels*)
+;  )
+
 (defgeneric feed-forward (nn input)
   (:documentation "Computation of feed forward step within neural network."))
 
 (defmethod feed-forward ((nn neural-network) input)
   (let ((a input))
+
     (mapcar #'(lambda (w b)
                 (setf a (sigmoid (add (dot w a) b))))
-      (weights nn) (biases nn))
+
+            (weights nn) (biases nn))
 
   a))
 
@@ -51,9 +61,9 @@
          (mini-batch-range (range 0 n mini-batch-size)))
 
     (dotimes (j epochs)
-      (setf indexes (randomize-list (iota n)))
-      (setf train-data-rand   (shuffle-rows-spec train-data indexes))
-      (setf train-labels-rand (shuffle-rows-spec train-labels indexes))
+      (setf rand-idx (randomize-list (iota n)))
+      (setf train-data-rand   (shuffle-rows-spec train-data   rand-idx))
+      (setf train-labels-rand (shuffle-rows-spec train-labels rand-idx))
 
       (mapcar #'(lambda (idx)
                   (progn
@@ -71,25 +81,28 @@
   ([] idx (+ idx (- mini-batch-size 1)) data))
 
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
-  (let* ((grad-b (mapcar #'zero-matrix-like (biases nn)))
-         (grad-w (mapcar #'zero-matrix-like (weights nn)))
-         (mini-batch-size (matrix-rows data-mini-batch))
-         (modif-lr (/ lr mini-batch-size)))
+  (let ((grad-b (mapcar #'zero-matrix-like (biases  nn)))
+        (grad-w (mapcar #'zero-matrix-like (weights nn)))
+        (modif-lr (* lr (matrix-rows data-mini-batch)))) ; is it correct?
 
-  (mapcar #'(lambda (x y) (progn
-                            (multiple-value-setq (delta-grad-b delta-grad-w) (backpropagation nn x y))
-                            (setf grad-b
-                                  (mapcar #'(lambda (base delta) (add base delta)) grad-b delta-grad-b))
-                            (setf grad-w
-                                  (mapcar #'(lambda (base delta) (add base delta)) grad-w delta-grad-w))))
+    (mapcar #'(lambda (x y) (progn
+                              (multiple-value-setq (delta-grad-b delta-grad-w) (backpropagation nn x y))
+                              (setf grad-b
+                                    (mapcar #'(lambda (base delta) (add base delta)) grad-b delta-grad-b))
+                              (setf grad-w
+                                    (mapcar #'(lambda (base delta) (add base delta)) grad-w delta-grad-w))))
 
-          (matrix-data data-mini-batch) (matrix-data labels-mini-batch))
+            (matrix-data data-mini-batch) (matrix-data labels-mini-batch))
 
-  (setf (slot-value nn 'weights)
-        (mapcar #'(lambda (w g-w) (subtract w (multiply modif-lr g-w))) (weights nn) grad-w))
+    (setf (slot-value nn 'weights)
+          (mapcar #'(lambda (w g-w)
+                      (subtract w (multiply modif-lr g-w)))
+                  (weights nn) grad-w))
 
-  (setf (slot-value nn 'biases)
-        (mapcar #'(lambda (b g-b) (subtract b (multiply modif-lr g-b))) (biases nn) grad-b))))
+    (setf (slot-value nn 'biases)
+          (mapcar #'(lambda (b g-b)
+                      (subtract b (multiply modif-lr g-b)))
+                  (biases nn) grad-b))))
 
 (defmethod backpropagation ((nn neural-network) x y)
   (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
@@ -126,9 +139,17 @@
 (defmethod evaluate ((nn neural-network) test-x test-y)
   (let ((correct 0))
 
-    (mapcar #'(lambda (x y) (if (= (car y)
-                                   (maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
-                              (incf correct 1)))
+    (mapcar #'(lambda (x y) (progn
+                              ;(print (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))) ; TODO delete
+
+                              (setf tmp (car (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
+
+                              (if (= (car y)
+                                   ;(maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
+                                   (if (> tmp 0.5)
+                                     1
+                                     0))
+                              (incf correct 1))))
             (matrix-data test-x) (matrix-data test-y))
 
     (print correct) ; only for debugging purposes
