@@ -34,13 +34,25 @@
       (setf weights
         (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front)))))
 
-;(defgeneric fit (nn X y &optional params)
-;  (:documentation "Train neural network."))
-;
-;(defmethod fit ((nn neural-network) X y &optional params)
-;  (SGD nn X y *epoch-num* *mini-batch-size* *lr*
-;       *data* *labels*)
-;  )
+(defgeneric fit (nn X y &optional params)
+  (:documentation "Train neural network."))
+
+(defmethod fit ((nn neural-network) X y &optional params)
+  (let ((num-epoch (gethash 'num-epoch params))
+        (lr        (gethash 'lr        params))
+        (mini-batch-size (gethash 'mini-batch-size params)))
+
+  (SGD nn
+       X y ; training data
+       num-epoch mini-batch-size lr
+       X y))) ; test data
+
+(defgeneric predict (nn X &optional params)
+  (:documentation "Predict using neural network."))
+
+; TODO
+(defmethod predict ((nn neural-network) X &optional params)
+  )
 
 (defgeneric feed-forward (nn input)
   (:documentation "Computation of feed forward step within neural network."))

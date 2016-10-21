@@ -21,14 +21,11 @@
   (make-instance 'neural-network :nn-dims '(2 4 1)))
 
 ;;; Train model.
-;(defparameter *params*
-;  (generate-params '(('num-epoch       50)
-;                     ('lr              0.005)
-;                     ('mini-batch-size 50))))
-;(fit *nn* *data* *labels* *params*)
-
-(SGD *nn* *data* *labels* *epoch-num* *mini-batch-size* *lr*
-     *data* *labels*)
+(defparameter *params*
+  (generate-params '((num-epoch       50)
+                     (lr              0.005)
+                     (mini-batch-size 50))))
+(fit *nn* *data* *labels* *params*)
 
 (print 'biases)
 (print (biases  *nn*))
