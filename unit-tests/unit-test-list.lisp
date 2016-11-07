@@ -3,9 +3,12 @@
 
 (in-package :lispml)
 
+(setf *list-namespace-unit-test* '())
+
 (deftest test-range ()
   (check
     ;; create ascending series of numbers
+    (push 'range *list-namespace-unit-test*)
     (equal (range 0 0) '())
     (equal (range 0 4) '(0 1 2 3))
     (equal (range 0 4 2) '(0 2))
@@ -14,6 +17,7 @@
 
 (deftest test-iota ()
   (check
+    (push 'iota *list-namespace-unit-test*)
     (equal (iota 0) '())
     (equal (iota 1) '(0))
     (equal (iota 2) '(0 1))
@@ -32,6 +36,7 @@
 (deftest test-circular-index ()
   (check
     ;; access list with positive or negative indexes that circle around list
+    (push 'circular-index *list-namespace-unit-test*)
     (equal (circular-index 0 '(0 1 2 3)) 0)
     (equal (circular-index 1 '(0 1 2 3)) 1)
     (equal (circular-index 2 '(0 1 2 3)) 2)
@@ -56,6 +61,7 @@
 
   (check
     ;; nth-pos-neg
+    (push 'nth-pos-neg *list-namespace-unit-test*)
     (equal (setf (nth-pos-neg 0 *list*) 99) 99)
     (equal *list* '(99 2 3 4 5 6))
     (equal (setf (nth-pos-neg 2 *list*) 88) 88)
@@ -69,6 +75,7 @@
 (deftest test-maximum ()
   (check
     ;; base maximum function, return both maximum value and index
+    (push 'maximum *list-namespace-unit-test*)
     (equal (multiple-value-list (maximum '()))         '(NIL 0))
     (equal (multiple-value-list (maximum '(1)))        '(1 0))
     (equal (multiple-value-list (maximum '(9 8 7)))    '(9 0))
@@ -81,6 +88,7 @@
 (deftest test-minimum ()
   (check
     ;; base minimum function, return both minimum value and index
+    (push 'minimum *list-namespace-unit-test*)
     (equal (multiple-value-list (minimum '()))         '(NIL 0))
     (equal (multiple-value-list (minimum '(1)))        '(1 0))
     (equal (multiple-value-list (minimum '(9 10 11)))  '(9 0))
@@ -92,6 +100,7 @@
 
 (deftest test-remove-nth ()
   (check
+    (push 'remove-nth *list-namespace-unit-test*)
     (equal (remove-nth 0 '(0 1 2 3)) '(1 2 3))
     (equal (remove-nth 1 '(0 1 2 3)) '(0 2 3))
     (equal (remove-nth 2 '(0 1 2 3)) '(0 1 3))
@@ -100,6 +109,8 @@
 
 (deftest test-random ()
   (check
+    (push 'randomize-list *list-namespace-unit-test*)
+
     (defparameter *lst0* (iota 6))
     (defparameter *lst1* '(9 3 2))
     (defparameter *lst2* (mapcar #'(lambda (x) (random x)) (iota 100 1)))
@@ -112,11 +123,13 @@
 (deftest test-math-list ()
   (check
     ;; sum two lists
+    (push 'sum-two-lists *list-namespace-unit-test*)
     (equal (sum-two-lists '(0) '(1)) '(1))
     (equal (sum-two-lists '(1) '(0)) '(1))
     (equal (sum-two-lists '(0 1 2 3) '(1 2 3 4)) '(1 3 5 7))
 
     ;; sum list of lists
+    (push 'sum-list-of-lists *list-namespace-unit-test*)
     (equal (sum-list-of-lists '((1 1) (2 2))) '(3 3))
     (equal (sum-list-of-lists '((1 1) (2 2) (2 1))) '(5 4))
     (equal (sum-list-of-lists '((1 1 4) (2 2 1) (2 1 2))) '(5 4 7))
@@ -133,4 +146,5 @@
     (test-remove-nth)
     (test-random)
     (test-math-list)
-  ))
+
+    (unit-test-coverage *list-namespace* *list-namespace-unit-test* "list")))

@@ -33,3 +33,26 @@
   "Report the results of a single test case. Called by 'check'."
   (format t "~:[FAIL~;PASS~] ... ~a: ~a~%" result *test-name* form)
   result)
+
+(defun unit-test-coverage (namespace unit-test-namespace unit-test-name)
+  (let ((namespace-size (length namespace))
+        (unit-test-namespace-size 0)
+        (coverage 0)
+        (not-covered '()))
+
+    (mapcar #'(lambda (name) (if (member name unit-test-namespace)
+                               (setf unit-test-namespace-size
+                                     (1+ unit-test-namespace-size))
+                               (push name not-covered)))
+            namespace)
+
+    (setf coverage (* (/ unit-test-namespace-size namespace-size) 100))
+
+    (print (format nil "~:@(~a~) unit tests coverage ~f %"
+            unit-test-name
+            coverage))
+
+    (if (> (length not-covered) 0)
+      (print (format nil "Missing tests for ~{~a~#[~;, and ~:;, ~]~}" not-covered))))
+
+  T)
