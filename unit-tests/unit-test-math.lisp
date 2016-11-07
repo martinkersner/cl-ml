@@ -5,6 +5,18 @@
 
 (deftest test-basics ()
   (check
+    ;; even
+    (eq (is-even 1)  NIL)
+    (eq (is-even 2)  T)
+    (eq (is-even 13) NIL)
+    (eq (is-even 14) T)
+
+    ;; odd 
+    (eq (is-odd 3)  T)
+    (eq (is-odd 4)  NIL)
+    (eq (is-odd 15) T)
+    (eq (is-odd 16) NIL)
+
     ;; mean
     (= (mean '(1))     1)
     (= (mean '(1 2))   1.5)
