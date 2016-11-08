@@ -400,3 +400,5 @@
     (test-shuffling)
 
     (unit-test-coverage *matrix-namespace* *matrix-namespace-unit-test* "matrix")))
+
+(test-matrix)

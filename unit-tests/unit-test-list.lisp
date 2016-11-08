@@ -148,3 +148,5 @@
     (test-math-list)
 
     (unit-test-coverage *list-namespace* *list-namespace-unit-test* "list")))
+
+(test-list)

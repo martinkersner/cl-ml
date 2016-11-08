@@ -44,3 +44,5 @@
     (test-basics)
 
     (unit-test-coverage *math-namespace* *math-namespace-unit-test* "math")))
+
+(test-math)
