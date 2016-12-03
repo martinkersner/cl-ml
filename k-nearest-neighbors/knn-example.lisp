@@ -36,9 +36,26 @@
 
 (print *y-test*)
 
-;;; Plot data
-(ext:shell
-  (concatenate-with-space (list "./plot-2d.bash" *dataset-path*
-                                                 (caar *x-test*)
-                                                 (cadar *x-test*)
-                                                 *y-test*)))
+(defparameter *classified-record* (list (list
+                                        (caar *x-test*)
+                                        (cadar *x-test*)
+                                        *y-test*)))
+
+(in-package :lispplot)
+
+(defparameter *fig* (make-instance 'figure
+                                   :nokey t))
+(xlabel *fig* "feature 1")
+(ylabel *fig* "feature 2")
+(scatter *fig* (lispml::matrix-data lispml::*dataset*)
+         :palette t
+         :pt 7
+         :ps 2)
+(scatter *fig* lispml::*classified-record*
+         :plot-type 'replot
+         :palette t
+         :with 'circles
+         :fill t
+         :solid-border t
+         :lt 2)
+(show *fig*)
