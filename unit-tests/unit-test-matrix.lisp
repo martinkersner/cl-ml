@@ -2,6 +2,7 @@
 ;;;; 2016/04/27 
 
 ;;; TODO check error conditions in tests
+;;; TODO take out push functions out of deftest checks
 
 (in-package :lispml)
 
@@ -385,6 +386,14 @@
     (compare-matrix (apply-matrix (lambda (x) (expt x 2)) (matrix-from-data '((2 2 2)(3 3 3)))) (matrix-from-data '((4 4 4)(9 9 9))))
   ))
 
+(push 'vstack *matrix-namespace-unit-test*)
+(deftest test-matrix-to-matrix ()
+  (check
+    (compare-matrix (vstack (matrix-from-data '((1))) (matrix-from-data '((2)))) (matrix-from-data '((1 2))))
+    (compare-matrix (vstack (matrix-from-data '((1)(2))) (matrix-from-data '((3)(4)))) (matrix-from-data '((1 3)(2 4))))
+    (compare-matrix (vstack (matrix-from-data '((1 2)(2 3))) (matrix-from-data '((3 4)(4 5)))) (matrix-from-data '((1 2 3 4)(2 3 4 5))))
+  ))
+
 (deftest test-matrix ()
   (combine-results
     (test-generate-matrix)
@@ -398,6 +407,7 @@
     (test-mathematical-functions)
     (test-value-extremes)
     (test-shuffling)
+    (test-matrix-to-matrix)
 
     (unit-test-coverage *matrix-namespace* *matrix-namespace-unit-test* "matrix")))
 

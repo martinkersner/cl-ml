@@ -74,6 +74,10 @@
 ;;; * (nth-col-min col mat)
 ;;; * (nth-row-max row mat)
 ;;; * (nth-row-min row mat)
+;;;
+;;; MATRIX to MATRIX OPERATIONS
+;;; * (vstack mat-left mat-right)
+;;; * TODO (hstack mat-top mat-bottom)
 
 ;;; TODO 
 ;;; smart operations (add vector to all rows or columns of matrix)
@@ -644,3 +648,15 @@
 (push 'nth-row-min *matrix-namespace*)
 (defun nth-row-min (row mat)
   (minimum (nth row (matrix-data mat))))
+
+;;; Concatenate matrices vertically.
+(push 'vstack *matrix-namespace*)
+(defun vstack (mat-left mat-right)
+  (if (not (and
+        (= (matrix-rows mat-left) (matrix-rows mat-right))))
+    (error 'matrix-error :text "Number of matrix rows does not correspondent each other.")
+
+    (matrix-from-data (mapcar #'(lambda (l r)
+                                  (concatenate 'list l r))
+                              (matrix-data mat-left)
+                              (matrix-data mat-right)))))
