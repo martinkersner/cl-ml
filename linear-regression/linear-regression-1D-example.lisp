@@ -37,8 +37,15 @@
 (defparameter *y-min* ([][] 0 0 (predict *linreg* (matrix-from-data (list (list *x-min*))))))
 (defparameter *y-max* ([][] 0 0 (predict *linreg* (matrix-from-data (list (list *x-max*))))))
 
+;;; prepare list of input and target data for plotting
+(defparameter *test-dataset-list* (matrix-data (vstack test-data test-labels)))
+
 ;;; Plot regression line.
-(ext:shell
-  (concatenate-with-space (list "./plot-lin-reg-2d.bash" *test-dataset-path*
-                                         *x-min* *y-min*
-                                         *x-max* *y-max*)))
+(in-package :lispplot)
+
+(defparameter *fig* (make-instance 'figure :nokey t))
+(xlabel *fig* "feature")
+(ylabel *fig* "target")
+(arrow *fig* lispml::*x-min* lispml::*y-min* lispml::*x-max* lispml::*y-max* "nohead")
+(scatter *fig* lispml::*test-dataset-list*)
+(show    *fig*)
