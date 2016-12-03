@@ -660,3 +660,13 @@
                                   (concatenate 'list l r))
                               (matrix-data mat-left)
                               (matrix-data mat-right)))))
+
+;;; Concatenate matrices horizontally.
+(push 'hstack *matrix-namespace*)
+(defun hstack (mat-top mat-bottom)
+  (if (not (and
+        (= (matrix-cols mat-top) (matrix-cols mat-bottom))))
+    (error 'matrix-error :text "Number of matrix columns does not correspondent each other.")
+
+    (matrix-from-data
+      (concatenate 'list (matrix-data mat-top) (matrix-data mat-bottom)))))

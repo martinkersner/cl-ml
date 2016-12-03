@@ -387,11 +387,18 @@
   ))
 
 (push 'vstack *matrix-namespace-unit-test*)
+(push 'hstack *matrix-namespace-unit-test*)
 (deftest test-matrix-to-matrix ()
   (check
+    ;; vstack
     (compare-matrix (vstack (matrix-from-data '((1))) (matrix-from-data '((2)))) (matrix-from-data '((1 2))))
     (compare-matrix (vstack (matrix-from-data '((1)(2))) (matrix-from-data '((3)(4)))) (matrix-from-data '((1 3)(2 4))))
     (compare-matrix (vstack (matrix-from-data '((1 2)(2 3))) (matrix-from-data '((3 4)(4 5)))) (matrix-from-data '((1 2 3 4)(2 3 4 5))))
+
+    ;; hstack
+    (compare-matrix (hstack (matrix-from-data '((1))) (matrix-from-data '((2)))) (matrix-from-data '((1)(2))))
+    (compare-matrix (hstack (matrix-from-data '((1)(2))) (matrix-from-data '((3)(4)))) (matrix-from-data '((1)(2)(3)(4))))
+    (compare-matrix (hstack (matrix-from-data '((1 2)(2 3))) (matrix-from-data '((3 4)(4 5)))) (matrix-from-data '((1 2)(2 3)(3 4)(4 5))))
   ))
 
 (deftest test-matrix ()
