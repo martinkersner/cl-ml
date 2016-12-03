@@ -66,7 +66,16 @@
 ;(setf *y-max* (+ (* *y-max* *std-y*) *mean-y*))
 
 ;;; Plot decision boundary.
-(ext:shell
-  (concatenate-with-space (list "./plot-log-reg-2d.bash" *dataset-path*
-                                         *x-min* *y-min*
-                                         *x-max* *y-max*)))
+(in-package :lispplot)
+
+(defparameter *fig* (make-instance 'figure
+                                   :nokey t))
+(xlabel *fig* "feature 1")
+(ylabel *fig* "feature 2")
+(arrow *fig* lispml::*x-min* lispml::*y-min* lispml::*x-max* lispml::*y-max* "nohead")
+(scatter *fig* (lispml::matrix-data lispml::*dataset*)
+         :palette t
+         :pt 7
+         :ps 2
+         :with 'points)
+(show *fig*)
