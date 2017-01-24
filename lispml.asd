@@ -38,6 +38,9 @@
                (:module neural-networks
                   :components ((:file "nn")))
 
+               (:module support-vector-machines
+                  :components ((:file "support-vector-machines")))
+
                (:module unit-tests
                   :components ((:file "unit-test")
                                (:file "unit-test-list")
