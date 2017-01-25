@@ -15,4 +15,8 @@
     2))
 
 ;;; TRAINING
-(fit *svm* train-data train-labels)
+(defparameter *params*
+  (generate-params '(('C       0.6)
+                     ('toler   0.002)
+                     ('maxiter 40))))
+(fit *svm* train-data train-labels *params*)
