@@ -19,6 +19,7 @@
 ;;; * (matrix-data-peel data)
 ;;;
 ;;; SINGLE MATRIX OPERATIONS
+;;; * TODO (shape mat)
 ;;; * (transpose mat)
 ;;; * (nth-row row mat)
 ;;; * (nth-col col mat)
@@ -212,11 +213,18 @@
 (push '[] *matrix-namespace*)
 (defun [] (from to mat)
   (let ((mat-list (matrix-data mat))
-        (to-verif (min to (1- (matrix-rows mat)))))
+        (to-verif (min to (1- (matrix-rows mat))))
+        (mat-tmp nil))
 
-    (matrix-from-data
-      (mapcar #'(lambda (idx) (nth idx mat-list))
-            (iota (1+ (- to-verif from)) from)))))
+    (setf mat-tmp
+          (matrix-from-data
+            (mapcar #'(lambda (idx) (nth idx mat-list))
+                    (iota (1+ (- to-verif from)) from))))
+
+    (if (and (= (matrix-rows mat-tmp) 1)
+             (= (matrix-cols mat-tmp) 1))
+      (caar (matrix-data mat-tmp))
+      mat-tmp)))
 
 ;;; Access value of 2D matrix.
 ;;; Does not control access outside of matrix.
@@ -440,9 +448,12 @@
          (mat_out (empty-matrix rows cols))
          (mat_idxs (matrix-indices rows cols)))
 
-  (setf mat_out (dot-rec mat_out mat_l mat_r mat_idxs))
+    (setf mat_out (dot-rec mat_out mat_l mat_r mat_idxs))
 
-  mat_out))
+    (if (and (= (matrix-rows mat_out) 1)
+             (= (matrix-cols mat_out) 1))
+      (caar (matrix-data mat_out))
+      mat_out)))
 
 ;;; ELEMENT-WISE OPERATIONS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; TODO simplify/shorten definition of those functions, too much repetition
