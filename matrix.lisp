@@ -226,6 +226,21 @@
       (caar (matrix-data mat-tmp))
       mat-tmp)))
 
+(defun (setf []) (val from to mat)
+  (let ((mat-list (matrix-data mat))
+        (to-verif (min to (1- (matrix-rows mat))))
+        (mat-tmp nil))
+
+    (setf mat-tmp
+          (matrix-from-data
+            (mapcar #'(lambda (idx) (setf (nth idx mat-list) (list val)))
+                    (iota (1+ (- to-verif from)) from))))
+
+    (if (and (= (matrix-rows mat-tmp) 1)
+             (= (matrix-cols mat-tmp) 1))
+      (caar (matrix-data mat-tmp))
+      mat-tmp)))
+
 ;;; Access value of 2D matrix.
 ;;; Does not control access outside of matrix.
 (push '[][] *matrix-namespace*)

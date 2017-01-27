@@ -16,7 +16,10 @@
 
 ;;; TRAINING
 (defparameter *params*
-  (generate-params '(('C       0.6)
-                     ('toler   0.002)
-                     ('maxiter 40))))
+  (generate-params '((C       0.6)
+                     (toler   0.002)
+                     (maxiter 40))))
 (fit *svm* train-data train-labels *params*)
+
+(print (get-b *svm*))
+(print (get-alphas *svm*))
