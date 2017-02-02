@@ -74,6 +74,7 @@
                           (dot X (transpose ([] j j X))))))
 
               (setf Ej (- fXj ([] j j y)))
+
               (setf alpha-i-old ([] i i alphas))
               (setf alpha-j-old ([] j j alphas))
 

@@ -30,8 +30,8 @@
 
 ;;; Train model.
 (defparameter *params*
-  (generate-params '(('num-epoch 50)
-                     ('lr        0.005))))
+  (generate-params '((num-epoch 50)
+                     (lr        0.005))))
 (fit *logreg* *data* *labels* *params*)
 
 ;;; Extract parameters of trained model.
