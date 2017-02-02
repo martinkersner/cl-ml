@@ -5,7 +5,7 @@
 ;;;
 ;;; TODO accept parameter for selecting optimization method
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defclass logistic-regression ()
   ((weights :accessor get-weights)))

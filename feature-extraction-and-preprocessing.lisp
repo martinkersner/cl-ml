@@ -1,7 +1,7 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/08/23
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; Create single one hot encoding vector.
 (defun create-one-hot (len pos)

@@ -4,3 +4,6 @@
 [submodule "lisp-plot"]
 	path = lisp-plot
 	url = https://github.com/martinkersner/lisp-plot
+[submodule "math"]
+	path = math
+	url = https://github.com/martinkersner/cl-math

@@ -7,7 +7,7 @@
 ;;; TODO and also include tests for algorithm verification
 ;;; TODO predict from more feature vectors at once
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defclass k-nearest-neighbors ()
   ((X :accessor get-X)

@@ -5,7 +5,7 @@
 ;;;
 ;;; TODO accept parameter for selecting optimization method
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; n-D linear regression
 (defclass linear-regression ()

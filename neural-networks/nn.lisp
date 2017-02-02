@@ -9,7 +9,7 @@
 ;;; control of object initialization 
 ;;; create a simple dataset
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims :initarg :nn-dims)

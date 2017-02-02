@@ -5,6 +5,8 @@
 
 (push (namestring (ext:cd)) asdf:*central-registry*)
 (push "lisp-plot/" asdf:*central-registry*)
+(push "math/" asdf:*central-registry*)
 
-(asdf:load-system :lispml)
+(asdf:load-system :cl-math)
+(asdf:load-system :cl-ml)
 (asdf:load-system :lispplot)

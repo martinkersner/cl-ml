@@ -1,7 +1,7 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/06/12 
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; Load data.
 (defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")

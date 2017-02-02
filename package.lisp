@@ -1,9 +1,7 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/08/16
 
-(defpackage :lispml
-  (:use :cl :asdf)
-  (:export
-    empty-matrix))
+(defpackage :cl-ml
+  (:use :cl :asdf))
 
-(in-package :lispml)
+(in-package :cl-ml)

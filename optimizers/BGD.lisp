@@ -4,7 +4,7 @@
 ;;;; Batch Gradient Descent
 ;;;;
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defun BGD-optimizer (clf X-data y-labels &key num-epoch lr)
   (let* ((d (matrix-cols X-data))

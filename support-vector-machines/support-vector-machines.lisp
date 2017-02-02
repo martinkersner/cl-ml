@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Support Vector Machines 
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defclass support-vector-machines ()
   ((b :accessor get-b)

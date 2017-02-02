@@ -3,7 +3,7 @@
 ;;;;
 ;;;; k-nearest neighbors example.
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; Load data
 (defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")

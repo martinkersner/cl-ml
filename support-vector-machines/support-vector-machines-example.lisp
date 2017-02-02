@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Support Vector Machines example
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; INITIALIZATION
 (defparameter *svm* (make-instance 'support-vector-machines))

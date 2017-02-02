@@ -6,7 +6,7 @@
 ;;;; TODO terminating condition when converged 
 ;;;; TODO function for decreasing learning rate
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defun SGD-optimizer (clf X-data y-labels &key num-epoch lr)
   (let* ((n (matrix-rows X-data))

@@ -3,7 +3,7 @@
 ;;;;
 ;;;; Logistic regression example for two dimensional data with binary labels.
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 (defun compute-y-coordinate (weights x)
   (let ((w0 (nth 0 weights))

@@ -4,7 +4,7 @@
 ;;;; Auxiliary functions.
 ;;;; Probably some of them are going to be moved to more appropriate places.
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; Compute entropy of given list.
 ;;; Created for decision trees algorithm.

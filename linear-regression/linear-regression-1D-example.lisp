@@ -3,7 +3,7 @@
 ;;;;
 ;;;; 1D linear regression example.
 
-(in-package :lispml)
+(in-package :cl-ml)
 
 ;;; INITIALIZATION
 (defparameter *linreg* (make-instance 'linear-regression))
