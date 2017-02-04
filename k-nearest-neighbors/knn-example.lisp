@@ -3,8 +3,6 @@
 ;;;;
 ;;;; k-nearest neighbors example.
 
-(in-package :cl-ml)
-
 ;;; Load data
 (defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset*
@@ -13,8 +11,8 @@
 ;;; Training data preparation
 (defparameter *label-col* 2)
 
-(defparameter *train-data* (remove-col *label-col* *dataset*))
-(defparameter *train-labels* (matrix-from-data (nth-col *label-col* *dataset*)))
+(defparameter *train-data* (remove-col *dataset* *label-col*))
+(defparameter *train-labels* (nth-col *dataset* *label-col*))
 
 ;(defparameter *x-test* '((2 5))) ; 1 class
 ;(defparameter *x-test* '((-1 8))) ; 0 class
@@ -41,17 +39,15 @@
                                         (cadar *x-test*)
                                         *y-test*)))
 
-(in-package :lispplot)
-
 (defparameter *fig* (make-instance 'figure
                                    :nokey t))
 (xlabel *fig* "feature 1")
 (ylabel *fig* "feature 2")
-(scatter *fig* (lispml::matrix-data lispml::*dataset*)
+(scatter *fig* (matrix-data *dataset*)
          :palette t
          :pt 7
          :ps 2)
-(scatter *fig* lispml::*classified-record*
+(scatter *fig* *classified-record*
          :plot-type 'replot
          :palette t
          :with 'circles

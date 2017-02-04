@@ -20,11 +20,11 @@
 
 ; TODO unit tests
 (defun L2-single-row-precise (X1 X2)
-  (expt (sum (power 2 (-mm X1 X2))) 0.5))
+  (expt (sum (power (-mm X1 X2) 2)) 0.5))
 
 ; TODO unit tests
 (defun L2-single-row-approx (X1 X2)
-  (sum (power 2 (-mm X1 X2))))
+  (sum (power (-mm X1 X2) 2)))
 
 ; Multiple rows
 (defun L2-multiple-rows (X1 X2 &key precise)
@@ -34,8 +34,8 @@
 
 ; TODO unit tests
 (defun L2-multiple-rows-precise (X1 X2)
-  (power 0.5 (sum-rows (power 2 (-mr X1 X2)))))
+  (power (sum-rows (power (-mr X1 X2) 2)) 0.5))
 
 ; TODO unit tests
 (defun L2-multiple-rows-approx (X1 X2)
-  (sum-rows (power 2 (-mr X1 X2))))
+  (sum-rows (power (-mr X1 X2) 2)))

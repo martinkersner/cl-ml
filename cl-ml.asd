@@ -24,9 +24,9 @@
                (:module optimizers
                   :components ((:file "SGD"))
                   :components ((:file "BGD")))
-;;
-;;               (:module k-nearest-neighbors
-;;                  :components ((:file "knn")))
+
+               (:module k-nearest-neighbors
+                  :components ((:file "knn")))
 ;;
 ;;               (:module linear-regression
 ;;                  :components ((:file "linear-regression")))
