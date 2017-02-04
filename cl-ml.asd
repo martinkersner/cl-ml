@@ -8,10 +8,6 @@
   :long-description "Machine Learning library for Common Lisp"
   :serial t
   :components ((:file "package")
-               ;(:file "math")
-               ;(:file "random")
-               ;(:file "list")
-               ;(:file "matrix")
                (:file "feature-extraction-and-preprocessing")
                (:file "utils")
                (:file "csv-reader")
@@ -39,11 +35,4 @@
                   :components ((:file "nn")))
 
                (:module support-vector-machines
-                  :components ((:file "support-vector-machines")))
-
-               ;(:module unit-tests
-               ;   :components ((:file "unit-test")
-               ;                (:file "unit-test-list")
-               ;                (:file "unit-test-math")
-               ;                (:file "unit-test-matrix")))
-               ))
+                  :components ((:file "support-vector-machines")))))

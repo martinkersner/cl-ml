@@ -3,6 +3,7 @@
 ;;;;
 ;;;; Support Vector Machines 
 
+(in-package :cl-math)
 (in-package :cl-ml)
 
 (defclass support-vector-machines ()
@@ -56,81 +57,81 @@
         (tagbody
         (progn
           (setf fXi
-            (+ b (dot (transpose (matrix-mult alphas y))
-                      (dot X (transpose ([] i i X))))))
+            (+ b (dot (transpose (*mm alphas y))
+                      (dot X (transpose ([] X :row i))))))
 
-          (setf Ei (- fXi ([] i i y)))
+          (setf Ei (- fXi ([] y :row i)))
 
           (if (or (and
-                    (< (* ([] i i y) Ei) (- toler))
-                    (< ([] i i alphas) C))
+                    (< (* ([] y :row i) Ei) (- toler))
+                    (< ([] alphad :row i) C))
                   (and
-                    (> (* ([] i i y) Ei) toler)
-                    (> ([] i i alphas) 0)))
+                    (> (* ([] y :row i) Ei) toler)
+                    (> ([] alphas :row i) 0)))
             (progn
               (setf j (select-random-j i m))
               (setf fXj
-                (+ b (dot (transpose (matrix-mult alphas y))
-                          (dot X (transpose ([] j j X))))))
+                (+ b (dot (transpose (*mm alphas y))
+                          (dot X (transpose ([] X :row j))))))
 
-              (setf Ej (- fXj ([] j j y)))
+              (setf Ej (- fXj ([] y :row j)))
 
-              (setf alpha-i-old ([] i i alphas))
-              (setf alpha-j-old ([] j j alphas))
+              (setf alpha-i-old ([] alphas :row i))
+              (setf alpha-j-old ([] alphas :row j))
 
-              (if (not (= ([] i i y) ([] j j y)))
+              (if (not (= ([] y :row i) ([] y :row j)))
                 (progn
-                  (setf L (max 0 (- ([] j j alphas) ([] i i alphas))))
-                  (setf H (min C (+ C (- ([] j j alphas) ([] i i alphas))))))
+                  (setf L (max 0 (- ([] alphas :row j) ([] alphas :row i))))
+                  (setf H (min C (+ C (- ([] alphas :row j) ([] alphas :row i))))))
                 (progn
-                  (setf L (max 0 (- (+ ([] j j alphas) ([] i i alphas)) C)))
-                  (setf H (min C (+ ([] j j alphas) ([] i i alphas))))))
+                  (setf L (max 0 (- (+ ([] alphas :row j) ([] alphas :row i)) C)))
+                  (setf H (min C (+ ([] alphas :row j) ([] alphas :row i))))))
 
               (if (= L H)
                 (go continue))
 
               (setf eta
                 (* 2 (-
-                  (dot ([] i i X) (transpose ([] j j X)))
-                  (dot ([] i i X) (transpose ([] i i X)))
-                  (dot ([] j j X) (transpose ([] j j X))))))
+                  (dot ([] X :row i) (transpose ([] X :row j)))
+                  (dot ([] X :row i) (transpose ([] X :row i)))
+                  (dot ([] X :row j) (transpose ([] X :row j))))))
 
               (if (>= eta 0)
                 (go continue))
 
-              (setf ([] j j alphas)
-                (- ([] j j alphas) (/ (* ([] j j y)
+              (setf ([] alphas :row j)
+                (- ([] alphas :row j) (/ (* ([] y :row j)
                                          (- Ei Ej))
                                       eta)))
-              (setf ([] j j alphas)
-                (clip-alpha ([] j j alphas) H L))
+              (setf ([] alphas :row j)
+                (clip-alpha ([] alphas :row j) H L))
 
-              (if (< (abs (- ([] j j alphas)
+              (if (< (abs (- ([] alphas :row j)
                              alpha-j-old))
                      0.00001)
                 (go continue))
 
-              (setf ([] i i alphas)  ; TODO inc
-                (+ ([] i i alphas)
-                   (* ([] j j y)
-                      ([] i i y)
-                      (- alpha-j-old ([] j j alphas)))))
+              (setf ([] alphas :row i)  ; TODO inc
+                (+ ([] alphas :row i)
+                   (* ([] y :row j)
+                      ([] y :row i)
+                      (- alpha-j-old ([] alphas :row j)))))
 
               (setf b1
                 (- b
                    Ei
-                   (* ([] i i y) (- ([] i i alphas) alpha-i-old) (dot ([] i i X) (transpose ([] i i X))))
-                   (* ([] j j y) (- ([] j j alphas) alpha-j-old) (dot ([] i i X) (transpose ([] j j X))))))
+                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row i))))
+                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row i) (transpose ([] X :row j))))))
 
               (setf b2
                 (- b
                    Ej
-                   (* ([] i i y) (- ([] i i alphas) alpha-i-old) (dot ([] i i X) (transpose ([] j j X))))
-                   (* ([] j j y) (- ([] j j alphas) alpha-j-old) (dot ([] j j X) (transpose ([] j j X))))))
+                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
+                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
 
-              (cond ((and (< 0 ([] i i alphas)) (> C ([] i i alphas)))
+              (cond ((and (< 0 ([] alphad :row i)) (> C ([] alphas :row i)))
                      (setf b b1))
-                    ((and (< 0 ([] j j alphas)) (> C ([] j j alphas)))
+                    ((and (< 0 ([] alphas :row j)) (> C ([] alphas :row j)))
                      (setf b b2))
                     (t
                       (setf b (/ (+ b1 b2) 2))))
