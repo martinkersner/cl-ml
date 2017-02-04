@@ -3,8 +3,6 @@
 ;;;;
 ;;;; Logistic regression example for two dimensional data with binary labels.
 
-(in-package :cl-ml)
-
 (defun compute-y-coordinate (weights x)
   (let ((w0 (nth 0 weights))
         (w1 (nth 1 weights))
@@ -18,8 +16,8 @@
 
 ;;; Data preprocessing.
 (defparameter *label-col-idx* 2)
-(defparameter *data*   (remove-col *label-col-idx* *dataset*))
-(defparameter *labels* (matrix-from-data (nth-col *label-col-idx* *dataset*)))
+(defparameter *data*   (remove-col *dataset* *label-col-idx*))
+(defparameter *labels* (nth-col *dataset* *label-col-idx*))
 
 ;(defparameter *mean* (mean-cols *data*))
 ;(defparameter *std* (std-cols *data* *mean*))
@@ -48,8 +46,8 @@
 
 ;;; Processing weights for plotting decision boundary.
 (defparameter *col-idx* 0)
-(defparameter *x-min* (nth-col-min *col-idx* *data*))
-(defparameter *x-max* (nth-col-max *col-idx* *data*))
+(defparameter *x-min* (nth-col-min *data* *col-idx*))
+(defparameter *x-max* (nth-col-max *data* *col-idx*))
 (defparameter *y-min* (compute-y-coordinate *weights* *x-min*))
 (defparameter *y-max* (compute-y-coordinate *weights* *x-max*))
 
@@ -66,14 +64,12 @@
 ;(setf *y-max* (+ (* *y-max* *std-y*) *mean-y*))
 
 ;;; Plot decision boundary.
-(in-package :lispplot)
-
 (defparameter *fig* (make-instance 'figure
                                    :nokey t))
 (xlabel *fig* "feature 1")
 (ylabel *fig* "feature 2")
-(arrow *fig* lispml::*x-min* lispml::*y-min* lispml::*x-max* lispml::*y-max* "nohead")
-(scatter *fig* (lispml::matrix-data lispml::*dataset*)
+(arrow *fig* *x-min* *y-min* *x-max* *y-max* :nohead t)
+(scatter *fig* (matrix-data *dataset*)
          :palette t
          :pt 7
          :ps 2

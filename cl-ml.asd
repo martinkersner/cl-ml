@@ -33,10 +33,10 @@
 
                (:module decision-trees
                   :components ((:file "id3")))
-;;
-;;               (:module logistic-regression
-;;                  :components ((:file "logistic-regression")))
-;;
+
+               (:module logistic-regression
+                  :components ((:file "logistic-regression")))
+
 ;;               (:module neural-networks
 ;;                  :components ((:file "nn")))
 
