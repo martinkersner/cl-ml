@@ -3,9 +3,6 @@
 ;;;;
 ;;;; Support Vector Machines 
 
-(in-package :cl-math)
-(in-package :cl-ml)
-
 (defclass support-vector-machines ()
   ((b :accessor get-b)
    (alphas :accessor get-alphas)))
@@ -34,7 +31,6 @@
          (toler   (gethash 'toler   params))
          (maxiter (gethash 'maxiter params))
          (m (matrix-rows X))
-         (n (matrix-cols X))
          (fXi nil)
          (fXj nil)
          (Ei nil)
@@ -47,6 +43,9 @@
          (b 0)
          (b1 0)
          (b2 0)
+         (L 0)
+         (H 0)
+         (eta 0)
          (alphas (empty-matrix m 1 0)))
 
     (loop while (< iter maxiter) do
@@ -64,7 +63,7 @@
 
           (if (or (and
                     (< (* ([] y :row i) Ei) (- toler))
-                    (< ([] alphad :row i) C))
+                    (< ([] alphas :row i) C))
                   (and
                     (> (* ([] y :row i) Ei) toler)
                     (> ([] alphas :row i) 0)))
@@ -129,7 +128,7 @@
                    (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
                    (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
 
-              (cond ((and (< 0 ([] alphad :row i)) (> C ([] alphas :row i)))
+              (cond ((and (< 0 ([] alphas :row i)) (> C ([] alphas :row i)))
                      (setf b b1))
                     ((and (< 0 ([] alphas :row j)) (> C ([] alphas :row j)))
                      (setf b b2))

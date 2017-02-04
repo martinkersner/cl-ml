@@ -3,8 +3,6 @@
 ;;;;
 ;;;; Simple CSV reader
 
-(in-package :cl-ml)
-
 ;;; Modified http://batsov.com/articles/2011/04/30/parsing-numbers-from-string-in-lisp/
 (defun str2list (str)
   (let ((str-clean (substitute #\SPACE #\, str))) ; remove commas

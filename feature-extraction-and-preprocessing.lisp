@@ -1,8 +1,6 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/08/23
 
-(in-package :cl-ml)
-
 ;;; Create single one hot encoding vector.
 (defun create-one-hot (len pos)
   (let* ((tmp-one-hot (make-list len :initial-element 0)))

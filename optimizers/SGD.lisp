@@ -6,12 +6,14 @@
 ;;;; TODO terminating condition when converged 
 ;;;; TODO function for decreasing learning rate
 
-(in-package :cl-ml)
-
 (defun SGD-optimizer (clf X-data y-labels &key num-epoch lr)
   (let* ((n (matrix-rows X-data))
          (d (matrix-cols X-data))
          (W (initialize-matrix d 1 1))
+         (rand-idx nil)
+         (idx nil)
+         (y-pred nil)
+         (y-correct nil)
 
          ; default parameters
          (num-epoch (if (not num-epoch) 1 num-epoch))
@@ -31,9 +33,9 @@
         ; prediction with the latest weights
         (setf y-pred    (funcall clf X-vec W))
 
-        (setf W (subtract W 
-                     (dot (multiply lr (transpose X-vec)) 
-                          (subtract y-pred y-correct))))
+        (setf W (-mm W
+                     (dot (*mv (transpose X-vec) lr)
+                          (-mm y-pred y-correct))))
 
         (setf data-idx (remove-nth rand-idx data-idx)))))
 

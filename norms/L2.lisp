@@ -5,8 +5,6 @@
 ;;;
 ;;; TODO recognize orientation of matrices (row vs col subtraction)
 
-(in-package :cl-ml)
-
 ; Compute L2 distance between X1 and X2.
 ; Number of rows of X1 should be the same or larger than X2.
 (defun L2 (X1 X2 &key (precise NIL))

@@ -4,8 +4,6 @@
 ;;;; Auxiliary functions.
 ;;;; Probably some of them are going to be moved to more appropriate places.
 
-(in-package :cl-ml)
-
 ;;; Compute entropy of given list.
 ;;; Created for decision trees algorithm.
 ;;; TODO unit tests!
@@ -79,9 +77,9 @@
 
         ;;; Data preprocessing.
         (data
-          (remove-col label-col-idx dataset))
+          (remove-col dataset label-col-idx))
         (labels
-          (matrix-from-data (nth-col label-col-idx dataset))))
+          (nth-col dataset label-col-idx)))
 
   (values data labels)))
 
