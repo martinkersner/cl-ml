@@ -3,8 +3,6 @@
 ;;;;
 ;;;; Example code for Decision Tree classifier using Iterative Dichotomiser 3 (id3).
 
-(in-package :cl-ml)
-
 (defun preprocess-data (data)
   (let ((uniq-lst nil)
         (preprocess-data nil)

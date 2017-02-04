@@ -3,8 +3,6 @@
 ;;;;
 ;;;; Decision Tree classifier using Iterative Dichotomiser 3 (id3).
 
-(in-package :cl-ml)
-
 (defclass id3-dt ()
   ((tree :accessor get-tree
          :initform nil)))
