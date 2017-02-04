@@ -22,14 +22,14 @@
                   :components ((:file "L2")))
 
                (:module optimizers
-                  :components ((:file "SGD"))
-                  :components ((:file "BGD")))
+                  :components ((:file "SGD")
+                               (:file "BGD")))
 
                (:module k-nearest-neighbors
                   :components ((:file "knn")))
-;;
-;;               (:module linear-regression
-;;                  :components ((:file "linear-regression")))
+
+               (:module linear-regression
+                  :components ((:file "linear-regression")))
 ;;
 ;;               (:module decision-trees
 ;;                  :components ((:file "id3")))

@@ -27,8 +27,8 @@
         (setf rand-idx (random (length data-idx)))
         (setf idx (nth rand-idx data-idx))
 
-        (setf X-vec     (matrix-from-data (nth-row idx X-data)))
-        (setf y-correct (matrix-from-data (nth-row idx y-labels)))
+        (setf X-vec     (nth-row X-data idx))
+        (setf y-correct (nth-row y-labels idx))
 
         ; prediction with the latest weights
         (setf y-pred    (funcall clf X-vec W))

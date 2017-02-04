@@ -3,8 +3,6 @@
 ;;;;
 ;;;; Linear regression example.
 
-(in-package :cl-ml)
-
 ;;; INITIALIZATION
 (defparameter *linreg* (make-instance 'linear-regression))
 
