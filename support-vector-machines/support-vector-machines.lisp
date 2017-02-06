@@ -4,7 +4,8 @@
 ;;;; Support Vector Machines 
 
 (defclass support-vector-machines ()
-  ((b      :accessor get-b)
+  ((b      :accessor get-b
+           :initform 0)
    (alphas :accessor get-alphas)
    (X      :accessor get-X)
    (y      :accessor get-y)
@@ -17,7 +18,8 @@
   (:documentation ""))
 
 (defmethod fit ((svm support-vector-machines) X y &optional params)
-  (smo-simple svm X y params))
+  (smo svm X y params))
+  ;(smo-simple svm X y params))
 
 (defun select-random-j (i m)
   (nth
@@ -315,3 +317,52 @@
               0)
     continue
     0)))
+
+(defgeneric smo (svm X y &optional params)
+  (:documentation ""))
+
+(defmethod smo ((svm support-vector-machines) X y &optional params)
+  (let* ((C       (gethash 'C       params))
+         (toler   (gethash 'toler   params))
+         (maxiter (gethash 'maxiter params))
+         (m (matrix-rows X))
+         (iter 0)
+         (entire-set t)
+         (alpha-pairs-changed 0)
+         (alphas (empty-matrix m 1 0)))
+
+    (setf (get-X svm) X)
+    (setf (get-y svm) y)
+    (setf (get-C svm) C)
+    (setf (get-toler svm) y)
+    (setf (get-alphas svm) alphas)
+
+    (flet ((in-between (val lower higher)
+            (cond ((<= val lower) nil)
+                  ((>= val higher) nil)
+                  (t t))))
+
+    (loop while (and (< iter maxiter)
+                     (or (> alpha-pairs-changed 0)
+                         entire-set))
+      do (progn
+           (incf iter)
+           (if entire-set
+             (progn
+               (mapcar #'(lambda (idx) (setf alpha-pairs-changed (+ alpha-pairs-changed (inner-L svm idx)))) (iota m))
+               (incf iter))
+             (progn
+               (mapcar #'(lambda (idx)
+                           (if (in-between ([] alphas :row idx) 0 C)
+                             (setf alpha-pairs-changed (+ alpha-pairs-changed (inner-L svm idx)))))
+                       (iota m))
+               (incf iter)
+               ))
+
+           (cond (entire-set
+                    (setf entire-set nil))
+                  ((= alpha-pairs-changed 0)
+                   (setf entire-set t)))
+
+           )))))
+
