@@ -12,14 +12,25 @@
    (C      :accessor get-C)
    (toler  :accessor get-toler)
    (cache  :accessor get-error-cache)
-   (w      :accessor get-w)))
+   (w      :accessor get-w)
+   (K      :accessor get-K)))
 
 (defgeneric fit (svm X y &optional params)
   (:documentation ""))
 
 (defmethod fit ((svm support-vector-machines) X y &optional params)
+  (let ((rows (matrix-rows X)))
+
+  (setf (get-X svm) X)
+  (setf (get-K svm) (empty-matrix rows rows 0))
+
+  (mapcar #'(lambda (idx)
+              (setf ([] (get-K svm) :col idx)
+                    (kernel-trans svm ([] X :row idx) params)))
+          (iota rows))
+
   (smo svm X y params)
-  (calculate-weights svm))
+  (calculate-weights svm)))
   ;(smo-simple svm X y params)))
 
 (defgeneric predict (svm X &optional params)
@@ -193,7 +204,7 @@
          (y (get-y svm))
          (fXk (+ (get-b svm)
                  (dot (transpose (*mm (get-alphas svm) y))
-                      (dot X (transpose ([] X :row k)))))))
+                      ([] (get-K svm) :col k)))))
 
   (- fXk ([] y :row k))))
 
@@ -253,6 +264,7 @@
         (y (get-y svm))
         (toler (get-toler svm))
         (C (get-C svm))
+        (K (get-K svm))
 
         (Ei (calc-Ek svm i))
 
@@ -293,10 +305,10 @@
                 (go continue))
 
               (setf eta
-                (* 2 (-
-                  (dot ([] X :row i) (transpose ([] X :row j)))
-                  (dot ([] X :row i) (transpose ([] X :row i)))
-                  (dot ([] X :row j) (transpose ([] X :row j))))))
+                (-
+                  (* 2 ([] K :row i :col j))
+                  ([] K :row i :col i)
+                  ([] K :row j :col j)))
 
               (if (>= eta 0)
                 (go continue))
@@ -326,14 +338,14 @@
               (setf b1
                 (- (get-b svm)
                    Ei
-                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row i))))
-                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) (dot ([] X :row i) (transpose ([] X :row j))))))
+                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) ([] K :row i :col i))
+                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) ([] K :row i :col j))))
 
               (setf b2
                 (- (get-b svm)
                    Ej
-                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
-                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
+                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) ([] K :row i :col j))
+                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) ([] K :row j :col j))))
 
               (cond ((and (< 0 ([] (get-alphas svm) :row i)) (> C ([] (get-alphas svm) :row i)))
                      (setf (get-b svm) b1))
@@ -403,3 +415,34 @@
                    (setf entire-set t)))
 
            )))))
+
+(defgeneric kernel-trans (svm A params)
+  (:documentation ""))
+
+(defmethod kernel-trans ((svm support-vector-machines) A params)
+  (let* ((kernel-type (gethash 'type params))
+
+         (X (get-X svm))
+         (rows (matrix-rows X))
+         (K (empty-matrix rows 1 0))
+         (delta-row nil))
+
+    (cond ((eq kernel-type 'linear)
+           (setf K
+                 (dot X (transpose A))))
+
+          ((eq kernel-type 'rbf)
+           (progn
+             (mapcar #'(lambda (idx)
+                       (progn
+                         (setf delta-row (-mm ([] X :row idx) A))
+                         (setf ([] K :row idx) (dot
+                                                 delta-row
+                                                 (transpose delta-row)))))
+                   (iota rows))
+             (setf K
+                   (apply-mat
+                     (/mv K (- (expt (gethash 'delta params) 2)))
+                     (lambda (x) (exp x)))))))
+
+    (matrix-data K)))

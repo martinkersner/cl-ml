@@ -42,14 +42,27 @@
 (multiple-value-setq (train-data train-labels) 
   (load-dataset 
     "datasets/support-vector-machines/dataset.txt"
+    ;"datasets/support-vector-machines/rbf1.txt"
+    ;"datasets/support-vector-machines/rbf2.txt"
     2))
 
 ;;; TRAINING
-(defparameter *params*
+
+(defparameter *linear-params*
   (generate-params '((C       0.6)
-                     (toler   0.002)
-                     (maxiter 40))))
-(fit *svm* train-data train-labels *params*)
+                     (toler   0.001)
+                     (maxiter 40)
+                     (type    linear))))
+
+(defparameter *rbf-params*
+  (generate-params '((C       200)
+                     (toler   0.0001)
+                     (maxiter 10000)
+                     (type    rbf)
+                     (delta   1.3))))
+
+;(fit *svm* train-data train-labels *rbf-params*)
+(fit *svm* train-data train-labels *linear-params*)
 
 ;;; plot training data
 (defparameter *sv* (find-support-vectors *svm*))
@@ -61,21 +74,16 @@
 (xlabel *fig* "feature 1")
 (ylabel *fig* "feature 2")
 (arrow *fig* *x-min* *y-min* *x-max* *y-max* :nohead t)
-(scatter *fig* '((1 1)))
 ;(scatter *fig* (matrix-data (vstack train-data train-labels))
 (scatter *fig* (matrix-data (vstack train-data *predictions*))
          :palette t
          :pt 7
          :ps 2)
-(scatter *fig* (matrix-data *sv*)
-         :plot-type 'replot
-         :palette t
-         :with 'circles
-         :fill t
-         :solid-border t
-         :lt 2)
+;(scatter *fig* (matrix-data *sv*)
+         ;:plot-type 'replot
+         ;:palette t
+         ;:with 'circles
+         ;:fill t
+         ;:solid-border t
+         ;:lt 2)
 (show *fig*)
-
-(print
-  (predict *svm* (matrix-from-data '((3.542485 1.977398)      ; -1
-                                     (7.551510 -1.580030))))) ; +1
