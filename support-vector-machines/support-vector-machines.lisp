@@ -11,14 +11,45 @@
    (y      :accessor get-y)
    (C      :accessor get-C)
    (toler  :accessor get-toler)
-   (cache :accessor get-error-cache)))
+   (cache  :accessor get-error-cache)
+   (w      :accessor get-w)))
 
 (defgeneric fit (svm X y &optional params)
   (:documentation ""))
 
 (defmethod fit ((svm support-vector-machines) X y &optional params)
-  (smo svm X y params))
-  ;(smo-simple svm X y params))
+  (smo svm X y params)
+  (calculate-weights svm))
+  ;(smo-simple svm X y params)))
+
+(defgeneric predict (svm X &optional params)
+  (:documentation ""))
+
+(defmethod predict ((svm support-vector-machines) X &optional params)
+  (+mv
+    (dot X (get-w svm) :keep t)
+    (get-b svm)))
+
+(defgeneric calculate-weights (svm)
+  (:documentation ""))
+
+(defmethod calculate-weights ((svm support-vector-machines))
+  (let* ((X (get-X svm))
+         (y (get-y svm))
+         (data-rows (matrix-rows X))
+         (data-cols (matrix-cols X))
+         (alphas (get-alphas svm)))
+
+    (setf (get-w svm) (empty-matrix data-cols 1 0))
+
+    (mapcar #'(lambda (idx)
+                (setf (get-w svm) (+mm
+                                          (get-w svm)
+                                          (*mv
+                                            (transpose ([] X :row idx))
+                                            (* ([] alphas :row idx)
+                                               ([] y      :row idx))))))
+            (iota data-rows))))
 
 (defun select-random-j (i m)
   (nth

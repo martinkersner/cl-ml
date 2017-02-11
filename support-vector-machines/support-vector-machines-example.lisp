@@ -19,5 +19,6 @@
                      (maxiter 40))))
 (fit *svm* train-data train-labels *params*)
 
-(print (get-b *svm*))
-(print (get-alphas *svm*))
+(print
+  (predict *svm* (matrix-from-data '((3.542485 1.977398)      ; -1
+                                     (7.551510 -1.580030))))) ; +1
