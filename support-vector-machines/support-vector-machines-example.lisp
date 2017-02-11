@@ -20,6 +20,21 @@
 
     (matrix-from-data support-vectors)))
 
+(defun compute-hyperplane (svm)
+  (let* ((X (get-X svm))
+         (W (matrix-data (get-w svm)))
+         (w1 (caar W))
+         (w2 (caadr W))
+         (min-x (nth-col-min X 0))
+         (max-x (nth-col-max X 0))
+         (b (get-b svm)))
+
+    (values
+      min-x
+      (/ (- (- b) (* min-x w1)) w2)
+      max-x
+      (/ (- (- b) (* max-x w1)) w2))))
+
 ;;; INITIALIZATION
 (defparameter *svm* (make-instance 'support-vector-machines))
 
@@ -38,11 +53,17 @@
 
 ;;; plot training data
 (defparameter *sv* (find-support-vectors *svm*))
+(multiple-value-setq (*x-min* *y-min* *x-max* *y-max*) (compute-hyperplane *svm*))
+(defparameter *predictions* (predict *svm* train-data))
+
 (defparameter *fig* (make-instance 'figure
                                    :nokey t))
 (xlabel *fig* "feature 1")
 (ylabel *fig* "feature 2")
-(scatter *fig* (matrix-data (vstack train-data train-labels))
+(arrow *fig* *x-min* *y-min* *x-max* *y-max* :nohead t)
+(scatter *fig* '((1 1)))
+;(scatter *fig* (matrix-data (vstack train-data train-labels))
+(scatter *fig* (matrix-data (vstack train-data *predictions*))
          :palette t
          :pt 7
          :ps 2)
