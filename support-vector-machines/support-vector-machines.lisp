@@ -11,7 +11,6 @@
    (y      :accessor get-y)
    (C      :accessor get-C)
    (toler  :accessor get-toler)
-   ; error cache
    (cache :accessor get-error-cache)))
 
 (defgeneric fit (svm X y &optional params)
@@ -212,16 +211,16 @@
 
 (defmethod update-error-cache ((svm support-vector-machines) idx val)
   (setf ([] (get-error-cache svm) :row idx)
-        (matrix-from-data (list (list 1 val)))))
+        (list (list 1 val))))
 
 (defgeneric inner-L (svm i)
   (:documentation ""))
 
 (defmethod inner-L ((svm support-vector-machines) i)
-  (let ((X (get-X svm))
+  (let (
+        (X (get-X svm))
         (y (get-y svm))
         (toler (get-toler svm))
-        (alphas (get-alphas svm))
         (C (get-C svm))
 
         (Ei (calc-Ek svm i))
@@ -233,31 +232,31 @@
         (L nil)
         (H nil)
         (eta nil)
-        (b nil)
         (b1 nil)
-        (b2 nil))
+        (b2 nil)
+        (pair-changed 0))
 
     (tagbody
     (if (or (and
               (< (* ([] y :row i) Ei) (- toler))
-              (< ([] alphas :row i) C))
+              (< ([] (get-alphas svm) :row i) C))
             (and
               (> (* ([] y :row i) Ei) toler)
-              (> ([] alphas :row i) 0)))
+              (> ([] (get-alphas svm) :row i) 0)))
 
             (progn
               (multiple-value-setq (j Ej) (select-j svm i Ei))
 
-              (setf alpha-i-old ([] alphas :row i))
-              (setf alpha-j-old ([] alphas :row j))
+              (setf alpha-i-old ([] (get-alphas svm) :row i))
+              (setf alpha-j-old ([] (get-alphas svm) :row j))
 
               (if (not (= ([] y :row i) ([] y :row j)))
                 (progn
-                  (setf L (max 0 (- ([] alphas :row j) ([] alphas :row i))))
-                  (setf H (min C (+ C (- ([] alphas :row j) ([] alphas :row i))))))
+                  (setf L (max 0 (- ([] (get-alphas svm) :row j) ([] (get-alphas svm) :row i))))
+                  (setf H (min C (+ C (- ([] (get-alphas svm) :row j) ([] (get-alphas svm) :row i))))))
                 (progn
-                  (setf L (max 0 (- (+ ([] alphas :row j) ([] alphas :row i)) C)))
-                  (setf H (min C (+ ([] alphas :row j) ([] alphas :row i))))))
+                  (setf L (max 0 (- (+ ([] (get-alphas svm) :row j) ([] (get-alphas svm) :row i)) C)))
+                  (setf H (min C (+ ([] (get-alphas svm) :row j) ([] (get-alphas svm) :row i))))))
 
               (if (= L H)
                 (go continue))
@@ -271,52 +270,55 @@
               (if (>= eta 0)
                 (go continue))
 
-              (setf ([] alphas :row j)
-                (- ([] alphas :row j) (/ (* ([] y :row j)
+              (setf ([] (get-alphas svm) :row j)
+                (- ([] (get-alphas svm) :row j) (/ (* ([] y :row j)
                                          (- Ei Ej))
                                       eta)))
-              (setf ([] alphas :row j)
-                (clip-alpha ([] alphas :row j) H L))
+              (setf ([] (get-alphas svm) :row j)
+                (clip-alpha ([] (get-alphas svm) :row j) H L))
 
               (update-Ek svm j)
 
-              (if (< (abs (- ([] alphas :row j)
+              (if (< (abs (- ([] (get-alphas svm) :row j)
                              alpha-j-old))
                      0.00001)
                 (go continue))
 
-              (setf ([] alphas :row i)  ; TODO inc
-                (+ ([] alphas :row i)
+              (setf ([] (get-alphas svm) :row i)  ; TODO inc
+                (+ ([] (get-alphas svm) :row i)
                    (* ([] y :row j)
                       ([] y :row i)
-                      (- alpha-j-old ([] alphas :row j)))))
+                      (- alpha-j-old ([] (get-alphas svm) :row j)))))
 
               (update-Ek svm i)
 
               (setf b1
-                (- b
+                (- (get-b svm)
                    Ei
-                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row i))))
-                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row i) (transpose ([] X :row j))))))
+                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row i))))
+                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) (dot ([] X :row i) (transpose ([] X :row j))))))
 
               (setf b2
-                (- b
+                (- (get-b svm)
                    Ej
-                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
-                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
+                   (* ([] y :row i) (- ([] (get-alphas svm) :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
+                   (* ([] y :row j) (- ([] (get-alphas svm) :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
 
-              (cond ((and (< 0 ([] alphas :row i)) (> C ([] alphas :row i)))
-                     (setf b b1))
-                    ((and (< 0 ([] alphas :row j)) (> C ([] alphas :row j)))
-                     (setf b b2))
+              (cond ((and (< 0 ([] (get-alphas svm) :row i)) (> C ([] (get-alphas svm) :row i)))
+                     (setf (get-b svm) b1))
+                    ((and (< 0 ([] (get-alphas svm) :row j)) (> C ([] (get-alphas svm) :row j)))
+                     (setf (get-b svm) b2))
                     (t
-                      (setf b (/ (+ b1 b2) 2))))
+                      (setf (get-b svm) (/ (+ b1 b2) 2))))
 
-              1)
+              (setf pair-changed 1))
 
-              0)
+              (setf pair-changed 0))
+
     continue
-    0)))
+    (setf pair-changed 0))
+
+    pair-changed))
 
 (defgeneric smo (svm X y &optional params)
   (:documentation ""))
@@ -325,6 +327,7 @@
   (let* ((C       (gethash 'C       params))
          (toler   (gethash 'toler   params))
          (maxiter (gethash 'maxiter params))
+
          (m (matrix-rows X))
          (iter 0)
          (entire-set t)
@@ -334,8 +337,9 @@
     (setf (get-X svm) X)
     (setf (get-y svm) y)
     (setf (get-C svm) C)
-    (setf (get-toler svm) y)
+    (setf (get-toler svm) toler)
     (setf (get-alphas svm) alphas)
+    (setf (get-error-cache svm) (empty-matrix m 2 0))
 
     (flet ((in-between (val lower higher)
             (cond ((<= val lower) nil)
@@ -349,7 +353,10 @@
            (incf iter)
            (if entire-set
              (progn
-               (mapcar #'(lambda (idx) (setf alpha-pairs-changed (+ alpha-pairs-changed (inner-L svm idx)))) (iota m))
+               (mapcar #'(lambda (idx)
+                           (setf alpha-pairs-changed
+                                 (+ alpha-pairs-changed (inner-L svm idx))))
+                       (iota m))
                (incf iter))
              (progn
                (mapcar #'(lambda (idx)
@@ -365,4 +372,3 @@
                    (setf entire-set t)))
 
            )))))
-
