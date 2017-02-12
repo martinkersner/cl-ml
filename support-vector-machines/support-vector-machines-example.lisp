@@ -22,7 +22,7 @@
 
 (defun compute-hyperplane (svm)
   (let* ((X (get-X svm))
-         (W (matrix-data (get-w svm)))
+         (W (matrix-data (get-W svm)))
          (w1 (caar W))
          (w2 (caadr W))
          (min-x (nth-col-min X 0))
@@ -64,11 +64,12 @@
 ;(fit *svm* train-data train-labels *rbf-params*)
 (fit *svm* train-data train-labels *linear-params*)
 
-;;; plot training data
 (defparameter *sv* (find-support-vectors *svm*))
-(multiple-value-setq (*x-min* *y-min* *x-max* *y-max*) (compute-hyperplane *svm*))
+(multiple-value-setq (*x-min* *y-min* *x-max* *y-max*)
+  (compute-hyperplane *svm*))
 (defparameter *predictions* (predict *svm* train-data))
 
+;;; plot training data
 (defparameter *fig* (make-instance 'figure
                                    :nokey t))
 (xlabel *fig* "feature 1")

@@ -4,62 +4,52 @@
 ;;;; Support Vector Machines 
 
 (defclass support-vector-machines ()
-  ((b      :accessor get-b
-           :initform 0)
-   (alphas :accessor get-alphas)
-   (X      :accessor get-X)
+  ((X      :accessor get-X)
    (y      :accessor get-y)
+
+   (alphas :accessor get-alphas)
+   (K      :accessor get-K)
+
    (C      :accessor get-C)
    (toler  :accessor get-toler)
    (cache  :accessor get-error-cache)
-   (w      :accessor get-w)
-   (K      :accessor get-K)))
+
+   (W      :accessor get-W)
+   (b      :accessor get-b
+           :initform 0)))
 
 (defgeneric fit (svm X y &optional params)
-  (:documentation ""))
+  (:documentation "Fit the SVM model according to the given training data."))
 
 (defmethod fit ((svm support-vector-machines) X y &optional params)
-  (let ((rows (matrix-rows X)))
-
   (setf (get-X svm) X)
-  (setf (get-K svm) (empty-matrix rows rows 0))
-
-  (mapcar #'(lambda (idx)
-              (setf ([] (get-K svm) :col idx)
-                    (kernel-trans svm ([] X :row idx) params)))
-          (iota rows))
-
+  (prepare-kernel svm params)
   (smo svm X y params)
-  (calculate-weights svm)))
-  ;(smo-simple svm X y params)))
+  (calculate-weights svm))
 
 (defgeneric predict (svm X &optional params)
-  (:documentation ""))
+  (:documentation "Perform classification on samples in X."))
 
 (defmethod predict ((svm support-vector-machines) X &optional params)
   (+mv
-    (dot X (get-w svm) :keep t)
+    (dot X (get-W svm) :keep t)
     (get-b svm)))
 
-(defgeneric calculate-weights (svm)
-  (:documentation ""))
-
-(defmethod calculate-weights ((svm support-vector-machines))
+(defun calculate-weights (svm)
   (let* ((X (get-X svm))
          (y (get-y svm))
          (data-rows (matrix-rows X))
          (data-cols (matrix-cols X))
          (alphas (get-alphas svm)))
 
-    (setf (get-w svm) (empty-matrix data-cols 1 0))
+    (setf (get-W svm) (zeros (list data-cols 1)))
 
     (mapcar #'(lambda (idx)
-                (setf (get-w svm) (+mm
-                                          (get-w svm)
-                                          (*mv
-                                            (transpose ([] X :row idx))
-                                            (* ([] alphas :row idx)
-                                               ([] y      :row idx))))))
+                (setf (get-W svm)
+                      (+mm (get-W svm)
+                           (*mv (transpose ([] X :row idx))
+                                (* ([] alphas :row idx)
+                                   ([] y      :row idx))))))
             (iota data-rows))))
 
 (defun select-random-j (i m)
@@ -72,134 +62,7 @@
         ((> L a) L)
         (t a)))
 
-(defgeneric smo-simple (svm X y &optional params)
-  (:documentation ""))
-
-(defmethod smo-simple ((svm support-vector-machines) X y &optional params)
-  (let* ((C       (gethash 'C       params))
-         (toler   (gethash 'toler   params))
-         (maxiter (gethash 'maxiter params))
-         (m (matrix-rows X))
-         (fXi nil)
-         (fXj nil)
-         (Ei nil)
-         (Ej nil)
-         (j nil)
-         (iter 0)
-         (alpha-i-old nil)
-         (alpha-j-old nil)
-         (alpha-pairs-changed 0)
-         (b 0)
-         (b1 0)
-         (b2 0)
-         (L 0)
-         (H 0)
-         (eta 0)
-         (alphas (empty-matrix m 1 0)))
-
-    (loop while (< iter maxiter) do
-      (progn
-        (setf alpha-pairs-changed 0)
-        (loop for i from 0 below m collect
-
-        (tagbody
-        (progn
-          (setf fXi
-            (+ b (dot (transpose (*mm alphas y))
-                      (dot X (transpose ([] X :row i))))))
-
-          (setf Ei (- fXi ([] y :row i)))
-
-          (if (or (and
-                    (< (* ([] y :row i) Ei) (- toler))
-                    (< ([] alphas :row i) C))
-                  (and
-                    (> (* ([] y :row i) Ei) toler)
-                    (> ([] alphas :row i) 0)))
-            (progn
-              (setf j (select-random-j i m))
-              (setf fXj
-                (+ b (dot (transpose (*mm alphas y))
-                          (dot X (transpose ([] X :row j))))))
-
-              (setf Ej (- fXj ([] y :row j)))
-
-              (setf alpha-i-old ([] alphas :row i))
-              (setf alpha-j-old ([] alphas :row j))
-
-              (if (not (= ([] y :row i) ([] y :row j)))
-                (progn
-                  (setf L (max 0 (- ([] alphas :row j) ([] alphas :row i))))
-                  (setf H (min C (+ C (- ([] alphas :row j) ([] alphas :row i))))))
-                (progn
-                  (setf L (max 0 (- (+ ([] alphas :row j) ([] alphas :row i)) C)))
-                  (setf H (min C (+ ([] alphas :row j) ([] alphas :row i))))))
-
-              (if (= L H)
-                (go continue))
-
-              (setf eta
-                (* 2 (-
-                  (dot ([] X :row i) (transpose ([] X :row j)))
-                  (dot ([] X :row i) (transpose ([] X :row i)))
-                  (dot ([] X :row j) (transpose ([] X :row j))))))
-
-              (if (>= eta 0)
-                (go continue))
-
-              (setf ([] alphas :row j)
-                (- ([] alphas :row j) (/ (* ([] y :row j)
-                                         (- Ei Ej))
-                                      eta)))
-              (setf ([] alphas :row j)
-                (clip-alpha ([] alphas :row j) H L))
-
-              (if (< (abs (- ([] alphas :row j)
-                             alpha-j-old))
-                     0.00001)
-                (go continue))
-
-              (setf ([] alphas :row i)  ; TODO inc
-                (+ ([] alphas :row i)
-                   (* ([] y :row j)
-                      ([] y :row i)
-                      (- alpha-j-old ([] alphas :row j)))))
-
-              (setf b1
-                (- b
-                   Ei
-                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row i))))
-                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row i) (transpose ([] X :row j))))))
-
-              (setf b2
-                (- b
-                   Ej
-                   (* ([] y :row i) (- ([] alphas :row i) alpha-i-old) (dot ([] X :row i) (transpose ([] X :row j))))
-                   (* ([] y :row j) (- ([] alphas :row j) alpha-j-old) (dot ([] X :row j) (transpose ([] X :row j))))))
-
-              (cond ((and (< 0 ([] alphas :row i)) (> C ([] alphas :row i)))
-                     (setf b b1))
-                    ((and (< 0 ([] alphas :row j)) (> C ([] alphas :row j)))
-                     (setf b b2))
-                    (t
-                      (setf b (/ (+ b1 b2) 2))))
-
-              (incf alpha-pairs-changed))
-
-            (if (= alpha-pairs-changed 0)
-              (incf iter)
-              (setf iter 0))))
-
-      continue))))
-
-    (setf (get-b svm) b)
-    (setf (get-alphas svm) alphas)))
-
-;;; optimized SMO
-(defgeneric calc-Ek (svm k)
-  (:documentation ""))
-
-(defmethod calc-Ek ((svm support-vector-machines) k)
+(defun calc-Ek (svm k)
   (let* ((X (get-X svm))
          (y (get-y svm))
          (fXk (+ (get-b svm)
@@ -208,10 +71,7 @@
 
   (- fXk ([] y :row k))))
 
-(defgeneric select-j (svm i Ei)
-  (:documentation ""))
-
-(defmethod select-j ((svm support-vector-machines) i Ei)
+(defun select-j (svm i Ei)
   (let ((max-delta-E 0)
         (delta-E nil)
         (data-len (matrix-rows (get-X svm)))
@@ -241,24 +101,15 @@
 
     (values j Ej)))
 
-(defgeneric update-Ek (svm k)
-  (:documentation ""))
-
-(defmethod update-Ek ((svm support-vector-machines) k)
+(defun update-Ek (svm k)
   (let ((Ek (calc-Ek svm k)))
     (update-error-cache svm k Ek)))
 
-(defgeneric update-error-cache (svm idx val)
-  (:documentation ""))
-
-(defmethod update-error-cache ((svm support-vector-machines) idx val)
+(defun update-error-cache (svm idx val)
   (setf ([] (get-error-cache svm) :row idx)
         (list (list 1 val))))
 
-(defgeneric inner-L (svm i)
-  (:documentation ""))
-
-(defmethod inner-L ((svm support-vector-machines) i)
+(defun inner-L (svm i)
   (let (
         (X (get-X svm))
         (y (get-y svm))
@@ -363,10 +214,7 @@
 
     pair-changed))
 
-(defgeneric smo (svm X y &optional params)
-  (:documentation ""))
-
-(defmethod smo ((svm support-vector-machines) X y &optional params)
+(defun smo (svm X y &optional params)
   (let* ((C       (gethash 'C       params))
          (toler   (gethash 'toler   params))
          (maxiter (gethash 'maxiter params))
@@ -375,14 +223,15 @@
          (iter 0)
          (entire-set t)
          (alpha-pairs-changed 0)
-         (alphas (empty-matrix m 1 0)))
+         (alphas-shape (list m 1))
+         (alphas (zeros alphas-shape)))
 
     (setf (get-X svm) X)
     (setf (get-y svm) y)
     (setf (get-C svm) C)
     (setf (get-toler svm) toler)
     (setf (get-alphas svm) alphas)
-    (setf (get-error-cache svm) (empty-matrix m 2 0))
+    (setf (get-error-cache svm) (zeros (list m 2)))
 
     (flet ((in-between (val lower higher)
             (cond ((<= val lower) nil)
@@ -416,15 +265,12 @@
 
            )))))
 
-(defgeneric kernel-trans (svm A params)
-  (:documentation ""))
-
-(defmethod kernel-trans ((svm support-vector-machines) A params)
+(defun kernel-trans (svm A params)
   (let* ((kernel-type (gethash 'type params))
 
          (X (get-X svm))
          (rows (matrix-rows X))
-         (K (empty-matrix rows 1 0))
+         (K (zeros (list rows 1)))
          (delta-row nil))
 
     (cond ((eq kernel-type 'linear)
@@ -446,3 +292,14 @@
                      (lambda (x) (exp x)))))))
 
     (matrix-data K)))
+
+(defun prepare-kernel (svm params)
+  (let* ((rows  (matrix-rows (get-X svm)))
+         (shape (list rows rows)))
+
+    (setf (get-K svm) (zeros shape))
+
+    (mapcar #'(lambda (idx)
+                (setf ([] (get-K svm) :col idx)
+                      (kernel-trans svm ([] (get-X svm) :row idx) params)))
+            (iota rows))))
