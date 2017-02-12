@@ -1,4 +1,6 @@
-# Common Lisp Machine Learning Library
+# cl-ml
+
+Machine Learning library for Common Lisp
 
 Martin Kersner, <m.kersner@gmail.com>
 
@@ -7,37 +9,18 @@ Martin Kersner, <m.kersner@gmail.com>
 * Linear Regression
 * Logistic Regression
 * Decision Trees (ID3)
+* Support Vector Machines
 * Neural Networks (in progress)
 
-## TODO
-* Implement missing matrix and vector operations
-* Plot graphs
-* Verify correctness of algorithms
-* Optimize computational speed
-* Examples
-* Datasets
+## Requirements
+cl-ml requires [asdf](https://gitlab.common-lisp.net/asdf/asdf.git) to be installed. [cl-math](https://github.com/martinkersner/cl-math.git) and [cl-plot](https://github.com/martinkersner/cl-plot.git) are included as submodules to cl-ml project.
 
-## Installation steps
-
-### Clone lisp-ml
+## Get cl-ml
 ```bash
-git clone --recursive https://github.com/martinkersner/lisp-ml
+git clone --recursive https://github.com/martinkersner/cl-ml.git
 ```
 
-### Install ASDF
-```bash
-cd lisp-ml/asdf
-make
-```
-
-## Load lisp-ml
-```common-lisp
-(load "asdf/build/asdf")
-(push (namestring (ext:cd)) asdf:*central-registry*)
-(asdf:load-system :lispml)
-```
-or
-
+## Start using cl-ml
 ```common-lisp
 (load "init")
 ```
