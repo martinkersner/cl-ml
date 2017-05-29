@@ -37,6 +37,9 @@
                (:module logistic-regression
                   :components ((:file "logistic-regression")))
 
+               (:module naive-bayes-classifier 
+                  :components ((:file "naive-bayes-classifier")))
+
 ;;               (:module neural-networks
 ;;                  :components ((:file "nn")))
 
