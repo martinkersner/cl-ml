@@ -7,6 +7,6 @@
 (multiple-value-setq (X y) (get-default-dataset *nbc*))
 (multiple-value-setq (p0vec p1vec p1) (fit *nbc* X y))
 
-;(print p0vec)
-;(print p1vec)
-;(print p1)
+(print p0vec)
+(print p1vec)
+(print p1)
