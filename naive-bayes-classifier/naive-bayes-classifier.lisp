@@ -38,7 +38,7 @@
   (get-vocabulary nbc))
 
 (defgeneric doc2vec (nbc document vocabulary)
-  (:documentation "Convert document to feature vector which is represented as a list."))
+  (:documentation "Convert document to feature vector (bag of words) which is represented as a list."))
 
 (defmethod doc2vec ((nbc naive-bayes-classifier) document vocabulary)
   (let* ((index 0)
@@ -46,25 +46,27 @@
 
     (mapcar #'(lambda (w) (progn (setf index (position w vocabulary))
                                  (if index
-                                    (setf (nth index vec) 1)
+                                    (incf (nth index vec))
                                     (print "Word is not in vocabulary!"))))
             document)
     
     vec))
 
-(defgeneric docs2vec (nbc documents vocabulary)
+(defgeneric docs2mat (nbc documents vocabulary)
   (:documentation "Convert list of document to feature vectors which are represented as a matrix."))
 
-(defmethod docs2vec ((nbc naive-bayes-classifier) documents vocabulary)
-  (matrix-from-data (mapcar #'(lambda (d) (doc2vec nbc d vocabulary)) documents))
-  )
+(defmethod docs2mat ((nbc naive-bayes-classifier) documents vocabulary)
+  (matrix-from-data
+    (mapcar #'(lambda (d)
+                (doc2vec nbc d vocabulary))
+            documents)))
 
 (defgeneric fit (nbc X y &optional params)
   (:documentation "Fit the model according to the given training data. Only binary classes are expected."))
 
 (defmethod fit ((nbc naive-bayes-classifier) X y &optional params)
   (let* ((vocabulary (make-vocabulary nbc X))
-         (X-mat (docs2vec nbc X vocabulary))
+         (X-mat (docs2mat nbc X vocabulary))
          (rows (matrix-rows X-mat))
          (cols (matrix-cols X-mat))
          (p1 (/ (sum y) rows))
