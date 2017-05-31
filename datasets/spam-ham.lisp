@@ -69,4 +69,4 @@
     (Bargains Here! Buy Phentermin 37 5 mg K-25 Buy Genuine Phentermin at Low Cost VISA Acepted 30 - $130 50 60 - $219 0 90 - $292 50 120 - $36 0 180 - $513 0)))
 
 (defparameter *spam-ham-labels*
-  (matrix-from-data '((0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1))))
+  (matrix-from-data '((0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1))))
