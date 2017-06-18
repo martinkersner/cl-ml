@@ -40,8 +40,8 @@
                (:module naive-bayes-classifier 
                   :components ((:file "naive-bayes-classifier")))
 
-;;               (:module neural-networks
-;;                  :components ((:file "nn")))
+               (:module ann
+                  :components ((:file "ann")))
 
                (:module support-vector-machines
                   :components ((:file "support-vector-machines")))))

@@ -1,8 +1,6 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/06/12 
 
-(in-package :cl-ml)
-
 ;;; Load data.
 (defparameter *dataset-path* "datasets/logistic-regression/dataset_small.csv")
 (defparameter *dataset* (matrix-from-data (read-csv *dataset-path*)))
@@ -20,17 +18,17 @@
 (defparameter *nn*
   (make-instance 'neural-network :nn-dims '(2 4 1)))
 
-;;; Train model.
-(defparameter *params*
-  (generate-params '((num-epoch       50)
-                     (lr              0.005)
-                     (mini-batch-size 50))))
-(fit *nn* *data* *labels* *params*)
+;;;; Train model.
+;(defparameter *params*
+  ;(generate-params '((num-epoch       50)
+                     ;(lr              0.005)
+                     ;(mini-batch-size 50))))
+;(fit *nn* *data* *labels* *params*)
 
-(print 'biases)
-(print (biases  *nn*))
-(print 'weights)
-(print (weights *nn*))
+;(print 'biases)
+;(print (biases  *nn*))
+;(print 'weights)
+;(print (weights *nn*))
 
 ;(defparameter *x* (matrix-from-data '((8)(7))))
 ;(defparameter *y* (matrix-from-data '((1))))

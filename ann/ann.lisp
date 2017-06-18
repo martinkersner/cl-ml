@@ -1,18 +1,12 @@
 ;;;; Martin Kersner, m.kersner@gmail.com
 ;;;; 2016/05/11 
 ;;;;
-;;;; Neural Networks 
+;;;; Artificial Neural Networks
 ;;;; Inspired by https://github.com/mnielsen/neural-networks-and-deep-learning/blob/master/src/network.py
-;;;
-;;; TODO
-;;; change algorithm in order to be able to access data which are stored in row-like style
-;;; control of object initialization 
-;;; create a simple dataset
-
-(in-package :cl-ml)
 
 (defclass neural-network ()
-  ((nn-dims    :reader nn-dims :initarg :nn-dims)
+  ((nn-dims    :reader nn-dims
+               :initarg :nn-dims)
    (num-layers :reader num-layers)
    (biases     :reader biases)
    (weights    :reader weights)))
@@ -50,7 +44,7 @@
 (defgeneric predict (nn X &optional params)
   (:documentation "Predict using neural network."))
 
-; TODO
+;; TODO
 (defmethod predict ((nn neural-network) X &optional params)
   )
 
@@ -61,7 +55,7 @@
   (let ((a input))
 
     (mapcar #'(lambda (w b)
-                (setf a (sigmoid (add (dot w a) b))))
+                (setf a (sigmoid (+mm (dot w a) b))))
 
             (weights nn) (biases nn))
 
@@ -70,7 +64,12 @@
 ;;; Individual records are expected to be in row-like formatting.
 (defmethod SGD ((nn neural-network) train-data train-labels epochs mini-batch-size lr &optional test-data  test-labels)
   (let* ((n (matrix-rows train-data))
-         (mini-batch-range (range 0 n mini-batch-size)))
+         (mini-batch-range (range 0 n mini-batch-size))
+         (rand-idx nil)
+         (train-data-rand nil)
+         (train-labels-rand nil)
+         (data-mini-batch nil)
+         (labels-mini-batch nil))
 
     (dotimes (j epochs)
       (setf rand-idx (randomize-list (iota n)))
@@ -93,46 +92,50 @@
   ([] idx (+ idx (- mini-batch-size 1)) data))
 
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
-  (let ((grad-b (mapcar #'zero-matrix-like (biases  nn)))
-        (grad-w (mapcar #'zero-matrix-like (weights nn)))
-        (modif-lr (* lr (matrix-rows data-mini-batch)))) ; is it correct?
+  (let ((grad-b (mapcar #'zeros-like (biases  nn)))
+        (grad-w (mapcar #'zeros-like (weights nn)))
+        (modif-lr (* lr (matrix-rows data-mini-batch)))
+        (delta-grad-b nil)
+        (delta-grad-w)) ; is it correct?
 
     (mapcar #'(lambda (x y) (progn
                               (multiple-value-setq (delta-grad-b delta-grad-w) (backpropagation nn x y))
                               (setf grad-b
-                                    (mapcar #'(lambda (base delta) (add base delta)) grad-b delta-grad-b))
+                                    (mapcar #'(lambda (base delta) (+mm base delta)) grad-b delta-grad-b))
                               (setf grad-w
-                                    (mapcar #'(lambda (base delta) (add base delta)) grad-w delta-grad-w))))
+                                    (mapcar #'(lambda (base delta) (+mm base delta)) grad-w delta-grad-w))))
 
             (matrix-data data-mini-batch) (matrix-data labels-mini-batch))
 
     (setf (slot-value nn 'weights)
           (mapcar #'(lambda (w g-w)
-                      (subtract w (multiply modif-lr g-w)))
+                      (-mm w (*mm modif-lr g-w)))
                   (weights nn) grad-w))
 
     (setf (slot-value nn 'biases)
           (mapcar #'(lambda (b g-b)
-                      (subtract b (multiply modif-lr g-b)))
+                      (-mm b (*mm modif-lr g-b)))
                   (biases nn) grad-b))))
 
 (defmethod backpropagation ((nn neural-network) x y)
-  (let ((grad-b (mapcar #'empty-matrix-like (biases nn)))
-        (grad-w (mapcar #'empty-matrix-like (weights nn)))
+  (let ((grad-b (mapcar #'empty-like (biases nn)))
+        (grad-w (mapcar #'empty-like (weights nn)))
         (a (matrix-from-data (transpose-list (list x))))
         (a-hist (list x))
-        (z-hist nil))
+        (z-hist nil)
+        (z nil)
+        (delta nil))
 
     (mapcar #'(lambda (w b) (progn
-                              (setf z (add (dot w a) b))
+                              (setf z (+mm (dot w a) b))
                               (setf z-hist (append z-hist (list z)))
                               (setf a (sigmoid z))
                               (setf a-hist (append a-hist (list a)))))
 
       (weights nn) (biases nn))
 
-    (setf delta (matrix-mult (subtract (last-elem a-hist) (matrix-from-data-peel y))
-                             (sigmoid-prime (last-elem z-hist))))
+    (setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
+                     (sigmoid-prime (last-elem z-hist))))
 
     (setf (nth-pos-neg -1 grad-b) delta)
     (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
@@ -140,7 +143,7 @@
     (loop for l from 2 to (1- (num-layers nn))
       do ((lambda () (progn
           ;; TODO shorten expression
-          (setf delta (multiply (caar (matrix-data (sigmoid-prime (nth-pos-neg (- l) z-hist))))
+          (setf delta (*mm (caar (matrix-data (sigmoid-prime (nth-pos-neg (- l) z-hist))))
                                 (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta)))
           (setf (nth-pos-neg (- l) grad-b) delta)
           (setf (nth-pos-neg (- l) grad-w) (dot delta (matrix-from-data-peel (nth-pos-neg (1- (- l)) a-hist))))
@@ -149,15 +152,13 @@
   (values grad-b grad-w)))
 
 (defmethod evaluate ((nn neural-network) test-x test-y)
-  (let ((correct 0))
+  (let ((correct 0)
+        (tmp nil))
 
     (mapcar #'(lambda (x y) (progn
-                              ;(print (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))) ; TODO delete
-
                               (setf tmp (car (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
 
                               (if (= (car y)
-                                   ;(maximum-idx (matrix-data-peel (feed-forward nn (transpose (matrix-from-data-peel x))))))
                                    (if (> tmp 0.5)
                                      1
                                      0))
