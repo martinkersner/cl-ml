@@ -8,8 +8,8 @@
   ((nn-dims    :reader nn-dims
                :initarg :nn-dims)
    (num-layers :reader num-layers)
-   (biases     :reader biases)
-   (weights    :reader weights)))
+   (biases     :accessor biases)
+   (weights    :accessor weights)))
 
 (defmethod initialize-instance :after ((nn neural-network) &rest args)
   (let* ((nn-dims (nn-dims nn))
@@ -73,6 +73,8 @@
 
     (dotimes (j epochs)
       (print (list 'epoch j))
+      ;(print (biases nn))
+      ;(print (weights nn))
       (setf rand-idx (randomize-list (iota n)))
       (setf train-data-rand   (shuffle-rows-spec train-data   rand-idx))
       (setf train-labels-rand (shuffle-rows-spec train-labels rand-idx))
@@ -97,8 +99,8 @@
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
   (let ((grad-b (mapcar #'zeros-like (biases  nn)))
         (grad-w (mapcar #'zeros-like (weights nn)))
-        (modif-lr (* lr (matrix-rows data-mini-batch))) ; is it correct?
-        (delta-grad-b nil)
+        (modif-lr (/ lr (matrix-rows data-mini-batch)))
+        (delta-grad-b)
         (delta-grad-w))
 
     (mapcar #'(lambda (x y) (progn
@@ -110,15 +112,18 @@
 
             (matrix-data data-mini-batch) (matrix-data labels-mini-batch))
 
-    (setf (slot-value nn 'weights)
-          (mapcar #'(lambda (w g-w)
-                      (-mm w (*mv g-w modif-lr)))
-                  (weights nn) grad-w))
+    ;(print grad-w)
 
-    (setf (slot-value nn 'biases)
-          (mapcar #'(lambda (b g-b)
-                      (-mm b (*mv g-b modif-lr)))
-                  (biases nn) grad-b))))
+    (setf (weights nn)
+      (mapcar #'(lambda (w g-w)
+                  (progn 
+                  (-mm w (*mv g-w modif-lr))))
+              (weights nn) grad-w))
+
+    (setf (biases nn)
+      (mapcar #'(lambda (b g-b)
+                  (-mm b (*mv g-b modif-lr)))
+              (biases nn) grad-b))))
 
 (defmethod backpropagation ((nn neural-network) x y)
   (let ((grad-b (mapcar #'empty-like (biases nn)))
@@ -129,6 +134,7 @@
         (z nil)
         (delta nil))
 
+    ;forward pass
     (mapcar #'(lambda (w b) (progn
                               (setf z (+mm (dot w a :keep t) b))
                               (setf z-hist (append z-hist (list z)))
@@ -139,6 +145,17 @@
 
     (setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
                      (sigmoid-prime (last-elem z-hist))))
+    ;(print 'predict)
+    ;(print (last-elem a-hist))
+    ;(print 'true)
+    ;(print (matrix-from-data-peel y))
+    ;(print 'delta)
+    ;(print delta)
+    ;(print '-mm)
+    ;(print (-mm (last-elem a-hist) (matrix-from-data-peel y)))
+    ;(print 'sigmoid)
+    ;(print (sigmoid-prime (last-elem z-hist)))
+    ;(print 'delta-end)
 
     (setf (nth-pos-neg -1 grad-b) delta)
     (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
