@@ -39,7 +39,7 @@
   (SGD nn
        X y ; training data
        num-epoch mini-batch-size lr
-       X y))) ; test data
+       X y)))
 
 (defgeneric predict (nn X &optional params)
   (:documentation "Predict using neural network."))
@@ -55,7 +55,7 @@
   (let ((a input))
 
     (mapcar #'(lambda (w b)
-                (setf a (sigmoid (+mm (dot w a) b))))
+                (setf a (sigmoid (+mm (dot w a :keep t) b))))
 
             (weights nn) (biases nn))
 
@@ -72,6 +72,7 @@
          (labels-mini-batch nil))
 
     (dotimes (j epochs)
+      (print (list 'epoch j))
       (setf rand-idx (randomize-list (iota n)))
       (setf train-data-rand   (shuffle-rows-spec train-data   rand-idx))
       (setf train-labels-rand (shuffle-rows-spec train-labels rand-idx))
@@ -80,6 +81,7 @@
                   (progn
                     (setf data-mini-batch   (create-mini-batch train-data-rand   mini-batch-size idx))
                     (setf labels-mini-batch (create-mini-batch train-labels-rand mini-batch-size idx))
+
                     (update-mini-batch nn data-mini-batch labels-mini-batch lr)))
 
               mini-batch-range)
@@ -89,14 +91,15 @@
 
 ;;; Access and return specified mini-batch of data.
 (defun create-mini-batch (data mini-batch-size idx)
-  ([] idx (+ idx (- mini-batch-size 1)) data))
+  ([] data :row (list idx
+                      (+ idx (- mini-batch-size 1)))))
 
 (defmethod update-mini-batch ((nn neural-network) data-mini-batch labels-mini-batch lr)
   (let ((grad-b (mapcar #'zeros-like (biases  nn)))
         (grad-w (mapcar #'zeros-like (weights nn)))
-        (modif-lr (* lr (matrix-rows data-mini-batch)))
+        (modif-lr (* lr (matrix-rows data-mini-batch))) ; is it correct?
         (delta-grad-b nil)
-        (delta-grad-w)) ; is it correct?
+        (delta-grad-w))
 
     (mapcar #'(lambda (x y) (progn
                               (multiple-value-setq (delta-grad-b delta-grad-w) (backpropagation nn x y))
@@ -109,12 +112,12 @@
 
     (setf (slot-value nn 'weights)
           (mapcar #'(lambda (w g-w)
-                      (-mm w (*mm modif-lr g-w)))
+                      (-mm w (*mv g-w modif-lr)))
                   (weights nn) grad-w))
 
     (setf (slot-value nn 'biases)
           (mapcar #'(lambda (b g-b)
-                      (-mm b (*mm modif-lr g-b)))
+                      (-mm b (*mv g-b modif-lr)))
                   (biases nn) grad-b))))
 
 (defmethod backpropagation ((nn neural-network) x y)
@@ -127,7 +130,7 @@
         (delta nil))
 
     (mapcar #'(lambda (w b) (progn
-                              (setf z (+mm (dot w a) b))
+                              (setf z (+mm (dot w a :keep t) b))
                               (setf z-hist (append z-hist (list z)))
                               (setf a (sigmoid z))
                               (setf a-hist (append a-hist (list a)))))
@@ -142,9 +145,9 @@
 
     (loop for l from 2 to (1- (num-layers nn))
       do ((lambda () (progn
-          ;; TODO shorten expression
-          (setf delta (*mm (caar (matrix-data (sigmoid-prime (nth-pos-neg (- l) z-hist))))
-                                (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta)))
+          (setf delta (*mm (sigmoid-prime (nth-pos-neg (- l) z-hist))
+                                (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta :keep t)))
+
           (setf (nth-pos-neg (- l) grad-b) delta)
           (setf (nth-pos-neg (- l) grad-w) (dot delta (matrix-from-data-peel (nth-pos-neg (1- (- l)) a-hist))))
     ))))
@@ -166,4 +169,5 @@
             (matrix-data test-x) (matrix-data test-y))
 
     (print correct) ; only for debugging purposes
+
   correct))
