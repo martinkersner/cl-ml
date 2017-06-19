@@ -218,3 +218,15 @@
     (print correct) ; only for debugging purposes
 
   correct))
+
+(defmethod parameter-summary ((nn neural-network))
+  (print 'weights)
+  (parameter-dims nn (weights nn))
+
+  (print 'biases)
+  (parameter-dims nn (biases nn)))
+
+(defmethod parameter-dims ((nn neural-network) mat)
+  (mapcar #'(lambda (m)
+              (format t "~%(~d, ~d)" (matrix-rows m) (matrix-cols m)))
+          mat))

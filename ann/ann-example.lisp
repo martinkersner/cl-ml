@@ -19,7 +19,9 @@
   (generate-params '((num-epoch       30)
                      (lr              0.5)
                      (mini-batch-size 50))))
-(fit *nn* train-data train-labels *params*)
+
+(parameter-summary *nn*)
+;(fit *nn* train-data train-labels *params*)
 
 ;(print 'biases)
 ;(print (biases  *nn*))
