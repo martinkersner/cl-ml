@@ -12,7 +12,7 @@
 
 ;;; Initialize neural network
 (defparameter *nn*
-  (make-instance 'neural-network :nn-dims '(2 3 1)))
+  (make-instance 'neural-network :nn-dims '(2 3 4 1)))
 
 ;;;; Train model.
 (defparameter *params*
