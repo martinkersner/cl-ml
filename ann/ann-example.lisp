@@ -12,16 +12,16 @@
 
 ;;; Initialize neural network
 (defparameter *nn*
-  (make-instance 'neural-network :nn-dims '(2 3 4 1)))
+  (make-instance 'neural-network :nn-dims '(2 3 1)))
 
 ;;;; Train model.
 (defparameter *params*
-  (generate-params '((num-epoch       30)
+  (generate-params '((num-epoch       100)
                      (lr              0.5)
                      (mini-batch-size 50))))
 
-(parameter-summary *nn*)
-;(fit *nn* train-data train-labels *params*)
+;(parameter-summary *nn*)
+(fit *nn* train-data train-labels *params*)
 
 ;(print 'biases)
 ;(print (biases  *nn*))

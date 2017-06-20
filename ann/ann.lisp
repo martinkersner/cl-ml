@@ -73,8 +73,6 @@
 
     (dotimes (j epochs)
       (print (list 'epoch j))
-      ;(print (biases nn))
-      ;(print (weights nn))
       (setf rand-idx (randomize-list (iota n)))
       (setf train-data-rand   (shuffle-rows-spec train-data   rand-idx))
       (setf train-labels-rand (shuffle-rows-spec train-labels rand-idx))
@@ -112,8 +110,6 @@
 
             (matrix-data data-mini-batch) (matrix-data labels-mini-batch))
 
-    ;(print grad-w)
-
     (setf (weights nn)
       (mapcar #'(lambda (w g-w)
                   (progn 
@@ -129,11 +125,10 @@
   (let ((grad-b (mapcar #'empty-like (biases nn)))
         (grad-w (mapcar #'empty-like (weights nn)))
         (a (matrix-from-data (transpose-list (list x))))
-        (a-hist (list (matrix-from-data (list x))))
-        ;(a-hist (list x))
-        (z-hist nil)
-        (z nil)
-        (delta nil))
+        (a-hist (list (transpose (matrix-from-data (list x)))))
+        (z-hist)
+        (z)
+        (delta))
 
     ;forward pass
     (mapcar #'(lambda (w b) (progn
@@ -147,56 +142,18 @@
     (setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
                      (sigmoid-prime (last-elem z-hist))))
 
-    ;(print 'predict)
-    ;(print (last-elem a-hist))
-    ;(print 'true)
-    ;(print (matrix-from-data-peel y))
-    ;(print 'delta)
-    ;(print delta)
-    ;(print '-mm)
-    ;(print (-mm (last-elem a-hist) (matrix-from-data-peel y)))
-    ;(print 'sigmoid)
-    ;(print (sigmoid-prime (last-elem z-hist)))
-    ;(print 'delta-end)
+    (print delta)
 
-      ;(print "martin")
     (setf (nth-pos-neg -1 grad-b) delta)
-    ;(print (dot delta (transpose (nth-pos-neg -2 a-hist))))
-      ;(print "martin")
-      ;(print delta)
-      ;(print (nth-pos-neg -2 a-hist))
-      ;(print a-hist)
-      ;(print x)
     (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
 
-    ;(print 'num-layers)
-    ;(print (num-layers nn))
     (loop for l from 2 to (1- (num-layers nn))
       do ((lambda () (progn
-          (print 'layer)
-          (print l)
           (setf delta (*mm (sigmoid-prime (nth-pos-neg (- l) z-hist))
                            (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta :keep t)))
 
           (setf (nth-pos-neg (- l) grad-b) delta)
-      (print "martin")
-      ;(print (nth-pos-neg (1- (- l)) a-hist))
-      ;(print (dot delta (nth-pos-neg (1- (- l)) a-hist)))
-      (print 'weights)
-      (print (weights nn))
-      (print 'biases)
-      (print (biases nn))
-      (print 'a-hist)
-      (print a-hist)
-      (print 'delta)
-      (print delta)
-      (print 'a-hist-part)
-      (print (nth-pos-neg (1- (- l)) a-hist))
-      (print "martin2")
           (setf (nth-pos-neg (- l) grad-w) (dot delta (transpose (nth-pos-neg (1- (- l)) a-hist))))
-          ;(setf (nth-pos-neg (- l) grad-w) (dot delta (nth-pos-neg (1- (- l)) a-hist)))
-          ;(setf (nth-pos-neg (- l) grad-w) (dot delta (matrix-from-data-peel (nth-pos-neg (1- (- l)) a-hist))))
-      (print "martin3")
     ))))
 
   (values grad-b grad-w)))
@@ -218,6 +175,9 @@
     (print correct) ; only for debugging purposes
 
   correct))
+
+(defmethod matrices-summary ((nn neural-network) matrices)
+  (parameter-dims nn matrices))
 
 (defmethod parameter-summary ((nn neural-network))
   (print 'weights)
