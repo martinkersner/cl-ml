@@ -16,9 +16,9 @@
 
 ;;;; Train model.
 (defparameter *params*
-  (generate-params '((num-epoch       100)
-                     (lr              0.5)
-                     (mini-batch-size 50))))
+  (generate-params '((num-epoch       120)
+                     (lr              0.25)
+                     (mini-batch-size 10))))
 
 ;(parameter-summary *nn*)
 (fit *nn* train-data train-labels *params*)

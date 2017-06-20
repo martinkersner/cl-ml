@@ -128,7 +128,8 @@
         (a-hist (list (transpose (matrix-from-data (list x)))))
         (z-hist)
         (z)
-        (delta))
+        (delta)
+        (a))
 
     ;forward pass
     (mapcar #'(lambda (w b) (progn
@@ -136,13 +137,20 @@
                               (setf z-hist (append z-hist (list z)))
                               (setf a (sigmoid z))
                               (setf a-hist (append a-hist (list a)))))
-
       (weights nn) (biases nn))
 
-    (setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
+    ;(format t "~%(~d, ~d) ~d" (matrix-data-peel a)
+                              ;y
+                              ;(matrix-data-peel (-mm (matrix-from-data-peel y) (last-elem a-hist))))
+
+    ;(setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
+                     ;(sigmoid-prime (last-elem z-hist))))
+
+    (setf delta (*mm (-mm (matrix-from-data-peel y) (last-elem a-hist))
                      (sigmoid-prime (last-elem z-hist))))
 
-    (print delta)
+    ;(print delta)
+    ;(print (last-elem a-hist))
 
     (setf (nth-pos-neg -1 grad-b) delta)
     (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
@@ -153,8 +161,7 @@
                            (dot (transpose (nth-pos-neg (1+ (- l)) grad-w)) delta :keep t)))
 
           (setf (nth-pos-neg (- l) grad-b) delta)
-          (setf (nth-pos-neg (- l) grad-w) (dot delta (transpose (nth-pos-neg (1- (- l)) a-hist))))
-    ))))
+          (setf (nth-pos-neg (- l) grad-w) (dot delta (transpose (nth-pos-neg (1- (- l)) a-hist))))))))
 
   (values grad-b grad-w)))
 
