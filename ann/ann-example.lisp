@@ -12,29 +12,22 @@
 
 ;;; Initialize neural network
 (defparameter *nn*
-  (make-instance 'neural-network :nn-dims '(2 3 1)))
+  (make-instance 'neural-network :nn-dims '(2 1)))
 
-;;;; Train model.
+;;;; Train model
 (defparameter *params*
-  (generate-params '((num-epoch       120)
-                     (lr              0.25)
-                     (mini-batch-size 10))))
+  (generate-params '((num-epoch       50)
+                     (lr              0.3)
+                     (mini-batch-size 20))))
 
-;(parameter-summary *nn*)
 (fit *nn* train-data train-labels *params*)
 
-;(print 'biases)
-;(print (biases  *nn*))
-;(print 'weights)
-;(print (weights *nn*))
+(parameter-summary *nn*)
 
-;(defparameter *x* (matrix-from-data '((8)(7))))
-;(defparameter *y* (matrix-from-data '((1))))
-;(defparameter *x-row* (matrix-from-data '((8 7)(7 6))))
-;(defparameter *y-row* (matrix-from-data '((1 0))))
+(defparameter *X* (matrix-from-data '((0 14)
+                                      (0.3 0.2))))
+(defparameter *y-true* '(0 1))
 
-;(predict *nn* *x*)
-;(setf b (feed-forward *nn* *x*))
-;(multiple-value-setq (grad-b grad-w) (backpropagation *nn* *x* *y*))
-
-;(princ (evaluate *nn* *x-row* *y-row*))
+(format t "~%y-pred: ~d~%y-true: ~d"
+        (predict *nn* *X*)
+        *y-true*)

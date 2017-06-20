@@ -7,7 +7,7 @@
 (defclass neural-network ()
   ((nn-dims    :reader nn-dims
                :initarg :nn-dims)
-   (num-layers :reader num-layers)
+   (num-layers :accessor num-layers)
    (biases     :accessor biases)
    (weights    :accessor weights)))
 
@@ -16,17 +16,13 @@
          (front (subseq nn-dims 0 (1- (length nn-dims))))
          (back  (subseq nn-dims 1)))
 
-    (with-slots (num-layers) nn
-    (with-slots (nn-dims)    nn
-      (setf num-layers (length nn-dims))))
+    (setf (num-layers nn) (length (nn-dims nn)))
 
-    (with-slots (biases) nn
-      (setf biases
-        (mapcar #'(lambda (x) (rand-norm-matrix x 1)) back)))
+    (setf (biases nn)
+          (mapcar #'(lambda (y) (rand-norm-matrix y 1)) back))
 
-    (with-slots (weights) nn
-      (setf weights
-        (mapcar #'(lambda (x y) (rand-norm-matrix x y)) back front)))))
+    (setf (weights nn)
+          (mapcar #'(lambda (x y) (rand-norm-matrix y x)) front back))))
 
 (defgeneric fit (nn X y &optional params)
   (:documentation "Train neural network."))
@@ -41,12 +37,16 @@
        num-epoch mini-batch-size lr
        X y)))
 
-(defgeneric predict (nn X &optional params)
+(defgeneric predict (nn data &optional params)
   (:documentation "Predict using neural network."))
 
-;; TODO
-(defmethod predict ((nn neural-network) X &optional params)
-  )
+(defmethod predict ((nn neural-network) data &optional params)
+  (mapcar #'(lambda (X) (if (>
+                              (caar (matrix-data (feed-forward nn (transpose (matrix-from-data-peel X)))))
+                              0.5)
+                          1
+                          0))
+          (matrix-data data)))
 
 (defgeneric feed-forward (nn input)
   (:documentation "Computation of feed forward step within neural network."))
@@ -139,18 +139,11 @@
                               (setf a-hist (append a-hist (list a)))))
       (weights nn) (biases nn))
 
-    ;(format t "~%(~d, ~d) ~d" (matrix-data-peel a)
-                              ;y
-                              ;(matrix-data-peel (-mm (matrix-from-data-peel y) (last-elem a-hist))))
-
-    ;(setf delta (*mm (-mm (last-elem a-hist) (matrix-from-data-peel y))
-                     ;(sigmoid-prime (last-elem z-hist))))
-
-    (setf delta (*mm (-mm (matrix-from-data-peel y) (last-elem a-hist))
-                     (sigmoid-prime (last-elem z-hist))))
-
-    ;(print delta)
-    ;(print (last-elem a-hist))
+    (setf delta (*mm
+                  (-mm
+                    (last-elem a-hist)
+                    (matrix-from-data-peel y))
+                  (sigmoid-prime (last-elem z-hist))))
 
     (setf (nth-pos-neg -1 grad-b) delta)
     (setf (nth-pos-neg -1 grad-w) (dot delta (transpose (nth-pos-neg -2 a-hist))))
@@ -179,7 +172,7 @@
                               (incf correct 1))))
             (matrix-data test-x) (matrix-data test-y))
 
-    (print correct) ; only for debugging purposes
+    (print (/ correct (matrix-rows test-y))) ; only for debugging purposes
 
   correct))
 
