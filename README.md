@@ -10,6 +10,7 @@ Martin Kersner, <m.kersner@gmail.com>
 * Logistic Regression
 * Decision Trees (ID3)
 * Support Vector Machines
+* [Multinomial Naive Bayes Classifier](https://github.com/martinkersner/cl-ml#naive-bayes-classifier)
 * [Artificial Neural Networks](https://github.com/martinkersner/cl-ml#artificial-neural-networks)
 
 ### Requirements
@@ -27,8 +28,30 @@ git clone --recursive https://github.com/martinkersner/cl-ml.git
 
 ## Algorithms
 
+### Naive Bayes Classifier
+Currently, only Multinomial Naive Bayes Classifier is supported. 
+
+1. Create instance of Naive Bayes Classifier
+```common-lisp
+(defparameter *nbc*
+  (make-instance 'naive-bayes-classifier))
+```
+
+2. Pass training data. Training data will be transformed to feature vectors within training procedure.
+```common-lisp
+; X-train represent training data in list of lists format
+; y-train represent training labels in cl-math matrix format
+(fit *nbc* X-train y-train)
+```
+
+3. Predict on new data
+```common-lisp
+; X-test represent training data in list of lists format
+(predict *nbc* X-test)
+```
+
 ### Artificial Neural Networks
-Currently only [fully connected layers](http://cs231n.github.io/convolutional-networks/#fc) with [sigmoid activation function](https://en.wikipedia.org/wiki/Sigmoid_function) are supported. Optimization is performed using [Stochastic Gradient Descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) (SGD).
+Currently, only [fully connected layers](http://cs231n.github.io/convolutional-networks/#fc) with [sigmoid activation function](https://en.wikipedia.org/wiki/Sigmoid_function) are supported. Optimization is performed using [Stochastic Gradient Descent](https://en.wikipedia.org/wiki/Stochastic_gradient_descent) (SGD).
 
 1. Create network with 2 neurons in input layer, 3 neurons in hidden layer and 1 neuron the output layer.
 ```common-lisp
@@ -47,7 +70,7 @@ Currently only [fully connected layers](http://cs231n.github.io/convolutional-ne
 3. Start training.
 ```common-lisp
 ; X-train represent training data in cl-math matrix format
-; y-train represent training labels in cl-math matrix format 
+; y-train represent training labels in cl-math matrix format
 (fit *nn* X-train y-train *params*)
 ```
 
