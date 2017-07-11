@@ -21,7 +21,7 @@ Martin Kersner, <m.kersner@gmail.com>
 git clone --recursive https://github.com/martinkersner/cl-ml.git
 ```
 
-### Start using it
+### Start using `cl-ml`
 ```common-lisp
 (load "init")
 ```
@@ -79,3 +79,17 @@ Currently, only [fully connected layers](http://cs231n.github.io/convolutional-n
 ; X-test represent testing data in cl-math matrix format
 (predict *nn* X-test)
 ```
+
+## Project Roadmap
+
+1. Add new algorithms
+   * k-Means
+   * Adaboost
+   * Autoencoders
+   * CNN
+1. Add new default data sets
+1. Methods for data manipulation
+   * Generating new data
+1. Methods enabling easier training
+   * Cross validation
+   * Grid search
