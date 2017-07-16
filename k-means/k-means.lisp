@@ -6,6 +6,9 @@
 (defclass k-means ()
   ((k :initarg :k ; number of centroids
       :reader get-k)
+   ; maximum change in position of single centroid to declare convergence
+   (tol :initarg :tol
+        :reader get-tol)
    (centroids :accessor get-centroids)))
 
 (defmethod random-init ((km k-means) X)
@@ -43,7 +46,7 @@
 
 (defmethod fit ((km k-means) X y &optional params)
   (let ((centroids (random-init km X))
-        (assignment))
+        (label))
 
     (labels ((euclidean-dist (vec1 vec2)
                (apply '+
@@ -59,19 +62,42 @@
 
                min-idx)
 
+             (compute-mean (X)
+               (mapcar #'(lambda (f) (mean f)) (transpose-list X)))
+
              (assign (centroids X)
                (mapcar #'(lambda (vec)
                              (find-closest vec centroids))
                        X))
 
-             ;(update ())
+             (update (label X)
+               (let ((new-cluster-centers '()))
+                 (setf ht (make-hash-table :test 'equal))
+
+                 (multiple-value-setq (max-val max-idx) (maximum label))
+
+                 ; initialize empty clusters
+                 (loop for label-idx from 0 to max-val do
+                   (setf (gethash label-idx ht) '()))
+
+                 (mapcar #'(lambda (l vec)
+                             (push vec (gethash l ht))) label X)
+
+                 ; update cluster centers
+                 (maphash #'(lambda (key value)
+                              (push (compute-mean value) new-cluster-centers))
+                          ht)
+
+                 new-cluster-centers))
              )
 
-
-      (setf assignment
+      (setf label
             (assign centroids (matrix-data X)))
-      ;(update X)
-      ;(setf (get-centroids km) centroids)
+
+      (setf centroids
+            (update label (matrix-data X)))
+
+      (setf (get-centroids km) centroids)
     )))
 
 (defgeneric predict (km data &optional params)
