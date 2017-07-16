@@ -8,7 +8,12 @@
       :reader get-k)
    ; maximum change in position of single centroid to declare convergence
    (tol :initarg :tol
+        :initform 0.0001
         :reader get-tol)
+   (max-iter :initarg :max-iter
+             :initform 300
+             :reader get-max-iter)
+   (labels :accessor get-labels)
    (centroids :accessor get-centroids)))
 
 (defmethod random-init ((km k-means) X)
@@ -46,12 +51,13 @@
 
 (defmethod fit ((km k-means) X y &optional params)
   (let ((centroids (random-init km X))
+        (centroids-prev)
         (label))
 
     (labels ((euclidean-dist (vec1 vec2)
-               (apply '+
+               (sqrt (apply '+
                       (mapcar #'(lambda (v1 v2) (expt (- v1 v2) 2))
-                              vec1 vec2)))
+                              vec1 vec2))))
 
              (find-closest (vec centroids)
                (multiple-value-setq (min-val min-idx)
@@ -63,7 +69,7 @@
                min-idx)
 
              (compute-mean (X)
-               (mapcar #'(lambda (f) (mean f)) (transpose-list X)))
+               (mapcar #'(lambda (f) (float (mean f))) (transpose-list X)))
 
              (assign (centroids X)
                (mapcar #'(lambda (vec)
@@ -89,16 +95,33 @@
                           ht)
 
                  new-cluster-centers))
+
+               (centroid-difference (centroid1 centroid2)
+                 (mapcar #'(lambda (c1 c2) (euclidean-dist c1 c2))
+                         centroid1 centroid2))
              )
 
-      (setf label
-            (assign centroids (matrix-data X)))
+      (loop for idx from 1 to (get-max-iter km) do
+        (setf label
+              (assign centroids (matrix-data X)))
 
-      (setf centroids
-            (update label (matrix-data X)))
+        (setf centroids-prev centroids)
+
+        (setf centroids
+              (update label (matrix-data X)))
+
+        (if (< (/
+                (apply '+ (centroid-difference centroids-prev centroids))
+                (get-k km))
+              (get-tol km))
+
+              (return 1)) ; TODO remove number
+
+        (setf centroids-prev centroids))
 
       (setf (get-centroids km) centroids)
-    )))
+      (setf (get-labels km) label)
+      )))
 
 (defgeneric predict (km data &optional params)
   (:documentation ""))
