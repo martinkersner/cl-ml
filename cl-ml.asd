@@ -40,6 +40,9 @@
                (:module naive-bayes-classifier 
                   :components ((:file "naive-bayes-classifier")))
 
+               (:module k-means 
+                  :components ((:file "k-means")))
+
                (:module ann
                   :components ((:file "ann")))
 
