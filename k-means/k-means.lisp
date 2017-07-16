@@ -42,9 +42,37 @@
   (:documentation ""))
 
 (defmethod fit ((km k-means) X y &optional params)
-  (let ((centroids (random-init km X)))
+  (let ((centroids (random-init km X))
+        (assignment))
 
-    ))
+    (labels ((euclidean-dist (vec1 vec2)
+               (apply '+
+                      (mapcar #'(lambda (v1 v2) (expt (- v1 v2) 2))
+                              vec1 vec2)))
+
+             (find-closest (vec centroids)
+               (multiple-value-setq (min-val min-idx)
+                 (minimum
+                   (mapcar #'(lambda (c)
+                               (euclidean-dist vec c))
+                           centroids)))
+
+               min-idx)
+
+             (assign (centroids X)
+               (mapcar #'(lambda (vec)
+                             (find-closest vec centroids))
+                       X))
+
+             ;(update ())
+             )
+
+
+      (setf assignment
+            (assign centroids (matrix-data X)))
+      ;(update X)
+      ;(setf (get-centroids km) centroids)
+    )))
 
 (defgeneric predict (km data &optional params)
   (:documentation ""))
