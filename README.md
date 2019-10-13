@@ -14,7 +14,7 @@ Martin Kersner, <m.kersner@gmail.com>
 * [Artificial Neural Networks](https://github.com/martinkersner/cl-ml#artificial-neural-networks)
 
 ### Requirements
-`cl-ml` requires [asdf](https://gitlab.common-lisp.net/asdf/asdf.git) to be installed. [`cl-math`](https://github.com/martinkersner/cl-math.git) and [`cl-plot`](https://github.com/martinkersner/cl-plot.git) are included as submodules to `cl-ml` project.
+`cl-ml` requires [CLISP](https://www.gnu.org/software/clisp/) and [ASDF](https://gitlab.common-lisp.net/asdf/asdf.git) >= 3.1. [`cl-math`](https://github.com/martinkersner/cl-math.git) and [`cl-plot`](https://github.com/martinkersner/cl-plot.git) are included as submodules to `cl-ml` project.
 
 ### Get the latest version
 ```bash
