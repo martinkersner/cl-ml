@@ -11,7 +11,6 @@
   :version "0.1"
   :author  "Martin Kersner, <m.kersner@gmail.com>"
   :long-description "Machine Learning library for Common Lisp"
-  :defsystem-depends-on (:asdf-package-system)
   :depends-on ("cl-math" "cl-plot")
   ;:serial t
   :components ((:file "feature-extraction-and-preprocessing")
